@@ -67,13 +67,42 @@ void Tetromino::setShape() {
     }
 }
 
-void Tetromino::setPosition(int startX, int startY) {
-	x = startX;
-	y = startY;
+void Tetromino::setPosition(int newX, int newY) {
+	x = newX;
+	y = newY;
 }
 
-void Tetromino::moveDown(int step) {
-	y += step;
+std::vector<int> Tetromino::getPosition() {
+	return {x, y};
+}
+
+void Tetromino::moveDown(int blockSize) {
+	y += blockSize;
+}
+
+void Tetromino::moveLeft(int blockSize) {
+	x -= blockSize;
+}
+
+void Tetromino::moveRight(int blockSize) {
+	x += blockSize;
+}
+
+void Tetromino::rotate() {
+	// rotate around the first block (this will work for most shapes)
+	// we will first find the relative position of each block, and rotate them around a pivot
+	int pivotX = blocks[1][0];
+	int pivotY = blocks[1][1];
+
+	for (int i = 0; i<4; i++) {
+		// get relative position of each block from the pivot
+		int relativeX = blocks[i][0] - pivotX;
+		int relativeY = blocks[i][1] - pivotY;
+
+		// rotate the block 90 degrees counterclockwise
+		blocks[i][0] = pivotX - relativeY;
+		blocks[i][1] = pivotY - relativeX;
+	}
 }
 
 // Draw the Tetromino using its shape definition

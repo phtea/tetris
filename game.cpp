@@ -20,18 +20,47 @@ Game::~Game() {
 
 void Game::run() {
     while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) running = false;
-        }
+		// handle user input
+		handleInput();
 
+		// handle tetrimino falling
 		Uint32 currentTime = SDL_GetTicks();
 		if (currentTime - lastFallTime >= 1000) { // 1 sec delay
 			tetromino.moveDown(BLOCK_SIZE);
 			lastFallTime = currentTime;
+			auto pos = tetromino.getPosition();
+			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
 		}
 
+		// render the game
         renderer.clear();
         tetromino.draw(renderer.getRenderer());
         renderer.present();
+    }
+}
+
+void Game::handleInput() {
+    // Handle quit event
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            running = false;
+        }
+    }
+
+    // Update input handler (check for pressed keys)
+    inputHandler.update();
+
+    // Move the tetromino based on user input
+    if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
+        tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed
+    }
+    if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
+        tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed
+    }
+    if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
+        tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed
+    }
+    if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
+        tetromino.rotate();  // Rotate tetromino if UP arrow key is pressed
     }
 }

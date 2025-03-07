@@ -7,7 +7,7 @@ SDL2_CFLAGS := $(shell sdl2-config --cflags)
 SDL2_LDFLAGS := $(shell sdl2-config --libs)
 
 # Source files
-SRC := main.cpp game.cpp renderer.cpp tetromino.cpp
+SRC := main.cpp game.cpp renderer.cpp tetromino.cpp input_handler.cpp
 OBJ := $(SRC:.cpp=.o)
 TARGET := tetris
 

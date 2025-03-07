@@ -4,6 +4,7 @@
 
 #include "renderer.h"
 #include "tetromino.h"
+#include "input_handler.h"
 
 class Game {
 public:
@@ -16,6 +17,10 @@ private:
     Renderer renderer;
     Tetromino tetromino;
 	Uint32 lastFallTime;
+
+	InputHandler inputHandler; // Instance of the InputHandler
+	
+	void handleInput();
 };
 
 #endif

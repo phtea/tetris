@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <vector>
 #include "constants.h"
 
 enum class TetrominoType { I, J, L, O, S, T, Z };
@@ -8,9 +9,16 @@ class Tetromino {
 public:
     Tetromino(TetrominoType type);
 
+    void moveLeft(int blockSize);
+    void moveRight(int blockSize);
+    void moveDown(int blockSize);
+
+    void rotate();
+
+    void setPosition(int newX, int newY);
+	std::vector<int> getPosition();
+
     void draw(SDL_Renderer* renderer);
-    void setPosition(int startX, int startY);
-    void moveDown(int step);
     
 private:
     TetrominoType type;
