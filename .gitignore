@@ -1,0 +1,7 @@
+/.cache/
+/build/
+/out/
+*.o
+*.out
+tetris
+*.swp

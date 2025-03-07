@@ -4,7 +4,13 @@
 #include <SDL2/SDL_timer.h>
 
 Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {  
-    SDL_Init(SDL_INIT_VIDEO);
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		// Initialization failed, output the error
+		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+		running = false;
+		return;
+	}
+
     renderer.init("Teatris");
 
 	// set tetromino start pos at top center
@@ -52,6 +58,7 @@ void Game::handleInput() {
 
     // Move the tetromino based on user input
     if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
+		std::cout << "left clicked" << std::endl;
         tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed
     }
     if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {

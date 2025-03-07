@@ -1,34 +1,13 @@
-# Compiler and flags
-CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++17 -g
+.PHONY: all build run clean
 
-# SDL2 flags
-SDL2_CFLAGS := $(shell sdl2-config --cflags)
-SDL2_LDFLAGS := $(shell sdl2-config --libs)
+all: build
 
-# Source files
-SRC := main.cpp game.cpp renderer.cpp tetromino.cpp input_handler.cpp
-OBJ := $(SRC:.cpp=.o)
-TARGET := tetris
+build:
+	cmake -B build -S .
+	cmake --build build
 
-# Build rules
-all: $(TARGET)
-
-$(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $(TARGET) $(SDL2_LDFLAGS)
-
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(SDL2_CFLAGS) -c $< -o $@
-
-# Utility commands
-run: $(TARGET)
-	./$(TARGET)
+run: build
+	./build/tetris
 
 clean:
-	rm -f $(OBJ) $(TARGET)
-
-debug: CXXFLAGS += -DDEBUG -O0
-debug: clean $(TARGET)
-	gdb ./$(TARGET)
-
-.PHONY: all clean run debug
+	rm -rf build

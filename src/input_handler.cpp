@@ -1,5 +1,4 @@
 #include "input_handler.h"
-#include <SDL2/SDL.h>
 
 InputHandler::InputHandler() {
     keyboardState = SDL_GetKeyboardState(NULL);
