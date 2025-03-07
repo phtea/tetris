@@ -56,18 +56,26 @@ void Game::handleInput() {
     // Update input handler (check for pressed keys)
     inputHandler.update();
 
-    // Move the tetromino based on user input
-    if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
-		std::cout << "left clicked" << std::endl;
-        tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed
-    }
-    if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
-        tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed
-    }
-    if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-        tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed
-    }
-    if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
-        tetromino.rotate();  // Rotate tetromino if UP arrow key is pressed
+    // Get the current time in milliseconds
+    Uint32 currentTime = SDL_GetTicks();
+
+    // If 500ms has passed since the last move
+    if (currentTime - lastMoveTime >= 500) {
+        // Move the tetromino based on user input
+        if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
+            tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed
+        }
+        if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
+            tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed
+        }
+        if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
+            tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed
+        }
+        if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
+            tetromino.rotate();  // Rotate tetromino if UP arrow key is pressed
+        }
+
+        // Update the last move time
+        lastMoveTime = currentTime;
     }
 }

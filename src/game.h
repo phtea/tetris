@@ -17,6 +17,7 @@ private:
     Renderer renderer;
     Tetromino tetromino;
 	Uint32 lastFallTime;
+	Uint32 lastMoveTime = 0;  // To track the last move time
 
 	InputHandler inputHandler; // Instance of the InputHandler
 	

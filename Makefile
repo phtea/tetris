@@ -1,13 +1,13 @@
-.PHONY: all build run clean
+.PHONY: all out run clean
 
-all: build
+all: out
 
-build:
-	cmake -B build -S .
-	cmake --build build
+out:
+	cmake -B out -S .
+	cmake --build out
 
-run: build
-	./build/tetris
+run: out
+	./out/tetris
 
 clean:
-	rm -rf build
+	rm -rf out
