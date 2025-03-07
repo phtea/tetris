@@ -2,7 +2,6 @@
 #define RENDERER_H
 
 #include <SDL2/SDL.h>
-#include <iostream>
 
 class Renderer {
 public:

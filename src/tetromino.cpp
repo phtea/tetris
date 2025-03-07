@@ -1,4 +1,5 @@
 #include "tetromino.h"
+#include "constants.h"
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 
@@ -118,3 +119,27 @@ void Tetromino::draw(SDL_Renderer* renderer) {
         SDL_RenderFillRect(renderer, &block);
     }
 }
+
+bool Tetromino::collidesWith(Direction direction) {
+    for (int i = 0; i < 4; i++) {
+        int blockX = x + blocks[i][0] * BLOCK_SIZE;
+        int blockY = y + blocks[i][1] * BLOCK_SIZE;
+
+        // Left wall collision
+        if (direction == Direction::LEFT && blockX <= 0) {
+            return true;
+        }
+        
+        // Right wall collision
+        if (direction == Direction::RIGHT && blockX + BLOCK_SIZE >= SCREEN_WIDTH) {
+            return true;
+        }
+
+        // Bottom wall collision
+        if (direction == Direction::DOWN && blockY + BLOCK_SIZE >= SCREEN_HEIGHT) {
+            return true;
+        }
+    }
+    return false;
+}
+

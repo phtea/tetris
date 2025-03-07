@@ -2,6 +2,8 @@
 #include "constants.h"
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
+#include <iostream>
+#include <ostream>
 
 Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {  
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -32,7 +34,9 @@ void Game::run() {
 		// handle tetrimino falling
 		Uint32 currentTime = SDL_GetTicks();
 		if (currentTime - lastFallTime >= 1000) { // 1 sec delay
-			tetromino.moveDown(BLOCK_SIZE);
+            if (!tetromino.collidesWith(Direction::DOWN)) {
+				tetromino.moveDown(BLOCK_SIZE);
+			}
 			lastFallTime = currentTime;
 			auto pos = tetromino.getPosition();
 			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
@@ -63,14 +67,21 @@ void Game::handleInput() {
     if (currentTime - lastMoveTime >= 500) {
         // Move the tetromino based on user input
         if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
-            tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed
+            if (!tetromino.collidesWith(Direction::LEFT)) {
+                tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed and no collision
+            }
         }
         if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
-            tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed
+            if (!tetromino.collidesWith(Direction::RIGHT)) {
+                tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed and no collision
+            }
         }
-        if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-            tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed
-        }
+		// TODO: faster drop feature
+		if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
+			if (!tetromino.collidesWith(Direction::DOWN)) {
+				tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed and no collision
+			}
+		}
         if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
             tetromino.rotate();  // Rotate tetromino if UP arrow key is pressed
         }
