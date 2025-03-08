@@ -2,17 +2,19 @@
 #define INPUT_HANDLER_H
 
 #include <SDL2/SDL.h>
+#include <SDL_keycode.h>
+#include <unordered_map>
 
 class InputHandler {
 public:
-    InputHandler();
-    ~InputHandler();
+    InputHandler() = default;
+    ~InputHandler() = default;
 
-    void update();
-    bool isKeyPressed(SDL_Scancode key);
+	void pollEvents();
+    bool isKeyPressed(SDL_Keycode key) const;
 
 private:
-    const Uint8* keyboardState;
+	std::unordered_map<SDL_Keycode, bool> keyStates;
 };
 
 #endif

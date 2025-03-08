@@ -1,18 +1,27 @@
 #include "input_handler.h"
+#include <SDL_events.h>
+#include <SDL_keyboard.h>
+#include <iostream>
 
-InputHandler::InputHandler() {
-    keyboardState = SDL_GetKeyboardState(NULL);
+void InputHandler::pollEvents() {
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT) {
+			// handle quitting
+			std::cout << "Quit event received" << std::endl;
+		}
+
+		if (event.type == SDL_KEYDOWN) {
+			keyStates[event.key.keysym.sym] = true;
+		}
+
+		if (event.type == SDL_KEYUP) {
+			keyStates[event.key.keysym.sym] = false;
+		}
+	}
 }
 
-InputHandler::~InputHandler() {
-    // Nothing to clean up for now
-}
-
-void InputHandler::update() {
-    SDL_PumpEvents();  // Update keyboard state
-    keyboardState = SDL_GetKeyboardState(NULL);
-}
-
-bool InputHandler::isKeyPressed(SDL_Scancode key) {
-    return keyboardState[key];  // Returns true if key is currently pressed
+bool InputHandler::isKeyPressed(SDL_Keycode key) const {
+	auto it = keyStates.find(key);
+	return it != keyStates.end() && it->second;
 }

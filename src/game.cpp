@@ -3,6 +3,7 @@
 #include "tetromino.h"
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL_keycode.h>
 #include <SDL_scancode.h>
 #include <cstdlib>
 #include <iostream>
@@ -44,7 +45,7 @@ void Game::placeTetrominoOnGrid() {
 
 void Game::createNewTetromino() {
 	tetromino = Tetromino(static_cast<TetrominoType>(rand() % 7));
-	tetromino.setPosition(SCREEN_WIDTH/2 - BLOCK_SIZE, 0);
+	tetromino.setPosition(SCREEN_WIDTH/2 - BLOCK_SIZE, 0); // TODO: create setStartPosition function
 }
 
 void Game::run() {
@@ -103,32 +104,19 @@ bool Game::isGameOver() {
 }
 
 void Game::handleInput() {
-	// Handle quit event
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_QUIT) {
-			running = false;
-		}
+	inputHandler.pollEvents(); // fetch all key events here
+
+	if (inputHandler.isKeyPressed(SDLK_LEFT) && !tetromino.collidesWith(Direction::LEFT, grid)) {
+		tetromino.moveLeft(BLOCK_SIZE);
 	}
 
-	inputHandler.update();
-
-	Uint32 currentTime = SDL_GetTicks();
-
-	// If 500ms has passed since the last move
-	if (currentTime - lastMoveTime >= 500) {
-		if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT) && !tetromino.collidesWith(Direction::LEFT, grid)) {
-			tetromino.moveLeft(BLOCK_SIZE);
-		}
-
-		if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT) && !tetromino.collidesWith(Direction::RIGHT, grid)) {
-			tetromino.moveRight(BLOCK_SIZE);
-		}
-
-		if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN) && !tetromino.collidesWith(Direction::DOWN, grid)) {
-			tetromino.moveDown(BLOCK_SIZE);
-		}
-
-		// Update the last move time
-		lastMoveTime = currentTime;
+	if (inputHandler.isKeyPressed(SDLK_RIGHT) && !tetromino.collidesWith(Direction::RIGHT, grid)) {
+		tetromino.moveRight(BLOCK_SIZE);
 	}
+
+	if (inputHandler.isKeyPressed(SDLK_DOWN) && !tetromino.collidesWith(Direction::DOWN, grid)) {
+		tetromino.moveDown(BLOCK_SIZE);
+	}
+
+	SDL_Delay(1000/FPS);
 }
