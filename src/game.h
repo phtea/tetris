@@ -14,9 +14,12 @@ public:
     void run();
 
 private:
+	void updateGame();
 	void createNewTetromino();
 	void handleInput();
 	void placeTetrominoOnGrid();
+	void renderGame();
+	void drawGrid();
 	bool isGameOver();
 
     bool running;

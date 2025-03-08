@@ -20,12 +20,10 @@ Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {
 
 	renderer.init(GAME_TITLE);
 
-	// set tetromino start pos at top center
-	tetromino.setPosition(SCREEN_WIDTH / 2 - BLOCK_SIZE, 0); // TODO: create setStartPosition function
+	tetromino.setStartPosition();
 
 	lastFallTime = SDL_GetTicks();
 
-	// initialize the grid (10*20)
 	grid = std::vector<std::vector<int>>(BOARD_HEIGHT, std::vector<int>(BOARD_WIDTH, 0));
 }
 
@@ -39,56 +37,69 @@ void Game::placeTetrominoOnGrid() {
 		int gridX = block[0] / BLOCK_SIZE;
 		int gridY = block[1] / BLOCK_SIZE;
 
-		grid[gridY][gridX] = 1; // Mark grid cell as occupied
+		grid[gridY][gridX] = 1;
 	}
 }
 
 void Game::createNewTetromino() {
 	tetromino = Tetromino(static_cast<TetrominoType>(rand() % 7));
-	tetromino.setPosition(SCREEN_WIDTH/2 - BLOCK_SIZE, 0); // TODO: create setStartPosition function
+	tetromino.setStartPosition();
 }
 
 void Game::run() {
 	while (running) {
+		inputHandler.pollEvents();
+
 		handleInput();
 
-		Uint32 currentTime = SDL_GetTicks();
-		if (currentTime - lastFallTime >= 1000) { // 1 sec delay
-			if (!tetromino.collidesWith(Direction::DOWN, grid)) {
-				tetromino.moveDown(BLOCK_SIZE);
-			} else {
-				// store landed tetrimino
-				placeTetrominoOnGrid();
+		updateGame();
 
-				// spawn new one
-				createNewTetromino();
+		renderGame();
 
-				if (isGameOver()) {
-					running = false;
-					std::cout << "Game over!" << std::endl;
-				}
-			}
-			lastFallTime = currentTime;
-
-			auto pos = tetromino.getPosition();
-			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
-		}
-
-		// render the game
-		renderer.clear();
-
-		// Draw existing blocks on the grid
-		for (int y = 0; y < BOARD_HEIGHT; ++y) {
-			for (int x = 0; x < BOARD_WIDTH; ++x) {
-				if (grid[y][x] == 1) {
-					renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
-				}
-			}
-		}
-
-		tetromino.draw(renderer.getRenderer());
-		renderer.present();
+		SDL_Delay(1000/FPS);
 	}
+}
+
+void Game::updateGame() {
+	Uint32 currentTime = SDL_GetTicks();
+	static const int timeToFall = 1000;
+	if (currentTime - lastFallTime >= timeToFall) { // 1 second delay between tetromino falls
+		if (!tetromino.collidesWith(Direction::DOWN, grid)) {
+			tetromino.moveDown(BLOCK_SIZE);
+		} else { // if collides
+			placeTetrominoOnGrid();
+
+			createNewTetromino();
+
+			if (isGameOver()) {
+				running = false;
+				std::cout << "Game over!" << std::endl;
+			}
+		}
+
+		lastFallTime = currentTime;
+
+		auto pos = tetromino.getPosition();
+		std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
+	}
+}
+
+void Game::renderGame() {
+	renderer.clear();
+	drawGrid();
+
+	tetromino.draw(renderer.getRenderer());
+	renderer.present();
+}
+
+void Game::drawGrid() {
+    for (int y = 0; y < BOARD_HEIGHT; ++y) {
+        for (int x = 0; x < BOARD_WIDTH; ++x) {
+            if (grid[y][x] == 1) { // If the cell is occupied (1), draw it
+                renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
+            }
+        }
+    }
 }
 
 bool Game::isGameOver() {
@@ -104,8 +115,6 @@ bool Game::isGameOver() {
 }
 
 void Game::handleInput() {
-	inputHandler.pollEvents(); // fetch all key events here
-
 	if (inputHandler.isKeyPressed(SDLK_LEFT) && !tetromino.collidesWith(Direction::LEFT, grid)) {
 		tetromino.moveLeft(BLOCK_SIZE);
 	}
@@ -117,6 +126,4 @@ void Game::handleInput() {
 	if (inputHandler.isKeyPressed(SDLK_DOWN) && !tetromino.collidesWith(Direction::DOWN, grid)) {
 		tetromino.moveDown(BLOCK_SIZE);
 	}
-
-	SDL_Delay(1000/FPS);
 }

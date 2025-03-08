@@ -18,6 +18,7 @@ public:
     void rotate();
 
     void setPosition(int newX, int newY);
+    void setStartPosition();
 	std::vector<int> getPosition();
 	std::vector<std::array<int, 2>> getBlocks() const;
 

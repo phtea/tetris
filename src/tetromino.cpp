@@ -74,6 +74,11 @@ void Tetromino::setPosition(int newX, int newY) {
 	y = newY;
 }
 
+void Tetromino::setStartPosition() {
+	x = SCREEN_WIDTH/2 - BLOCK_SIZE;
+	y = 0;
+}
+
 std::vector<int> Tetromino::getPosition() {
 	return {x, y};
 }
