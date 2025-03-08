@@ -5,23 +5,30 @@
 #include "renderer.h"
 #include "tetromino.h"
 #include "input_handler.h"
+#include <vector>
 
 class Game {
 public:
     Game();
     ~Game();
     void run();
+
 private:
+	void createNewTetromino();
+	void handleInput();
+	void placeTetrominoOnGrid();
+	bool isGameOver();
+
     bool running;
-    SDL_Event event;
+	Uint32 lastFallTime;
+	Uint32 lastMoveTime;
+
     Renderer renderer;
     Tetromino tetromino;
-	Uint32 lastFallTime;
-	Uint32 lastMoveTime = 0;  // To track the last move time
+	InputHandler inputHandler;
+    SDL_Event event;
 
-	InputHandler inputHandler; // Instance of the InputHandler
-	
-	void handleInput();
+	std::vector<std::vector<int>> grid;
 };
 
 #endif

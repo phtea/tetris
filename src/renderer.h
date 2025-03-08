@@ -9,7 +9,10 @@ public:
     void clear();
     void present();
     void cleanup();
+	void drawBlock(int x, int y);
+
     SDL_Renderer* getRenderer() { return renderer; }
+
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;

@@ -19,3 +19,9 @@ void Renderer::cleanup() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 }
+
+void Renderer::drawBlock(int x, int y) {
+    SDL_Rect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &block);
+}

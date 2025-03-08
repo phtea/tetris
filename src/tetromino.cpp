@@ -143,3 +143,14 @@ bool Tetromino::collidesWith(Direction direction) {
     return false;
 }
 
+std::vector<std::array<int, 2>> Tetromino::getBlocks() const {
+    std::vector<std::array<int, 2>> blockPositions;
+    
+    for (int i = 0; i < 4; i++) {
+        int absX = x + blocks[i][0] * BLOCK_SIZE;
+        int absY = y + blocks[i][1] * BLOCK_SIZE;
+        blockPositions.push_back({absX, absY});
+    }
+
+    return blockPositions;
+}

@@ -1,9 +1,12 @@
 #include "game.h"
 #include "constants.h"
+#include "tetromino.h"
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
+#include <cstdlib>
 #include <iostream>
 #include <ostream>
+#include <vector>
 
 Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {  
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -13,12 +16,15 @@ Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {
 		return;
 	}
 
-    renderer.init("Teatris");
+    renderer.init(GAME_TITLE);
 
 	// set tetromino start pos at top center
-	tetromino.setPosition(SCREEN_WIDTH / 2 - BLOCK_SIZE, 0);
+	tetromino.setPosition(SCREEN_WIDTH / 2 - BLOCK_SIZE, 0); // TODO: create setStartPosition function
 
 	lastFallTime = SDL_GetTicks();
+
+	// initialize the grid (10*20)
+	grid = std::vector<std::vector<int>>(BOARD_HEIGHT, std::vector<int>(BOARD_WIDTH, 0));
 }
 
 Game::~Game() {
@@ -26,27 +32,76 @@ Game::~Game() {
     SDL_Quit();
 }
 
+void Game::placeTetrominoOnGrid() {
+    auto blocks = tetromino.getBlocks(); // Get tetromino block positions
+    for (const auto& block : blocks) {
+        int x = block[0] / BLOCK_SIZE;
+        int y = block[1] / BLOCK_SIZE;
+        
+        if (y >= 0 && y < BOARD_HEIGHT && x >= 0 && x < BOARD_WIDTH) {
+            grid[y][x] = 1; // Mark block as occupied
+        }
+    }
+}
+
+void Game::createNewTetromino() {
+	tetromino = Tetromino(static_cast<TetrominoType>(rand() % 7));
+	tetromino.setPosition(SCREEN_WIDTH/2 - BLOCK_SIZE, 0);
+}
+
 void Game::run() {
     while (running) {
-		// handle user input
 		handleInput();
 
-		// handle tetrimino falling
 		Uint32 currentTime = SDL_GetTicks();
 		if (currentTime - lastFallTime >= 1000) { // 1 sec delay
             if (!tetromino.collidesWith(Direction::DOWN)) {
 				tetromino.moveDown(BLOCK_SIZE);
+			} else {
+				// store landed tetrimino
+				placeTetrominoOnGrid();
+
+				// spawn new one
+				createNewTetromino();
+				
+				if (isGameOver()) {
+					running = false;
+					std::cout << "Game over!" << std::endl;
+				}
 			}
 			lastFallTime = currentTime;
+
 			auto pos = tetromino.getPosition();
 			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
 		}
 
 		// render the game
         renderer.clear();
+
+		// Draw existing blocks on the grid
+        for (int y = 0; y < BOARD_HEIGHT; ++y) {
+            for (int x = 0; x < BOARD_WIDTH; ++x) {
+                if (grid[y][x] == 1) {
+                    renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
+                }
+            }
+        }
+
         tetromino.draw(renderer.getRenderer());
         renderer.present();
     }
+}
+
+bool Game::isGameOver() {
+    auto blocks = tetromino.getBlocks();
+    for (const auto& block : blocks) {
+        int x = block[0] / BLOCK_SIZE;
+        int y = block[1] / BLOCK_SIZE;
+        if (grid[y][x] != 0) {
+            return true; // Collision at spawn → game over
+        }
+    }
+    return false;
 }
 
 void Game::handleInput() {
@@ -57,33 +112,29 @@ void Game::handleInput() {
         }
     }
 
-    // Update input handler (check for pressed keys)
     inputHandler.update();
 
-    // Get the current time in milliseconds
     Uint32 currentTime = SDL_GetTicks();
 
     // If 500ms has passed since the last move
     if (currentTime - lastMoveTime >= 500) {
-        // Move the tetromino based on user input
         if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
             if (!tetromino.collidesWith(Direction::LEFT)) {
-                tetromino.moveLeft(BLOCK_SIZE);  // Move left if LEFT arrow key is pressed and no collision
+                tetromino.moveLeft(BLOCK_SIZE);
             }
         }
         if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
             if (!tetromino.collidesWith(Direction::RIGHT)) {
-                tetromino.moveRight(BLOCK_SIZE);  // Move right if RIGHT arrow key is pressed and no collision
+                tetromino.moveRight(BLOCK_SIZE);
             }
         }
-		// TODO: faster drop feature
 		if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
 			if (!tetromino.collidesWith(Direction::DOWN)) {
-				tetromino.moveDown(BLOCK_SIZE);  // Move down if DOWN arrow key is pressed and no collision
+				tetromino.moveDown(BLOCK_SIZE);
 			}
 		}
         if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
-            tetromino.rotate();  // Rotate tetromino if UP arrow key is pressed
+            tetromino.rotate();
         }
 
         // Update the last move time

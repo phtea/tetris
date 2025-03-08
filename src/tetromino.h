@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <array>
 #include <vector>
 
 enum class TetrominoType { I, J, L, O, S, T, Z };
@@ -18,6 +19,7 @@ public:
 
     void setPosition(int newX, int newY);
 	std::vector<int> getPosition();
+	std::vector<std::array<int, 2>> getBlocks() const;
 
 	bool collidesWith(Direction direction);
 
