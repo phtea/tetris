@@ -2,6 +2,7 @@
 #include "constants.h"
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+#include <vector>
 
 Tetromino::Tetromino(TetrominoType type) : type(type) {
 	setColor();
@@ -120,27 +121,29 @@ void Tetromino::draw(SDL_Renderer* renderer) {
     }
 }
 
-bool Tetromino::collidesWith(Direction direction) {
-    for (int i = 0; i < 4; i++) {
-        int blockX = x + blocks[i][0] * BLOCK_SIZE;
-        int blockY = y + blocks[i][1] * BLOCK_SIZE;
-
-        // Left wall collision
-        if (direction == Direction::LEFT && blockX <= 0) {
-            return true;
-        }
-        
-        // Right wall collision
-        if (direction == Direction::RIGHT && blockX + BLOCK_SIZE >= SCREEN_WIDTH) {
-            return true;
-        }
-
-        // Bottom wall collision
-        if (direction == Direction::DOWN && blockY + BLOCK_SIZE >= SCREEN_HEIGHT) {
-            return true;
-        }
-    }
-    return false;
+bool Tetromino::collidesWith(Direction direction, const std::vector<std::vector<int>>& grid) {
+	for (int i = 0; i < 4; i++) {
+		int blockX = x / BLOCK_SIZE + blocks[i][0];
+		int blockY = y / BLOCK_SIZE + blocks[i][1];
+		switch (direction) {
+			case Direction::LEFT:
+				if (blockX <= 0 || grid[blockY][blockX - 1] == 1) {
+					return true;
+				}
+				break;
+			case Direction::RIGHT:
+				if (blockX + 1 >= BOARD_WIDTH || grid[blockY][blockX + 1] == 1) {
+					return true;
+				}
+				break;
+			case Direction::DOWN:
+				if (blockY + 1 >= BOARD_HEIGHT || grid[blockY + 1][blockX] == 1) {
+					return true;
+				}
+				break;
+		}
+	}
+	return false;
 }
 
 std::vector<std::array<int, 2>> Tetromino::getBlocks() const {

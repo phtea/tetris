@@ -21,7 +21,8 @@ public:
 	std::vector<int> getPosition();
 	std::vector<std::array<int, 2>> getBlocks() const;
 
-	bool collidesWith(Direction direction);
+	/*bool collidesWith(Direction direction);*/
+	bool collidesWith(Direction direction, const std::vector<std::vector<int>>& grid);
 
     void draw(SDL_Renderer* renderer);
     

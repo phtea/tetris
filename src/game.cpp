@@ -3,6 +3,7 @@
 #include "tetromino.h"
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL_scancode.h>
 #include <cstdlib>
 #include <iostream>
 #include <ostream>
@@ -16,7 +17,7 @@ Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {
 		return;
 	}
 
-    renderer.init(GAME_TITLE);
+	renderer.init(GAME_TITLE);
 
 	// set tetromino start pos at top center
 	tetromino.setPosition(SCREEN_WIDTH / 2 - BLOCK_SIZE, 0); // TODO: create setStartPosition function
@@ -28,20 +29,17 @@ Game::Game() : running(true), tetromino(static_cast<TetrominoType>(rand()%7)) {
 }
 
 Game::~Game() {
-    renderer.cleanup();
-    SDL_Quit();
+	renderer.cleanup();
+	SDL_Quit();
 }
 
 void Game::placeTetrominoOnGrid() {
-    auto blocks = tetromino.getBlocks(); // Get tetromino block positions
-    for (const auto& block : blocks) {
-        int x = block[0] / BLOCK_SIZE;
-        int y = block[1] / BLOCK_SIZE;
-        
-        if (y >= 0 && y < BOARD_HEIGHT && x >= 0 && x < BOARD_WIDTH) {
-            grid[y][x] = 1; // Mark block as occupied
-        }
-    }
+	for (const auto& block : tetromino.getBlocks()) {
+		int gridX = block[0] / BLOCK_SIZE;
+		int gridY = block[1] / BLOCK_SIZE;
+
+		grid[gridY][gridX] = 1; // Mark grid cell as occupied
+	}
 }
 
 void Game::createNewTetromino() {
@@ -50,12 +48,12 @@ void Game::createNewTetromino() {
 }
 
 void Game::run() {
-    while (running) {
+	while (running) {
 		handleInput();
 
 		Uint32 currentTime = SDL_GetTicks();
 		if (currentTime - lastFallTime >= 1000) { // 1 sec delay
-            if (!tetromino.collidesWith(Direction::DOWN)) {
+			if (!tetromino.collidesWith(Direction::DOWN, grid)) {
 				tetromino.moveDown(BLOCK_SIZE);
 			} else {
 				// store landed tetrimino
@@ -63,7 +61,7 @@ void Game::run() {
 
 				// spawn new one
 				createNewTetromino();
-				
+
 				if (isGameOver()) {
 					running = false;
 					std::cout << "Game over!" << std::endl;
@@ -76,68 +74,61 @@ void Game::run() {
 		}
 
 		// render the game
-        renderer.clear();
+		renderer.clear();
 
 		// Draw existing blocks on the grid
-        for (int y = 0; y < BOARD_HEIGHT; ++y) {
-            for (int x = 0; x < BOARD_WIDTH; ++x) {
-                if (grid[y][x] == 1) {
-                    renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
-                }
-            }
-        }
+		for (int y = 0; y < BOARD_HEIGHT; ++y) {
+			for (int x = 0; x < BOARD_WIDTH; ++x) {
+				if (grid[y][x] == 1) {
+					renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
+				}
+			}
+		}
 
-        tetromino.draw(renderer.getRenderer());
-        renderer.present();
-    }
+		tetromino.draw(renderer.getRenderer());
+		renderer.present();
+	}
 }
 
 bool Game::isGameOver() {
-    auto blocks = tetromino.getBlocks();
-    for (const auto& block : blocks) {
-        int x = block[0] / BLOCK_SIZE;
-        int y = block[1] / BLOCK_SIZE;
-        if (grid[y][x] != 0) {
-            return true; // Collision at spawn → game over
-        }
-    }
-    return false;
+	auto blocks = tetromino.getBlocks();
+	for (const auto& block : blocks) {
+		int x = block[0] / BLOCK_SIZE;
+		int y = block[1] / BLOCK_SIZE;
+		if (grid[y][x] != 0) {
+			return true; // Collision at spawn → game over
+		}
+	}
+	return false;
 }
 
 void Game::handleInput() {
-    // Handle quit event
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            running = false;
-        }
-    }
-
-    inputHandler.update();
-
-    Uint32 currentTime = SDL_GetTicks();
-
-    // If 500ms has passed since the last move
-    if (currentTime - lastMoveTime >= 500) {
-        if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
-            if (!tetromino.collidesWith(Direction::LEFT)) {
-                tetromino.moveLeft(BLOCK_SIZE);
-            }
-        }
-        if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
-            if (!tetromino.collidesWith(Direction::RIGHT)) {
-                tetromino.moveRight(BLOCK_SIZE);
-            }
-        }
-		if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-			if (!tetromino.collidesWith(Direction::DOWN)) {
-				tetromino.moveDown(BLOCK_SIZE);
-			}
+	// Handle quit event
+	while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT) {
+			running = false;
 		}
-        if (inputHandler.isKeyPressed(SDL_SCANCODE_UP)) {
-            tetromino.rotate();
-        }
+	}
 
-        // Update the last move time
-        lastMoveTime = currentTime;
-    }
+	inputHandler.update();
+
+	Uint32 currentTime = SDL_GetTicks();
+
+	// If 500ms has passed since the last move
+	if (currentTime - lastMoveTime >= 500) {
+		if (inputHandler.isKeyPressed(SDL_SCANCODE_LEFT) && !tetromino.collidesWith(Direction::LEFT, grid)) {
+			tetromino.moveLeft(BLOCK_SIZE);
+		}
+
+		if (inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT) && !tetromino.collidesWith(Direction::RIGHT, grid)) {
+			tetromino.moveRight(BLOCK_SIZE);
+		}
+
+		if (inputHandler.isKeyPressed(SDL_SCANCODE_DOWN) && !tetromino.collidesWith(Direction::DOWN, grid)) {
+			tetromino.moveDown(BLOCK_SIZE);
+		}
+
+		// Update the last move time
+		lastMoveTime = currentTime;
+	}
 }
