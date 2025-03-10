@@ -1,4 +1,5 @@
-// game.h - Handles game logic
+// game.h
+// Handles game logic
 #ifndef GAME_H
 #define GAME_H
 
@@ -14,11 +15,11 @@ public:
     void run();
 
 private:
-	void updateGame();
+	void update();
 	void createNewTetromino();
 	void handleInput();
 	void placeTetrominoOnGrid();
-	void renderGame();
+	void render();
 	void drawGrid();
 	bool isGameOver();
 

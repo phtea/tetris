@@ -1,3 +1,6 @@
+// renderer.h
+// Defines rendering logic
+
 #ifndef RENDERER_H
 #define RENDERER_H
 

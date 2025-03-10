@@ -3,6 +3,15 @@ project(Tetris)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Define a CMake option for DEBUG, default is OFF (disabled)
+option(DEBUG "Enable debug mode" OFF)
+
+# Check if DEBUG is enabled and define it accordingly
+if(DEBUG)
+    message(STATUS "Debug mode ENABLED")
+    add_definitions(-DDEBUG=1)
+endif()
+
 # Add source files
 add_executable(tetris 
     src/main.cpp 

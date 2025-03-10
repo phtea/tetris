@@ -1,3 +1,6 @@
+// constants.h
+// Defines global constants used in whole application
+
 #pragma once
 
 constexpr int BLOCK_SIZE = 30;

@@ -1,3 +1,6 @@
+// game.cpp
+// Implements the main game loop, state transitions, and game logic.
+
 #include "game.h"
 #include "constants.h"
 #include "tetromino.h"
@@ -36,8 +39,9 @@ void Game::placeTetrominoOnGrid() {
 	for (const auto& block : tetromino.getBlocks()) {
 		int gridX = block[0] / BLOCK_SIZE;
 		int gridY = block[1] / BLOCK_SIZE;
-
-		grid[gridY][gridX] = 1;
+		if (gridX >= 0 && gridX < BOARD_WIDTH && gridY >= 0 && gridY < BOARD_HEIGHT) { // TODO: make sure this bounds check is needed
+			grid[gridY][gridX] = 1;
+		}
 	}
 }
 
@@ -50,23 +54,26 @@ void Game::run() {
 	while (running) {
 		inputHandler.pollEvents();
 
+		if (inputHandler.shouldQuit()) {
+			running = false; // TODO: add method stop()
+			break;
+		}
+
 		handleInput();
 
-		updateGame();
+		update();
 
-		renderGame();
+		render();
 
 		SDL_Delay(1000/FPS);
 	}
 }
 
-void Game::updateGame() {
+void Game::update() {
 	Uint32 currentTime = SDL_GetTicks();
 	static const int timeToFall = 1000;
-	if (currentTime - lastFallTime >= timeToFall) { // 1 second delay between tetromino falls
-		if (!tetromino.collidesWith(Direction::DOWN, grid)) {
-			tetromino.moveDown(BLOCK_SIZE);
-		} else { // if collides
+	if (currentTime - lastFallTime >= timeToFall) {
+		if (!tetromino.moveDown(BLOCK_SIZE, grid)) { // if collides
 			placeTetrominoOnGrid();
 
 			createNewTetromino();
@@ -78,13 +85,14 @@ void Game::updateGame() {
 		}
 
 		lastFallTime = currentTime;
-
+#ifdef DEBUG
 		auto pos = tetromino.getPosition();
 		std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
+#endif // DEBUG
 	}
 }
 
-void Game::renderGame() {
+void Game::render() {
 	renderer.clear();
 	drawGrid();
 
@@ -93,6 +101,21 @@ void Game::renderGame() {
 }
 
 void Game::drawGrid() {
+    SDL_SetRenderDrawColor(renderer.getRenderer(), 50, 50, 50, 255);  // Light gray color for grid lines
+
+    // Draw vertical grid lines
+    for (int x = 0; x <= BOARD_WIDTH; ++x) {
+        int screenX = x * BLOCK_SIZE;
+        SDL_RenderDrawLine(renderer.getRenderer(), screenX, 0, screenX, BOARD_HEIGHT * BLOCK_SIZE);
+    }
+
+    // Draw horizontal grid lines
+    for (int y = 0; y <= BOARD_HEIGHT; ++y) {
+        int screenY = y * BLOCK_SIZE;
+        SDL_RenderDrawLine(renderer.getRenderer(), 0, screenY, BOARD_WIDTH * BLOCK_SIZE, screenY);
+    }
+
+    // Then, draw the blocks (the colored cells that are part of the tetromino or fixed)
     for (int y = 0; y < BOARD_HEIGHT; ++y) {
         for (int x = 0; x < BOARD_WIDTH; ++x) {
             if (grid[y][x] == 1) { // If the cell is occupied (1), draw it
@@ -102,8 +125,9 @@ void Game::drawGrid() {
     }
 }
 
+
 bool Game::isGameOver() {
-	auto blocks = tetromino.getBlocks();
+	std::array<std::array<int, 2>, 4> blocks = tetromino.getBlocks();
 	for (const auto& block : blocks) {
 		int x = block[0] / BLOCK_SIZE;
 		int y = block[1] / BLOCK_SIZE;
@@ -115,15 +139,28 @@ bool Game::isGameOver() {
 }
 
 void Game::handleInput() {
-	if (inputHandler.isKeyPressed(SDLK_LEFT) && !tetromino.collidesWith(Direction::LEFT, grid)) {
-		tetromino.moveLeft(BLOCK_SIZE);
-	}
+    if (inputHandler.isKeyPressed(SDLK_LEFT)) {
+        tetromino.moveLeft(BLOCK_SIZE, grid);
+    }
 
-	if (inputHandler.isKeyPressed(SDLK_RIGHT) && !tetromino.collidesWith(Direction::RIGHT, grid)) {
-		tetromino.moveRight(BLOCK_SIZE);
-	}
+    if (inputHandler.isKeyPressed(SDLK_RIGHT)) {
+        tetromino.moveRight(BLOCK_SIZE, grid);
+    }
 
-	if (inputHandler.isKeyPressed(SDLK_DOWN) && !tetromino.collidesWith(Direction::DOWN, grid)) {
-		tetromino.moveDown(BLOCK_SIZE);
-	}
+    if (inputHandler.isKeyPressed(SDLK_DOWN)) {
+        tetromino.moveDown(BLOCK_SIZE, grid);
+    }
+
+    if (inputHandler.isKeyJustPressed(SDLK_z) || inputHandler.isKeyJustPressed(SDLK_UP)) {
+        tetromino.rotate(-90, grid);
+    }
+
+    if (inputHandler.isKeyJustPressed(SDLK_x)) {
+        tetromino.rotate(90, grid);
+    }
+
+    if (inputHandler.isKeyJustPressed(SDLK_c)) {
+        tetromino.rotate(180, grid);
+    }
 }
+

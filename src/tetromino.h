@@ -1,3 +1,6 @@
+// tetromino.cpp
+// Implements logic around tetromino
+
 #pragma once
 #include <SDL2/SDL.h>
 #include <array>
@@ -11,19 +14,22 @@ class Tetromino {
 public:
     Tetromino(TetrominoType type);
 
-    void moveLeft(int blockSize);
-    void moveRight(int blockSize);
-    void moveDown(int blockSize);
+    /*void moveLeft(int blockSize);*/
+    /*void moveRight(int blockSize);*/
+    /*void moveDown(int blockSize);*/
 
-    void rotate();
+	bool moveLeft(int amount, const std::vector<std::vector<int>>& grid);
+	bool moveRight(int amount, const std::vector<std::vector<int>>& grid);
+	bool moveDown(int amount, const std::vector<std::vector<int>>& grid);
+
+    void rotate(int angle, const std::vector<std::vector<int>>& board);
 
     void setPosition(int newX, int newY);
     void setStartPosition();
 	std::vector<int> getPosition();
-	std::vector<std::array<int, 2>> getBlocks() const;
+	std::array<std::array<int, 2>, 4> getBlocks() const;
 
-	/*bool collidesWith(Direction direction);*/
-	bool collidesWith(Direction direction, const std::vector<std::vector<int>>& grid);
+	bool collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks, const std::vector<std::vector<int>>& grid) const;
 
     void draw(SDL_Renderer* renderer);
     
@@ -31,8 +37,11 @@ private:
     TetrominoType type;
     SDL_Color color;
 	
-    int blocks[4][2]; // Relative positions of the blocks
+	std::array<std::array<int, 2>, 4> blocks;
     int x, y; // Absolute position of Tetromino
+	int rotationState = 0; // 0-3 (spawn, right, 180, left)
+
+	std::pair<int, int> getPivot() const;
 
     void setColor();
     void setShape();

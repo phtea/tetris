@@ -1,3 +1,6 @@
+// renderer.cpp
+// Implements rendering logic
+
 #include "renderer.h"
 #include "constants.h"
 
@@ -21,6 +24,7 @@ void Renderer::cleanup() {
 }
 
 void Renderer::drawBlock(int x, int y) {
+	// todo: fix segfault if block is above screen
     SDL_Rect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &block);
