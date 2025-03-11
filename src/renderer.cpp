@@ -3,15 +3,26 @@
 
 #include "renderer.h"
 #include "constants.h"
+#include <iostream>
 
 void Renderer::init(const char* title) {
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    window = SDL_CreateWindow(title, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    if (window == NULL) {
+        // In the case that the window could not be made...
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n", SDL_GetError());
+    }
+    renderer = SDL_CreateRenderer(window, NULL);
+    if (renderer == nullptr) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer: %s\n", SDL_GetError());
+    }
 }
 
 void Renderer::clear() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    bool success = SDL_RenderClear(renderer);
+    if (!success) {
+        std::cout << "Error while clearing render: " << SDL_GetError() << std::endl;
+    }
 }
 
 void Renderer::present() {
@@ -25,7 +36,7 @@ void Renderer::cleanup() {
 
 void Renderer::drawBlock(int x, int y) {
 	// todo: fix segfault if block is above screen
-    SDL_Rect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+    SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &block);
 }

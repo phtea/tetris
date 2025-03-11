@@ -22,16 +22,18 @@ private:
 	void render();
 	void drawGrid();
 	bool isGameOver();
+	void stop();
 
     bool running;
-	Uint32 lastFallTime;
-	Uint32 lastMoveTime;
+	Uint64 lastFallTime;
+	Uint64 lastMoveTime;
 
     Renderer renderer;
     Tetromino tetromino;
 	InputHandler inputHandler;
     SDL_Event event;
 
+	// Grid of blocks [BOARD_WIDTH, BOARD_HEIGHT)
 	std::vector<std::vector<int>> grid;
 };
 

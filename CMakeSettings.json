@@ -1,0 +1,26 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug", // This ensures the Debug build type is selected
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DDEBUG=ON", // This passes the -DDEBUG=ON flag for Debug builds
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "x64-Release",
+      "generator": "Ninja",
+      "configurationType": "Release", // This specifies the Release build type
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DDEBUG=OFF", // This ensures the -DDEBUG=OFF flag for Release builds
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
+    }
+  ]
+}

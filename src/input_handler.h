@@ -4,8 +4,8 @@
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
-#include <SDL2/SDL.h>
-#include <SDL_keycode.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_keycode.h>
 #include <unordered_map>
 
 class InputHandler {

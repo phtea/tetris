@@ -1,16 +1,14 @@
 #include "tetromino.h"
 #include "constants.h"
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
 #include <iterator>
 #include <vector>
-
-#ifdef DEBUG
 #include <iostream>
-#endif // DEBUG
+
 
 Tetromino::Tetromino(TetrominoType type) : type(type) {
 	setColor();
@@ -94,7 +92,7 @@ std::vector<int> Tetromino::getPosition() {
 bool Tetromino::moveDown(int amount, const std::vector<std::vector<int>>& grid) {
     std::array<std::array<int, 2>, 4> testBlocks = blocks;
     for (auto& block : testBlocks) {
-        block[1] += BLOCK_SIZE;
+        block[1] += 1;
     }
 
     if (!collidesWith(testBlocks, grid)) {
@@ -108,7 +106,7 @@ bool Tetromino::moveDown(int amount, const std::vector<std::vector<int>>& grid) 
 bool Tetromino::moveLeft(int amount, const std::vector<std::vector<int>>& grid) {
     std::array<std::array<int, 2>, 4> testBlocks = blocks;
     for (auto& block : testBlocks) {
-        block[0] -= BLOCK_SIZE;
+        block[0] -= 1;
     }
     
     if (!collidesWith(testBlocks, grid)) {
@@ -122,7 +120,7 @@ bool Tetromino::moveLeft(int amount, const std::vector<std::vector<int>>& grid) 
 bool Tetromino::moveRight(int amount, const std::vector<std::vector<int>>& grid) {
     std::array<std::array<int, 2>, 4> testBlocks = blocks;
     for (auto& block : testBlocks) {
-        block[0] += BLOCK_SIZE;
+        block[0] += 1;
     }
 
     if (!collidesWith(testBlocks, grid)) {
@@ -200,7 +198,7 @@ void Tetromino::draw(SDL_Renderer* renderer) {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
 	for (int i = 0; i < 4; i++) {
-		SDL_Rect block = {
+		SDL_FRect block = {
 			x + blocks[i][0] * BLOCK_SIZE,
 			y + blocks[i][1] * BLOCK_SIZE,
 			BLOCK_SIZE, BLOCK_SIZE
@@ -211,7 +209,7 @@ void Tetromino::draw(SDL_Renderer* renderer) {
 	// Draw pivot block in white
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	auto [pivotX, pivotY] = getPivot();
-	SDL_Rect pivotBlock = {
+	SDL_FRect pivotBlock = {
 		x + pivotX * BLOCK_SIZE,
 		y + pivotY * BLOCK_SIZE,
 		BLOCK_SIZE, BLOCK_SIZE

@@ -2,7 +2,7 @@
 // Implements logic around tetromino
 
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <array>
 #include <vector>
 
@@ -14,15 +14,10 @@ class Tetromino {
 public:
     Tetromino(TetrominoType type);
 
-    /*void moveLeft(int blockSize);*/
-    /*void moveRight(int blockSize);*/
-    /*void moveDown(int blockSize);*/
-
 	bool moveLeft(int amount, const std::vector<std::vector<int>>& grid);
 	bool moveRight(int amount, const std::vector<std::vector<int>>& grid);
 	bool moveDown(int amount, const std::vector<std::vector<int>>& grid);
-
-    void rotate(int angle, const std::vector<std::vector<int>>& board);
+    void rotate(int angle, const std::vector<std::vector<int>>& grid);
 
     void setPosition(int newX, int newY);
     void setStartPosition();
