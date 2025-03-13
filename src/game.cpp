@@ -36,7 +36,6 @@ Game::Game()
 }
 
 Game::~Game() {
-	renderer.cleanup();
 	SDL_Quit();
 }
 
@@ -147,12 +146,26 @@ void Game::stop() {
 }
 
 void Game::handleInput() {
-    if (inputHandler.isKeyPressed(SDLK_LEFT)) {
-        tetromino.moveLeft(BLOCK_SIZE, grid);
+	Uint32 now = SDL_GetTicks();
+    
+	if (inputHandler.isKeyPressed(SDLK_LEFT)) {
+		Uint32 holdTime = inputHandler.getKeyHoldTime(SDLK_LEFT);
+		if (inputHandler.isKeyJustPressed(SDLK_LEFT) ||
+			holdTime > DAS &&
+			now - lastMoveTime > ARR) {
+			tetromino.moveLeft(BLOCK_SIZE, grid);
+			lastMoveTime = now;
+		}
     }
 
     if (inputHandler.isKeyPressed(SDLK_RIGHT)) {
-        tetromino.moveRight(BLOCK_SIZE, grid);
+		Uint32 holdTime = inputHandler.getKeyHoldTime(SDLK_RIGHT);
+		if (inputHandler.isKeyJustPressed(SDLK_RIGHT) ||
+			holdTime > DAS &&
+			now - lastMoveTime > ARR) {
+			tetromino.moveRight(BLOCK_SIZE, grid);
+			lastMoveTime = now;
+		}
     }
 
     if (inputHandler.isKeyPressed(SDLK_DOWN)) {

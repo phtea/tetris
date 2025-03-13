@@ -2,6 +2,7 @@
 // Implements logic around tetromino
 
 #pragma once
+
 #include <SDL3/SDL.h>
 #include <array>
 #include <vector>

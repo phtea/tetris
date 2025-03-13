@@ -21,15 +21,18 @@ void Renderer::clear() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     bool success = SDL_RenderClear(renderer);
     if (!success) {
-        std::cout << "Error while clearing render: " << SDL_GetError() << std::endl;
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not clear render: %s\n", SDL_GetError());
     }
 }
 
 void Renderer::present() {
-    SDL_RenderPresent(renderer);
+    bool success = SDL_RenderPresent(renderer);
+    if (!success) {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not present render: %s\n", SDL_GetError());
+    }
 }
 
-void Renderer::cleanup() {
+Renderer::~Renderer() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 }

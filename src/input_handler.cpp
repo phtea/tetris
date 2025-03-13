@@ -8,6 +8,8 @@
 
 void InputHandler::pollEvents() {
 	SDL_Event event;
+	Uint64 now = SDL_GetTicks();
+
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_EVENT_QUIT) {
 			// TODO: handle quitting
@@ -16,13 +18,14 @@ void InputHandler::pollEvents() {
 		}
 
 		if (event.type == SDL_EVENT_KEY_DOWN) {
-			/*if (!keyStates[event.key.key]) {
-				justPressed[event.key.key] = true;
-			}*/
-			if (!event.key.repeat) {
-				justPressed[event.key.key] = true;
+			if (event.key.repeat) {
+				keyStates[event.key.key] = KeyStateType::isHeld;
+			} else {
+				keyStates[event.key.key] = KeyStateType::isJustPressed;
+
+				// if just pressed the button - store its hold start time
+				keyHoldStartTimes[event.key.key] = now;
 			}
-			keyStates[event.key.key] = true;
 
 			// Quit on Escape key
 			if (event.key.key == SDLK_ESCAPE) {
@@ -30,24 +33,31 @@ void InputHandler::pollEvents() {
 				quit = true;
 			}
 		}
-
 		if (event.type == SDL_EVENT_KEY_UP) {
-			keyStates[event.key.key] = false;
-			justPressed[event.key.key] = false;
+			keyStates[event.key.key] = KeyStateType::isNotHeld;
+			keyHoldStartTimes.erase(event.key.key);
 		}
 	}
 }
 
 bool InputHandler::isKeyPressed(SDL_Keycode key) const {
 	auto it = keyStates.find(key);
-	return it != keyStates.end() && it->second;
+	return (it != keyStates.end() && (it->second == KeyStateType::isJustPressed || it->second == KeyStateType::isHeld));
 }
 
 bool InputHandler::isKeyJustPressed(SDL_Keycode key) {
-	auto it = justPressed.find(key);
-    if (it != justPressed.end() && it->second) {
-        justPressed[key] = false;
-        return true;
-    }
-    return false;
+	auto it = keyStates.find(key);
+	if (it != keyStates.end() && it->second == KeyStateType::isJustPressed) {
+		keyStates[key] = KeyStateType::isHeld;
+		return true;
+	}
+	return false;
+}
+
+Uint32 InputHandler::getKeyHoldTime(SDL_Keycode key) const {
+	auto it = keyHoldStartTimes.find(key);
+	if (it != keyHoldStartTimes.end()) {
+		return SDL_GetTicks() - it->second; // return hold duration
+	}
+	return 0;
 }
