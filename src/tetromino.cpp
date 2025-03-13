@@ -1,257 +1,304 @@
 #include "tetromino.h"
-#include "constants.h"
+
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
+#include <iostream>
 #include <iterator>
 #include <vector>
-#include <iostream>
 
+#include "constants.h"
 
-Tetromino::Tetromino(TetrominoType type) : type(type) {
-	setColor();
-	setShape();
+Tetromino::Tetromino(TetrominoType type) : m_type(type) {
+  setColor();
+  setShape();
 }
 
 void Tetromino::setColor() {
-	switch (type) {
-		case TetrominoType::I: color = {0, 255, 255, 255}; break; // Cyan
-		case TetrominoType::J: color = {0, 0, 255, 255}; break;   // Blue
-		case TetrominoType::L: color = {255, 165, 0, 255}; break; // Orange
-		case TetrominoType::O: color = {255, 255, 0, 255}; break; // Yellow
-		case TetrominoType::S: color = {0, 255, 0, 255}; break;   // Green
-		case TetrominoType::T: color = {128, 0, 128, 255}; break; // Purple
-		case TetrominoType::Z: color = {255, 0, 0, 255}; break;   // Red
-	}
+  switch (m_type) {
+    case TetrominoType::I:
+      m_color = {0, 255, 255, 255};
+      break;  // Cyan
+    case TetrominoType::J:
+      m_color = {0, 0, 255, 255};
+      break;  // Blue
+    case TetrominoType::L:
+      m_color = {255, 165, 0, 255};
+      break;  // Orange
+    case TetrominoType::O:
+      m_color = {255, 255, 0, 255};
+      break;  // Yellow
+    case TetrominoType::S:
+      m_color = {0, 255, 0, 255};
+      break;  // Green
+    case TetrominoType::T:
+      m_color = {128, 0, 128, 255};
+      break;  // Purple
+    case TetrominoType::Z:
+      m_color = {255, 0, 0, 255};
+      break;  // Red
+  }
 }
 
 // Define block positions for each Tetromino shape
 void Tetromino::setShape() {
-	switch (type) {
-		case TetrominoType::I:
-			blocks[0][0] = 0; blocks[0][1] = 1;
-			blocks[1][0] = 1; blocks[1][1] = 1;
-			blocks[2][0] = 2; blocks[2][1] = 1;
-			blocks[3][0] = 3; blocks[3][1] = 1;
-			break;
-		case TetrominoType::J:
-			blocks[0][0] = 0; blocks[0][1] = 0;
-			blocks[1][0] = 0; blocks[1][1] = 1;
-			blocks[2][0] = 1; blocks[2][1] = 1;
-			blocks[3][0] = 2; blocks[3][1] = 1;
-			break;
-		case TetrominoType::L:
-			blocks[0][0] = 2; blocks[0][1] = 0;
-			blocks[1][0] = 0; blocks[1][1] = 1;
-			blocks[2][0] = 1; blocks[2][1] = 1;
-			blocks[3][0] = 2; blocks[3][1] = 1;
-			break;
-		case TetrominoType::O:
-			blocks[0][0] = 1; blocks[0][1] = 0;
-			blocks[1][0] = 2; blocks[1][1] = 0;
-			blocks[2][0] = 1; blocks[2][1] = 1;
-			blocks[3][0] = 2; blocks[3][1] = 1;
-			break;
-		case TetrominoType::S:
-			blocks[0][0] = 1; blocks[0][1] = 0;
-			blocks[1][0] = 2; blocks[1][1] = 0;
-			blocks[2][0] = 0; blocks[2][1] = 1;
-			blocks[3][0] = 1; blocks[3][1] = 1;
-			break;
-		case TetrominoType::T:
-			blocks[0][0] = 1; blocks[0][1] = 0;
-			blocks[1][0] = 0; blocks[1][1] = 1;
-			blocks[2][0] = 1; blocks[2][1] = 1;
-			blocks[3][0] = 2; blocks[3][1] = 1;
-			break;
-		case TetrominoType::Z:
-			blocks[0][0] = 0; blocks[0][1] = 0;
-			blocks[1][0] = 1; blocks[1][1] = 0;
-			blocks[2][0] = 1; blocks[2][1] = 1;
-			blocks[3][0] = 2; blocks[3][1] = 1;
-			break;
-	}
+  switch (m_type) {
+    case TetrominoType::I:
+      m_blocks[0][0] = 0;
+      m_blocks[0][1] = 1;
+      m_blocks[1][0] = 1;
+      m_blocks[1][1] = 1;
+      m_blocks[2][0] = 2;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 3;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::J:
+      m_blocks[0][0] = 0;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 0;
+      m_blocks[1][1] = 1;
+      m_blocks[2][0] = 1;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 2;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::L:
+      m_blocks[0][0] = 2;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 0;
+      m_blocks[1][1] = 1;
+      m_blocks[2][0] = 1;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 2;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::O:
+      m_blocks[0][0] = 1;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 2;
+      m_blocks[1][1] = 0;
+      m_blocks[2][0] = 1;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 2;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::S:
+      m_blocks[0][0] = 1;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 2;
+      m_blocks[1][1] = 0;
+      m_blocks[2][0] = 0;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 1;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::T:
+      m_blocks[0][0] = 1;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 0;
+      m_blocks[1][1] = 1;
+      m_blocks[2][0] = 1;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 2;
+      m_blocks[3][1] = 1;
+      break;
+    case TetrominoType::Z:
+      m_blocks[0][0] = 0;
+      m_blocks[0][1] = 0;
+      m_blocks[1][0] = 1;
+      m_blocks[1][1] = 0;
+      m_blocks[2][0] = 1;
+      m_blocks[2][1] = 1;
+      m_blocks[3][0] = 2;
+      m_blocks[3][1] = 1;
+      break;
+  }
 }
 
-void Tetromino::setPosition(int newX, int newY) {
-	x = newX;
-	y = newY;
+void Tetromino::setPosition(int x, int y) {
+  m_x = x;
+  m_y = y;
 }
 
 void Tetromino::setStartPosition() {
-	x = SCREEN_WIDTH/2 - BLOCK_SIZE;
-	y = 0;
+  m_x = SCREEN_WIDTH / 2 - BLOCK_SIZE;
+  m_y = 0;
 }
 
-std::vector<int> Tetromino::getPosition() {
-	return {x, y};
+std::vector<int> Tetromino::getPosition() { return {m_x, m_y}; }
+
+bool Tetromino::canMoveDown(const std::vector<std::vector<int>>& grid) const {
+  std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
+  for (auto& block : testBlocks) {
+    block[1] += 1;
+  }
+
+  return !collidesWith(testBlocks, grid);
 }
 
-bool Tetromino::moveDown(int amount, const std::vector<std::vector<int>>& grid) {
-    std::array<std::array<int, 2>, 4> testBlocks = blocks;
-    for (auto& block : testBlocks) {
-        block[1] += 1;
-    }
+void Tetromino::moveDown(int amount) { m_y += amount; }
 
-    if (!collidesWith(testBlocks, grid)) {
-        y += amount;
-		return true;
-    }
+bool Tetromino::canMoveLeft(const std::vector<std::vector<int>>& grid) const {
+  std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
+  for (auto& block : testBlocks) {
+    block[0] -= 1;
+  }
 
-	return false;
+  return !collidesWith(testBlocks, grid);
 }
 
-bool Tetromino::moveLeft(int amount, const std::vector<std::vector<int>>& grid) {
-    std::array<std::array<int, 2>, 4> testBlocks = blocks;
-    for (auto& block : testBlocks) {
-        block[0] -= 1;
-    }
-    
-    if (!collidesWith(testBlocks, grid)) {
-        x -= amount;
-		return true;
-    }
+void Tetromino::moveLeft(int amount) { m_x -= amount; }
 
-	return false;
+bool Tetromino::canMoveRight(const std::vector<std::vector<int>>& grid) const {
+  std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
+  for (auto& block : testBlocks) {
+    block[0] += 1;
+  }
+
+  return !collidesWith(testBlocks, grid);
 }
 
-bool Tetromino::moveRight(int amount, const std::vector<std::vector<int>>& grid) {
-    std::array<std::array<int, 2>, 4> testBlocks = blocks;
-    for (auto& block : testBlocks) {
-        block[0] += 1;
-    }
+void Tetromino::moveRight(int amount) { m_x += amount; }
 
-    if (!collidesWith(testBlocks, grid)) {
-        x += amount;
-		return true;
-    }
-
-	return false;
+bool Tetromino::moveIfCan(Direction dir, int amount,
+                          const std::vector<std::vector<int>>& grid) {
+  switch (dir) {
+    case Direction::DOWN:
+      if (canMoveDown(grid)) {
+        moveDown(amount);
+        return true;
+      }
+      break;
+    case Direction::LEFT:
+      if (canMoveLeft(grid)) {
+        moveLeft(amount);
+        return true;
+      }
+      break;
+    case Direction::RIGHT:
+      if (canMoveRight(grid)) {
+        moveRight(amount);
+        return true;
+      }
+      break;
+  }
+  return false;
 }
 
-// Function to determine the pivot based on Tetromino type
+// Function to determine the pivot based on Tetromino m_type
 std::pair<int, int> Tetromino::getPivot() const {
-	// Default pivot
-	int pivotX = blocks[0][0];
-	int pivotY = blocks[0][1];
+  // Default pivot
+  int pivotX = m_blocks[0][0];
+  int pivotY = m_blocks[0][1];
 
+  switch (m_type) {
+    case TetrominoType::S:
+      pivotX = m_blocks[3][0];
+      pivotY = m_blocks[3][1];
+      break;
+    case TetrominoType::I:
+      pivotX = m_blocks[1][0];  // I piece rotates around the middle block
+      pivotY = m_blocks[1][1];
+      break;
+    case TetrominoType::L:
+    case TetrominoType::J:
+    case TetrominoType::T:
+    case TetrominoType::Z:
+      pivotX = m_blocks[2][0];
+      pivotY = m_blocks[2][1];
+      break;
+    case TetrominoType::O:
+      break;  // it doesn't rotate
+  }
 
-	switch (type) {
-		case TetrominoType::S:
-			pivotX = blocks[3][0];
-			pivotY = blocks[3][1];
-			break;
-		case TetrominoType::I:
-			pivotX = blocks[1][0]; // I piece rotates around the middle block
-			pivotY = blocks[1][1];
-			break;
-		case TetrominoType::L:
-		case TetrominoType::J:
-		case TetrominoType::T:
-		case TetrominoType::Z:
-			pivotX = blocks[2][0];
-			pivotY = blocks[2][1];
-			break;
-		case TetrominoType::O:
-			break; // it doesn't rotate
-	}
-
-	return {pivotX, pivotY}; // Return the pivot point as a pair
+  return {pivotX, pivotY};  // Return the pivot point as a pair
 }
-
 
 void Tetromino::rotate(int angle, const std::vector<std::vector<int>>& grid) {
-    if (type == TetrominoType::O) return; // O piece doesn't rotate
+  if (m_type == TetrominoType::O) return;  // O piece doesn't rotate
 
-    auto [pivotX, pivotY] = getPivot();
+  auto [pivotX, pivotY] = getPivot();
 
-    int newRotationState = (rotationState + (angle == 90 ? 1 : (angle == -90 ? 3 : 2))) % 4;
+  int newRotationState =
+      (m_rotationState + (angle == 90 ? 1 : (angle == -90 ? 3 : 2))) % 4;
 
-	std::array<std::array<int, 2>, 4> rotatedBlocks;
-    for (size_t i = 0; i < 4; i++) {
-        int relX = blocks[i][0] - pivotX;
-        int relY = blocks[i][1] - pivotY;
+  std::array<std::array<int, 2>, 4> rotatedBlocks;
+  for (size_t i = 0; i < 4; i++) {
+    int relX = m_blocks[i][0] - pivotX;
+    int relY = m_blocks[i][1] - pivotY;
 
-        if (angle == 90) {
-            rotatedBlocks[i][0] = pivotX - relY;
-            rotatedBlocks[i][1] = pivotY + relX;
-        } else if (angle == -90) {
-            rotatedBlocks[i][0] = pivotX + relY;
-            rotatedBlocks[i][1] = pivotY - relX;
-        } else if (angle == 180) {
-            rotatedBlocks[i][0] = pivotX - relX;
-            rotatedBlocks[i][1] = pivotY - relY;
-        }
+    if (angle == 90) {
+      rotatedBlocks[i][0] = pivotX - relY;
+      rotatedBlocks[i][1] = pivotY + relX;
+    } else if (angle == -90) {
+      rotatedBlocks[i][0] = pivotX + relY;
+      rotatedBlocks[i][1] = pivotY - relX;
+    } else if (angle == 180) {
+      rotatedBlocks[i][0] = pivotX - relX;
+      rotatedBlocks[i][1] = pivotY - relY;
     }
+  }
 
-    // Use collidesWith to check for rotation validity
-    if (!collidesWith(rotatedBlocks, grid)) {
-		std::copy(rotatedBlocks.begin(), rotatedBlocks.end(), blocks.begin());
-        rotationState = newRotationState;
-    }
+  // Use collidesWith to check for rotation validity
+  if (!collidesWith(rotatedBlocks, grid)) {
+    std::copy(rotatedBlocks.begin(), rotatedBlocks.end(), m_blocks.begin());
+    m_rotationState = newRotationState;
+  }
 }
 
 // Draw the Tetromino using its shape definition
 void Tetromino::draw(SDL_Renderer* renderer) {
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_SetRenderDrawColor(renderer, m_color.r, m_color.g, m_color.b, m_color.a);
 
-	for (int i = 0; i < 4; i++) {
-		SDL_FRect block = {
-			x + blocks[i][0] * BLOCK_SIZE,
-			y + blocks[i][1] * BLOCK_SIZE,
-			BLOCK_SIZE, BLOCK_SIZE
-		};
-		SDL_RenderFillRect(renderer, &block);
-	}
+  for (int i = 0; i < 4; i++) {
+    SDL_FRect block = {m_x + m_blocks[i][0] * BLOCK_SIZE,
+                       m_y + m_blocks[i][1] * BLOCK_SIZE, BLOCK_SIZE,
+                       BLOCK_SIZE};
+    SDL_RenderFillRect(renderer, &block);
+  }
 #ifdef DEBUG
-	// Draw pivot block in white
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	auto [pivotX, pivotY] = getPivot();
-	SDL_FRect pivotBlock = {
-		x + pivotX * BLOCK_SIZE,
-		y + pivotY * BLOCK_SIZE,
-		BLOCK_SIZE, BLOCK_SIZE
-	};
-	SDL_RenderFillRect(renderer, &pivotBlock);
+  // Draw pivot block in white
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  auto [pivotX, pivotY] = getPivot();
+  SDL_FRect pivotBlock = {m_x + pivotX * BLOCK_SIZE, m_y + pivotY * BLOCK_SIZE,
+                          BLOCK_SIZE, BLOCK_SIZE};
+  SDL_RenderFillRect(renderer, &pivotBlock);
 #endif
 }
 
-// TODO: URGENT FIX THIS!!
-bool Tetromino::collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks,
-							const std::vector<std::vector<int>>& grid) const {
-    for (const auto& block : testBlocks) {
-        int blockX = block[0] + x / BLOCK_SIZE;
-        int blockY = block[1] + y / BLOCK_SIZE;
+bool Tetromino::collidesWith(
+    const std::array<std::array<int, 2>, 4>& testBlocks,
+    const std::vector<std::vector<int>>& grid) const {
+  for (const auto& block : testBlocks) {
+    int blockX = block[0] + m_x / BLOCK_SIZE;
+    int blockY = block[1] + m_y / BLOCK_SIZE;
 
-
-#ifdef DEBUG
-		std::cout << "b[0]=" << block[0] << ", b[1]=" << block[1] << "\n"; 
-		std::cout << "blockX=" << blockY << ", blockY=" << blockY << "\n"; 
-#endif // DEBUG
-
-        // Check out-of-bounds
-        if (blockX < 0 || blockX >= BOARD_WIDTH || blockY < 0 || blockY >= BOARD_HEIGHT) {
-            return true;
-        }
-
-        // Check grid collision
-        if (grid[blockY][blockX] != 0) {
-            return true;
-        }
+    // Check out-of-bounds
+    if (blockX < 0 || blockX >= BOARD_WIDTH || blockY < 0 ||
+        blockY >= BOARD_HEIGHT) {
+      return true;
     }
-    return false;
+
+    // Check m_grid collision
+    if (grid[blockY][blockX] != 0) {
+      return true;
+    }
+  }
+  return false;
 }
 
 std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
-	std::array<std::array<int, 2>, 4> blockPositions;
+  std::array<std::array<int, 2>, 4> blockPositions;
 
-	for (int i = 0; i < 4; i++) {
-		int absX = x + blocks[i][0] * BLOCK_SIZE;
-		int absY = y + blocks[i][1] * BLOCK_SIZE;
-		blockPositions[i] = {absX, absY};
-	}
+  for (int i = 0; i < 4; i++) {
+    int absX = m_x + m_blocks[i][0] * BLOCK_SIZE;
+    int absY = m_y + m_blocks[i][1] * BLOCK_SIZE;
+    blockPositions[i] = {absX, absY};
+  }
 
-	return blockPositions;
+  return blockPositions;
 }

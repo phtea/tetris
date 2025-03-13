@@ -22,13 +22,17 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")  # Multi-threaded Debug DLL runtime (Debug)
 endif()
 
-# Define paths to SDL3
-set(SDL3_DIR "C:/lib/SDL3")  # Change this to the correct path where SDL3 is installed
-set(SDL3_INCLUDE_DIR "${SDL3_DIR}/include")
-set(SDL3_LIB_DIR "${SDL3_DIR}/lib/x64")
+include(FetchContent)
 
-# Add SDL3 include directory
-include_directories(${SDL3_INCLUDE_DIR})
+# Fetch SDL3 from GitHub
+FetchContent_Declare(
+    SDL3
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+    GIT_TAG release-3.2.8
+)
+
+# Make SDL3 available
+FetchContent_MakeAvailable(SDL3)
 
 # Add source files
 add_executable(tetris 
@@ -40,10 +44,12 @@ add_executable(tetris
     src/constants.h
 )
 
-# Link SDL3 library
-target_link_libraries(tetris "${SDL3_LIB_DIR}/SDL3.lib")
+# Link SDL3 dynamically
+target_link_libraries(tetris SDL3::SDL3)
 
-# Copy SDL3.dll to the output directory after build
+# Copy SDL3.dll after build
 add_custom_command(TARGET tetris POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  "${SDL3_LIB_DIR}/SDL3.dll" $<TARGET_FILE_DIR:tetris>)
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_RUNTIME_DLLS:tetris> $<TARGET_FILE_DIR:tetris>
+    COMMAND_EXPAND_LISTS
+)

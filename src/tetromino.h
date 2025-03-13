@@ -1,44 +1,56 @@
-// tetromino.cpp
-// Implements logic around tetromino
+// m_tetromino.cpp
+// Implements logic around m_tetromino
 
 #pragma once
 
 #include <SDL3/SDL.h>
+
 #include <array>
 #include <vector>
 
-enum class TetrominoType { I, J, L, O, S, T, Z };
-enum class Direction { LEFT, RIGHT, DOWN };
-
+enum class TetrominoType : uint8_t { I, J, L, O, S, T, Z };
+enum class Direction : uint8_t { LEFT, RIGHT, DOWN };
 
 class Tetromino {
-public:
-    Tetromino(TetrominoType type);
+ public:
+  Tetromino(TetrominoType type);
 
-	bool moveLeft(int amount, const std::vector<std::vector<int>>& grid);
-	bool moveRight(int amount, const std::vector<std::vector<int>>& grid);
-	bool moveDown(int amount, const std::vector<std::vector<int>>& grid);
-    void rotate(int angle, const std::vector<std::vector<int>>& grid);
+  // Check if m_tetromino can move
+  bool canMoveDown(const std::vector<std::vector<int>>& grid) const;
+  bool canMoveRight(const std::vector<std::vector<int>>& grid) const;
+  bool canMoveLeft(const std::vector<std::vector<int>>& grid) const;
 
-    void setPosition(int newX, int newY);
-    void setStartPosition();
-	std::vector<int> getPosition();
-	std::array<std::array<int, 2>, 4> getBlocks() const;
+  // Collisions have to be checked before moving
+  void moveDown(int amount);
+  void moveLeft(int amount);
+  void moveRight(int amount);
 
-	bool collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks, const std::vector<std::vector<int>>& grid) const;
+  // Abstraction for moving if can (returns true if moved)
+  bool moveIfCan(Direction dir, int amount,
+                 const std::vector<std::vector<int>>& grid);
 
-    void draw(SDL_Renderer* renderer);
-    
-private:
-    TetrominoType type;
-    SDL_Color color;
-	
-	std::array<std::array<int, 2>, 4> blocks;
-    int x, y; // Absolute position of Tetromino
-	int rotationState = 0; // 0-3 (spawn, right, 180, left)
+  void rotate(int angle, const std::vector<std::vector<int>>& grid);
 
-	std::pair<int, int> getPivot() const;
+  void setPosition(int x, int y);
+  void setStartPosition();
+  std::vector<int> getPosition();
+  std::array<std::array<int, 2>, 4> getBlocks() const;
 
-    void setColor();
-    void setShape();
+  bool collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks,
+                    const std::vector<std::vector<int>>& grid) const;
+
+  void draw(SDL_Renderer* renderer);
+
+ private:
+  TetrominoType m_type;
+  SDL_Color m_color;
+
+  std::array<std::array<int, 2>, 4> m_blocks;
+  int m_x, m_y;             // Absolute position of Tetromino
+  int m_rotationState = 0;  // 0-3 (spawn, right, 180, left)
+
+  std::pair<int, int> getPivot() const;
+
+  void setColor();
+  void setShape();
 };
