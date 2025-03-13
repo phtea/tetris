@@ -5,11 +5,15 @@
 
 #include <vector>
 
+#include "bag7.h"
 #include "input_handler.h"
 #include "renderer.h"
 #include "tetromino.h"
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
+
+typedef std::array<TetrominoType, 7> bag7_t;
+typedef std::vector<std::vector<int>> grid_t;
 
 class Game {
  public:
@@ -26,9 +30,11 @@ class Game {
   void drawGrid();
   bool isGameOver();
   void stop();
+  Tetromino pickRandomTetromino();
 
-  bool running;
+  bool m_running;
   TouchState m_touchState = TouchState::NotTouching;
+  Bag7 m_bag7;
   Uint32 m_timeToFall = 1000;
   Uint32 m_lastFallTime = 0;
   Uint32 m_lastMoveTime = 0;
@@ -43,5 +49,5 @@ class Game {
   SDL_Event m_event;
 
   // Grid of m_blocks [BOARD_WIDTH, BOARD_HEIGHT]
-  std::vector<std::vector<int>> m_grid;
+  grid_t m_grid;
 };

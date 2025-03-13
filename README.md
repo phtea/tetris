@@ -1,22 +1,21 @@
-## Tetris project
-Features:
+# Tetris project
+
+### Features:
 - [x] hold delay
-- [ ] lock delay
+- [x] lock delay
 - [x] make NORMAL rotate (with collision detection)
-- [ ] random piece generation system (7 dice bag)
+- [x] random piece generation system (7 dice bag)
 - [ ] clear row
 - [ ] difficulty progression: game should become faster with time
-- [ ] hard drop feature
+- [ ] hard drop
 - [ ] pause menu
 
-- [ ] Fixes:
+### Bugs
+- [ ] main.cpp (at the end) => Exception Thrown Run-Time Check Failure #2 - Stack around the variable 'game' was corrupted.
 - [x] renderer.h - free memory at destructor
 
-Architecture:
-- [x] improve input handling architecture: change keyStates and justPressed to something else (there has to be a better way)
-=> what done: created a 
-- [ ] map of keyStates which now holds enum of different keyStates (subjectively better)
+---
 
-Code style:
+### Code style:
 - all member variables should start with m_ 
 - 1TBS bracket style

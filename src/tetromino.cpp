@@ -131,7 +131,7 @@ void Tetromino::setStartPosition() {
 
 std::vector<int> Tetromino::getPosition() { return {m_x, m_y}; }
 
-bool Tetromino::canMoveDown(const std::vector<std::vector<int>>& grid) const {
+bool Tetromino::canMoveDown(const grid_t& grid) const {
   std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
   for (auto& block : testBlocks) {
     block[1] += 1;
@@ -142,7 +142,7 @@ bool Tetromino::canMoveDown(const std::vector<std::vector<int>>& grid) const {
 
 void Tetromino::moveDown(int amount) { m_y += amount; }
 
-bool Tetromino::canMoveLeft(const std::vector<std::vector<int>>& grid) const {
+bool Tetromino::canMoveLeft(const grid_t& grid) const {
   std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
   for (auto& block : testBlocks) {
     block[0] -= 1;
@@ -153,7 +153,7 @@ bool Tetromino::canMoveLeft(const std::vector<std::vector<int>>& grid) const {
 
 void Tetromino::moveLeft(int amount) { m_x -= amount; }
 
-bool Tetromino::canMoveRight(const std::vector<std::vector<int>>& grid) const {
+bool Tetromino::canMoveRight(const grid_t& grid) const {
   std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
   for (auto& block : testBlocks) {
     block[0] += 1;
@@ -164,8 +164,7 @@ bool Tetromino::canMoveRight(const std::vector<std::vector<int>>& grid) const {
 
 void Tetromino::moveRight(int amount) { m_x += amount; }
 
-bool Tetromino::moveIfCan(Direction dir, int amount,
-                          const std::vector<std::vector<int>>& grid) {
+bool Tetromino::moveIfCan(Direction dir, int amount, const grid_t& grid) {
   switch (dir) {
     case Direction::DOWN:
       if (canMoveDown(grid)) {
@@ -218,7 +217,7 @@ std::pair<int, int> Tetromino::getPivot() const {
   return {pivotX, pivotY};  // Return the pivot point as a pair
 }
 
-void Tetromino::rotate(int angle, const std::vector<std::vector<int>>& grid) {
+void Tetromino::rotate(int angle, const grid_t& grid) {
   if (m_type == TetrominoType::O) return;  // O piece doesn't rotate
 
   auto [pivotX, pivotY] = getPivot();
@@ -272,7 +271,7 @@ void Tetromino::draw(SDL_Renderer* renderer) {
 
 bool Tetromino::collidesWith(
     const std::array<std::array<int, 2>, 4>& testBlocks,
-    const std::vector<std::vector<int>>& grid) const {
+    const grid_t& grid) const {
   for (const auto& block : testBlocks) {
     int blockX = block[0] + m_x / BLOCK_SIZE;
     int blockY = block[1] + m_y / BLOCK_SIZE;

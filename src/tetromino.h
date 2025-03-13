@@ -8,6 +8,8 @@
 #include <array>
 #include <vector>
 
+typedef std::vector<std::vector<int>> grid_t;
+
 enum class TetrominoType : uint8_t { I, J, L, O, S, T, Z };
 enum class Direction : uint8_t { LEFT, RIGHT, DOWN };
 
@@ -16,9 +18,9 @@ class Tetromino {
   Tetromino(TetrominoType type);
 
   // Check if m_tetromino can move
-  bool canMoveDown(const std::vector<std::vector<int>>& grid) const;
-  bool canMoveRight(const std::vector<std::vector<int>>& grid) const;
-  bool canMoveLeft(const std::vector<std::vector<int>>& grid) const;
+  bool canMoveDown(const grid_t& grid) const;
+  bool canMoveRight(const grid_t& grid) const;
+  bool canMoveLeft(const grid_t& grid) const;
 
   // Collisions have to be checked before moving
   void moveDown(int amount);
@@ -26,10 +28,9 @@ class Tetromino {
   void moveRight(int amount);
 
   // Abstraction for moving if can (returns true if moved)
-  bool moveIfCan(Direction dir, int amount,
-                 const std::vector<std::vector<int>>& grid);
+  bool moveIfCan(Direction dir, int amount, const grid_t& grid);
 
-  void rotate(int angle, const std::vector<std::vector<int>>& grid);
+  void rotate(int angle, const grid_t& grid);
 
   void setPosition(int x, int y);
   void setStartPosition();
@@ -37,7 +38,7 @@ class Tetromino {
   std::array<std::array<int, 2>, 4> getBlocks() const;
 
   bool collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks,
-                    const std::vector<std::vector<int>>& grid) const;
+                    const grid_t& grid) const;
 
   void draw(SDL_Renderer* renderer);
 

@@ -17,12 +17,13 @@
 #include "tetromino.h"
 
 Game::Game()
-    : running(true),
-      m_tetromino(static_cast<TetrominoType>(rand() % 7)),
+    : m_running(true),
       m_event(),
       m_lastFallTime(SDL_GetTicks()),
       m_lastMoveTime(0),
-      m_renderer() {
+      m_renderer(),
+      m_bag7(),
+      m_tetromino(pickRandomTetromino()) {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     // Initialization failed, output the error
     std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -35,8 +36,7 @@ Game::Game()
   m_tetromino.setStartPosition();
 
   // TODO: make array of BOARD_HEIGHT and BOARD_WIDTH
-  m_grid = std::vector<std::vector<int>>(BOARD_HEIGHT,
-                                         std::vector<int>(BOARD_WIDTH, 0));
+  m_grid = grid_t(BOARD_HEIGHT, std::vector<int>(BOARD_WIDTH, 0));
 }
 
 Game::~Game() { SDL_Quit(); }
@@ -57,12 +57,14 @@ void Game::placeTetrominoOnGrid() {
 }
 
 void Game::createNewTetromino() {
-  m_tetromino = Tetromino(static_cast<TetrominoType>(rand() % 7));
+  m_tetromino = pickRandomTetromino();
   m_tetromino.setStartPosition();
 }
 
+Tetromino Game::pickRandomTetromino() { return Tetromino(m_bag7.pickNext()); }
+
 void Game::run() {
-  while (running) {
+  while (m_running) {
     m_inputHandler.pollEvents();
 
     if (m_inputHandler.shouldQuit()) {
@@ -84,9 +86,7 @@ void Game::update() {
 
   // Handle the fall behavior (move tetromino down based on m_timeToFall)
   if (now - m_lastFallTime >= m_timeToFall) {
-    // If tetromino can't move down (collides with grid)
     if (m_tetromino.moveIfCan(Direction::DOWN, BLOCK_SIZE, m_grid)) {
-      // Update last fall time
       m_lastFallTime = now;
 
 #ifdef DEBUG
@@ -99,8 +99,7 @@ void Game::update() {
   }
 
   // Independently check the lock timer
-  bool canMove = m_tetromino.canMoveDown(m_grid);
-  if (canMove) {
+  if (m_tetromino.canMoveDown(m_grid)) {
     m_touchState = TouchState::NotTouching;
     return;
   }
@@ -178,12 +177,12 @@ bool Game::isGameOver() {
   return false;
 }
 
-void Game::stop() { running = false; }
+void Game::stop() { m_running = false; }
 
 void Game::handleInput() {
   Uint32 now = SDL_GetTicks();
 
-  // hold delay logic => DSA + m_ARR
+  // hold delay logic => DSA + ARR
   if (m_inputHandler.isKeyPressed(SDLK_LEFT)) {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_LEFT);
     if (m_inputHandler.isKeyJustPressed(SDLK_LEFT) ||
@@ -193,7 +192,7 @@ void Game::handleInput() {
     }
   }
 
-  // hold delay logic => DSA + m_ARR
+  // hold delay logic => DSA + ARR
   if (m_inputHandler.isKeyPressed(SDLK_RIGHT)) {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_RIGHT);
     if (m_inputHandler.isKeyJustPressed(SDLK_RIGHT) ||
