@@ -40,6 +40,7 @@ Game::~Game() { SDL_Quit(); }
 
 void Game::placeTetrominoOnGrid() {
   m_grid.placeTetromino(m_tetromino);
+  m_grid.checkFullRows();
   createNewTetromino();
 }
 
