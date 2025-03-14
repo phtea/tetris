@@ -74,7 +74,8 @@ void Game::update() {
 
   // Handle the fall behavior (move tetromino down based on m_timeToFall)
   if (now - m_lastFallTime >= m_timeToFall) {
-    if (m_tetromino.moveIfCan(Direction::DOWN, m_grid.getGrid())) {
+    if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+      m_tetromino.move(Direction::DOWN);
       m_lastFallTime = now;
 
 #ifdef DEBUG
@@ -87,7 +88,7 @@ void Game::update() {
   }
 
   // Independently check the lock timer
-  if (m_tetromino.canMoveDown(m_grid.getGrid())) {
+  if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
     m_touchState = TouchState::NotTouching;
     return;
   }
@@ -173,7 +174,9 @@ void Game::handleInput() {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_LEFT);
     if (m_inputHandler.isKeyJustPressed(SDLK_LEFT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
-      m_tetromino.moveIfCan(Direction::LEFT, m_grid.getGrid());
+      if (m_tetromino.canMove(Direction::LEFT, m_grid.getGrid())) {
+        m_tetromino.move(Direction::LEFT);
+      }
       m_lastMoveTime = now;
     }
   }
@@ -183,13 +186,17 @@ void Game::handleInput() {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_RIGHT);
     if (m_inputHandler.isKeyJustPressed(SDLK_RIGHT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
-      m_tetromino.moveIfCan(Direction::RIGHT, m_grid.getGrid());
+      if (m_tetromino.canMove(Direction::RIGHT, m_grid.getGrid())) {
+        m_tetromino.move(Direction::RIGHT);
+      }
       m_lastMoveTime = now;
     }
   }
 
   if (m_inputHandler.isKeyPressed(SDLK_DOWN)) {
-    m_tetromino.moveIfCan(Direction::DOWN, m_grid.getGrid());
+    if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+      m_tetromino.move(Direction::DOWN);
+    }
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_SPACE)) {

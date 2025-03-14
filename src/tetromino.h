@@ -1,6 +1,3 @@
-// m_tetromino.cpp
-// Implements logic around m_tetromino
-
 #pragma once
 
 #include <SDL3/SDL.h>
@@ -9,6 +6,7 @@
 #include <vector>
 
 typedef std::vector<std::vector<int>> grid_t;
+typedef std::array<std::array<int, 2>, 4> blocks_t;
 
 enum class TetrominoType : uint8_t { I, J, L, O, S, T, Z };
 enum class Direction : uint8_t { LEFT, RIGHT, DOWN };
@@ -17,41 +15,25 @@ class Tetromino {
  public:
   Tetromino(TetrominoType type);
 
-  // Check if m_tetromino can move
-  bool canMoveDown(const grid_t& grid) const;
-  bool canMoveRight(const grid_t& grid) const;
-  bool canMoveLeft(const grid_t& grid) const;
-
-  // Collisions have to be checked before moving
-  void moveDown();
-  void moveLeft();
-  void moveRight();
+  bool canMove(Direction dir, const grid_t& grid) const;
+  void move(Direction dir);
   void hardDrop(const grid_t& grid);
-
-  // Abstraction for moving if can (returns true if moved)
-  bool moveIfCan(Direction dir, const grid_t& grid);
-
-  void rotate(int angle, const grid_t& grid);
-
+  bool rotate(int angle, const grid_t& grid);
   void setPosition(int x, int y);
   void setStartPosition();
-  std::vector<int> getPosition();
-  std::array<std::array<int, 2>, 4> getBlocks() const;
-
-  bool collidesWith(const std::array<std::array<int, 2>, 4>& testBlocks,
-                    const grid_t& grid) const;
-
-  void draw(SDL_Renderer* renderer);
+  blocks_t getBlocks() const;
+  std::array<int, 2> getPosition() const;
+  void draw(SDL_Renderer* renderer) const;
 
  private:
   TetrominoType m_type;
   SDL_Color m_color;
+  blocks_t m_blocks;
+  int m_x, m_y;
 
-  std::array<std::array<int, 2>, 4> m_blocks;
-  int m_x, m_y;             // Absolute position of Tetromino
-
-  std::pair<int, int> getPivot() const;
+  std::array<int, 2> Tetromino::getPivot() const;
 
   void setColor();
   void setShape();
+  bool collidesWith(const blocks_t& testBlocks, const grid_t& grid) const;
 };
