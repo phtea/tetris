@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "bag7.h"
+#include "grid.h"
 #include "input_handler.h"
 #include "renderer.h"
 #include "tetromino.h"
@@ -13,7 +14,6 @@
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 
 typedef std::array<TetrominoType, 7> bag7_t;
-typedef std::vector<std::vector<int>> grid_t;
 
 class Game {
  public:
@@ -43,7 +43,7 @@ class Game {
   const Uint32 m_DAS = 167;      // Delay before auto-repeat (milliseconds)
   const Uint32 m_ARR = 33;       // Auto-repeat rate (milliseconds)
 
-  grid_t m_grid;  // Grid of m_blocks [BOARD_WIDTH, BOARD_HEIGHT]
+  Grid m_grid;  // Grid of m_blocks [BOARD_WIDTH, BOARD_HEIGHT]
   Renderer m_renderer;
   Tetromino m_tetromino;
   InputHandler m_inputHandler;

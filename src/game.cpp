@@ -34,42 +34,13 @@ Game::Game()
   m_renderer.init(GAME_TITLE);
 
   m_tetromino.setStartPosition();
-
-  // TODO: make array of BOARD_HEIGHT and BOARD_WIDTH
-  m_grid = grid_t(BOARD_HEIGHT, std::vector<int>(BOARD_WIDTH, 0));
 }
 
 Game::~Game() { SDL_Quit(); }
 
 void Game::placeTetrominoOnGrid() {
-  for (const auto& block : m_tetromino.getBlocks()) {
-    int gridX = block[0] / BLOCK_SIZE;
-    int gridY = block[1] / BLOCK_SIZE;
-    if (gridX >= 0 && gridX < BOARD_WIDTH && gridY >= 0 &&
-        gridY < BOARD_HEIGHT) {  // TODO: make sure this bounds check is needed
-      m_grid[gridY][gridX] = 1;
-    }
-  }
-
-  // Check for full rows and remove them
-  for (int y = 0; y < BOARD_HEIGHT; ++y) {
-    if (std::all_of(m_grid[y].begin(), m_grid[y].end(),
-                    [](int cell) { return cell == 1; })) {
-      std::cout << "Row " << y << " is full and will be cleared" << std::endl;
-
-      // Move all rows above down by one
-      for (int row = y; row > 0; --row) {
-        m_grid[row] = m_grid[row - 1];
-      }
-
-      // Clear the top row
-      m_grid[0] = std::vector<int>(BOARD_WIDTH, 0);
-    }
-  }
-
-  // Reset the touch state and timer after placing the tetromino
-  m_touchState = TouchState::NotTouching;
-  m_lastLockTime = 0;  // Reset lock timer
+  m_grid.placeTetromino(m_tetromino);
+  createNewTetromino();
 }
 
 void Game::createNewTetromino() {
@@ -102,7 +73,7 @@ void Game::update() {
 
   // Handle the fall behavior (move tetromino down based on m_timeToFall)
   if (now - m_lastFallTime >= m_timeToFall) {
-    if (m_tetromino.moveIfCan(Direction::DOWN, BLOCK_SIZE, m_grid)) {
+    if (m_tetromino.moveIfCan(Direction::DOWN, m_grid.getGrid())) {
       m_lastFallTime = now;
 
 #ifdef DEBUG
@@ -115,7 +86,7 @@ void Game::update() {
   }
 
   // Independently check the lock timer
-  if (m_tetromino.canMoveDown(m_grid)) {
+  if (m_tetromino.canMoveDown(m_grid.getGrid())) {
     m_touchState = TouchState::NotTouching;
     return;
   }
@@ -130,7 +101,6 @@ void Game::update() {
     case TouchState::KeepsTouching:
       if (now - m_lastLockTime >= m_lockDelayTime) {
         placeTetrominoOnGrid();
-        createNewTetromino();
 
         if (isGameOver()) {
           stop();
@@ -170,11 +140,10 @@ void Game::drawGrid() {
                    BOARD_WIDTH * BLOCK_SIZE, screenY);
   }
 
-  // Then, draw the m_blocks (the colored cells that are part of the m_tetromino
-  // or fixed)
+  const auto& grid = m_grid.getGrid();
   for (int y = 0; y < BOARD_HEIGHT; ++y) {
     for (int x = 0; x < BOARD_WIDTH; ++x) {
-      if (m_grid[y][x] == 1) {  // If the cell is occupied (1), draw it
+      if (grid[y][x] == 1) {  // If the cell is occupied (1), draw it
         m_renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
       }
     }
@@ -186,7 +155,7 @@ bool Game::isGameOver() {
   for (const auto& block : blocks) {
     int x = block[0] / BLOCK_SIZE;
     int y = block[1] / BLOCK_SIZE;
-    if (m_grid[y][x] != 0) {
+    if (m_grid.isCellOccupied(x, y)) {
       return true;  // Collision at spawn → game over
     }
   }
@@ -203,7 +172,7 @@ void Game::handleInput() {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_LEFT);
     if (m_inputHandler.isKeyJustPressed(SDLK_LEFT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
-      m_tetromino.moveIfCan(Direction::LEFT, BLOCK_SIZE, m_grid);
+      m_tetromino.moveIfCan(Direction::LEFT, m_grid.getGrid());
       m_lastMoveTime = now;
     }
   }
@@ -213,31 +182,30 @@ void Game::handleInput() {
     Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_RIGHT);
     if (m_inputHandler.isKeyJustPressed(SDLK_RIGHT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
-      m_tetromino.moveIfCan(Direction::RIGHT, BLOCK_SIZE, m_grid);
+      m_tetromino.moveIfCan(Direction::RIGHT, m_grid.getGrid());
       m_lastMoveTime = now;
     }
   }
 
   if (m_inputHandler.isKeyPressed(SDLK_DOWN)) {
-    m_tetromino.moveIfCan(Direction::DOWN, BLOCK_SIZE, m_grid);
+    m_tetromino.moveIfCan(Direction::DOWN, m_grid.getGrid());
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_SPACE)) {
-    m_tetromino.hardDrop(BLOCK_SIZE, m_grid);
+    m_tetromino.hardDrop(m_grid.getGrid());
     placeTetrominoOnGrid();
-    createNewTetromino();
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_Z) ||
       m_inputHandler.isKeyJustPressed(SDLK_UP)) {
-    m_tetromino.rotate(-90, m_grid);
+    m_tetromino.rotate(-90, m_grid.getGrid());
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_X)) {
-    m_tetromino.rotate(90, m_grid);
+    m_tetromino.rotate(90, m_grid.getGrid());
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_C)) {
-    m_tetromino.rotate(180, m_grid);
+    m_tetromino.rotate(180, m_grid.getGrid());
   }
 }

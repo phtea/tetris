@@ -23,13 +23,13 @@ class Tetromino {
   bool canMoveLeft(const grid_t& grid) const;
 
   // Collisions have to be checked before moving
-  void moveDown(int amount);
-  void moveLeft(int amount);
-  void moveRight(int amount);
-  void hardDrop(int amount, const grid_t& grid);
+  void moveDown();
+  void moveLeft();
+  void moveRight();
+  void hardDrop(const grid_t& grid);
 
   // Abstraction for moving if can (returns true if moved)
-  bool moveIfCan(Direction dir, int amount, const grid_t& grid);
+  bool moveIfCan(Direction dir, const grid_t& grid);
 
   void rotate(int angle, const grid_t& grid);
 

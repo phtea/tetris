@@ -140,7 +140,7 @@ bool Tetromino::canMoveDown(const grid_t& grid) const {
   return !collidesWith(testBlocks, grid);
 }
 
-void Tetromino::moveDown(int amount) { m_y += amount; }
+void Tetromino::moveDown() { m_y += BLOCK_SIZE; }
 
 bool Tetromino::canMoveLeft(const grid_t& grid) const {
   std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
@@ -151,7 +151,7 @@ bool Tetromino::canMoveLeft(const grid_t& grid) const {
   return !collidesWith(testBlocks, grid);
 }
 
-void Tetromino::moveLeft(int amount) { m_x -= amount; }
+void Tetromino::moveLeft() { m_x -= BLOCK_SIZE; }
 
 bool Tetromino::canMoveRight(const grid_t& grid) const {
   std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
@@ -162,31 +162,31 @@ bool Tetromino::canMoveRight(const grid_t& grid) const {
   return !collidesWith(testBlocks, grid);
 }
 
-void Tetromino::moveRight(int amount) { m_x += amount; }
+void Tetromino::moveRight() { m_x += BLOCK_SIZE; }
 
-void Tetromino::hardDrop(int amount, const grid_t& grid) {
+void Tetromino::hardDrop(const grid_t& grid) {
   while (canMoveDown(grid)) {
-    moveDown(amount);
+    moveDown();
   }
 }
 
-bool Tetromino::moveIfCan(Direction dir, int amount, const grid_t& grid) {
+bool Tetromino::moveIfCan(Direction dir, const grid_t& grid) {
   switch (dir) {
     case Direction::DOWN:
       if (canMoveDown(grid)) {
-        moveDown(amount);
+        moveDown();
         return true;
       }
       break;
     case Direction::LEFT:
       if (canMoveLeft(grid)) {
-        moveLeft(amount);
+        moveLeft();
         return true;
       }
       break;
     case Direction::RIGHT:
       if (canMoveRight(grid)) {
-        moveRight(amount);
+        moveRight();
         return true;
       }
       break;

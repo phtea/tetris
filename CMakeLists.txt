@@ -42,6 +42,7 @@ add_executable(tetris
     src/tetromino.cpp src/tetromino.h
     src/input_handler.cpp src/input_handler.h
     src/bag7.cpp src/bag7.h
+    src/grid.cpp src/grid.h
     src/constants.h
 )
 
