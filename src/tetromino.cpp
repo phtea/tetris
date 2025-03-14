@@ -111,7 +111,7 @@ void Tetromino::setPosition(int x, int y) {
 }
 
 void Tetromino::setStartPosition() {
-  m_x = (BOARD_WIDTH / 2 - 2) * BLOCK_SIZE;
+  m_x = (GRID_WIDTH / 2 - 2) * BLOCK_SIZE;
   m_y = 0;
 }
 
@@ -126,12 +126,9 @@ std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
 
 std::array<int, 2> Tetromino::getPosition() const { return {m_x, m_y}; }
 
-void Tetromino::draw(SDL_Renderer* renderer) const {
-  SDL_SetRenderDrawColor(renderer, m_color.r, m_color.g, m_color.b, m_color.a);
+void Tetromino::draw(Renderer& renderer) const {
   for (const auto& block : getBlocks()) {
-    SDL_FRect rect = {block[0] * BLOCK_SIZE, block[1] * BLOCK_SIZE, BLOCK_SIZE,
-                      BLOCK_SIZE};
-    SDL_RenderFillRect(renderer, &rect);
+    renderer.drawBlock(block[0] * BLOCK_SIZE, block[1] * BLOCK_SIZE, m_color);
   }
 }
 
@@ -142,7 +139,7 @@ bool Tetromino::collidesWith(
     int x = block[0] + m_x / BLOCK_SIZE;
     int y = block[1] + m_y / BLOCK_SIZE;
     if (y < 0) continue;
-    if (x < 0 || x >= BOARD_WIDTH || y >= BOARD_HEIGHT || grid[y][x] != 0) {
+    if (x < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT || grid[y][x] != 0) {
       return true;
     }
   }

@@ -2,9 +2,8 @@
 #include <vector>
 
 #include "tetromino.h"
-
-constexpr int GRID_WIDTH = 10;
-constexpr int GRID_HEIGHT = 20;
+#include "constants.h"
+#include "renderer.h"
 
 class Grid {
  public:
@@ -16,9 +15,13 @@ class Grid {
   void clearRow(int row);
   void shiftDown(int row);
   void reset();
+  void draw(Renderer& renderer) const;
 
   const std::vector<std::vector<int>>& getGrid() const { return m_grid; }
 
  private:
   std::vector<std::vector<int>> m_grid;
+  int m_width;
+  int m_height;
+  int m_blockSize;
 };

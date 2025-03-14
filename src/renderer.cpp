@@ -47,17 +47,27 @@ Renderer::~Renderer() {
   SDL_DestroyWindow(m_window);
 }
 
-void Renderer::drawBlock(int x, int y) {
-  // todo: fix segfault if block is above screen
+void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
+  // Avoid rendering if the block is above the screen
+  if (y < 0) return;
+
   SDL_FRect block = {x, y, BLOCK_SIZE, BLOCK_SIZE};
-  bool success = SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-  if (!success) {
+
+  if (!SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a)) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR,
                  "Could not set render draw color: %s\n", SDL_GetError());
   }
-  success = SDL_RenderFillRect(m_renderer, &block);
-  if (!success) {
+
+  if (!SDL_RenderFillRect(m_renderer, &block)) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render fill rect: %s\n",
                  SDL_GetError());
   }
+}
+
+void Renderer::setDrawColor(const SDL_Color& color) {
+  SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+}
+
+void Renderer::drawLine(int x1, int y1, int x2, int y2) {
+  SDL_RenderLine(m_renderer, x1, y1, x2, y2);
 }

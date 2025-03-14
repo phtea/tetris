@@ -4,6 +4,7 @@
 
 #include <array>
 #include <vector>
+#include "renderer.h"
 
 typedef std::vector<std::vector<int>> grid_t;
 typedef std::array<std::array<int, 2>, 4> blocks_t;
@@ -23,7 +24,8 @@ class Tetromino {
   void setStartPosition();
   blocks_t getBlocks() const;
   std::array<int, 2> getPosition() const;
-  void draw(SDL_Renderer* renderer) const;
+  void draw(Renderer& renderer) const;
+
 
  private:
   TetrominoType m_type;

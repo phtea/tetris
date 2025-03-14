@@ -118,38 +118,11 @@ void Game::update() {
 
 void Game::render() {
   m_renderer.clear();
-  drawGrid();
+  //drawGrid();
 
-  m_tetromino.draw(m_renderer.getRenderer());
+  m_grid.draw(m_renderer);
+  m_tetromino.draw(m_renderer);
   m_renderer.present();
-}
-
-void Game::drawGrid() {
-  SDL_SetRenderDrawColor(m_renderer.getRenderer(), 50, 50, 50,
-                         255);  // Light gray m_color for m_grid lines
-
-  // Draw vertical m_grid lines
-  for (int x = 0; x <= BOARD_WIDTH; ++x) {
-    int screenX = x * BLOCK_SIZE;
-    SDL_RenderLine(m_renderer.getRenderer(), screenX, 0, screenX,
-                   BOARD_HEIGHT * BLOCK_SIZE);
-  }
-
-  // Draw horizontal m_grid lines
-  for (int y = 0; y <= BOARD_HEIGHT; ++y) {
-    int screenY = y * BLOCK_SIZE;
-    SDL_RenderLine(m_renderer.getRenderer(), 0, screenY,
-                   BOARD_WIDTH * BLOCK_SIZE, screenY);
-  }
-
-  const auto& grid = m_grid.getGrid();
-  for (int y = 0; y < BOARD_HEIGHT; ++y) {
-    for (int x = 0; x < BOARD_WIDTH; ++x) {
-      if (grid[y][x] == 1) {  // If the cell is occupied (1), draw it
-        m_renderer.drawBlock(x * BLOCK_SIZE, y * BLOCK_SIZE);
-      }
-    }
-  }
 }
 
 bool Game::isGameOver() {

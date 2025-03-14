@@ -1,6 +1,3 @@
-// m_renderer.h
-// Defines rendering logic
-
 #pragma once
 
 #include <SDL3/SDL.h>
@@ -13,7 +10,9 @@ class Renderer {
   void init(const char* title);
   void clear();
   void present();
-  void drawBlock(int x, int y);
+  void drawBlock(int x, int y, const SDL_Color& color);
+  void setDrawColor(const SDL_Color& color);
+  void drawLine(int x1, int y1, int x2, int y2);
 
   SDL_Renderer* getRenderer() { return m_renderer; }
 
