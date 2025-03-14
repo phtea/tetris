@@ -49,7 +49,6 @@ class Tetromino {
 
   std::array<std::array<int, 2>, 4> m_blocks;
   int m_x, m_y;             // Absolute position of Tetromino
-  int m_rotationState = 0;  // 0-3 (spawn, right, 180, left)
 
   std::pair<int, int> getPivot() const;
 

@@ -43,7 +43,7 @@ class Game {
   const Uint32 m_DAS = 167;      // Delay before auto-repeat (milliseconds)
   const Uint32 m_ARR = 33;       // Auto-repeat rate (milliseconds)
 
-  Grid m_grid;  // Grid of m_blocks [BOARD_WIDTH, BOARD_HEIGHT]
+  Grid m_grid;
   Renderer m_renderer;
   Tetromino m_tetromino;
   InputHandler m_inputHandler;

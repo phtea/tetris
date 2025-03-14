@@ -228,9 +228,6 @@ void Tetromino::rotate(int angle, const grid_t& grid) {
 
   auto [pivotX, pivotY] = getPivot();
 
-  int newRotationState =
-      (m_rotationState + (angle == 90 ? 1 : (angle == -90 ? 3 : 2))) % 4;
-
   std::array<std::array<int, 2>, 4> rotatedBlocks;
   for (size_t i = 0; i < 4; i++) {
     int relX = m_blocks[i][0] - pivotX;
@@ -251,7 +248,6 @@ void Tetromino::rotate(int angle, const grid_t& grid) {
   // Use collidesWith to check for rotation validity
   if (!collidesWith(rotatedBlocks, grid)) {
     std::copy(rotatedBlocks.begin(), rotatedBlocks.end(), m_blocks.begin());
-    m_rotationState = newRotationState;
   }
 }
 
@@ -281,10 +277,14 @@ bool Tetromino::collidesWith(
   for (const auto& block : testBlocks) {
     int blockX = block[0] + m_x / BLOCK_SIZE;
     int blockY = block[1] + m_y / BLOCK_SIZE;
+    
+    // if above screen - it's fine!
+    if (blockY < 0) {
+      continue;
+    }
 
-    // Check out-of-bounds
-    if (blockX < 0 || blockX >= BOARD_WIDTH || blockY < 0 ||
-        blockY >= BOARD_HEIGHT) {
+      // Check out-of-bounds
+    if (blockX < 0 || blockX >= BOARD_WIDTH || blockY >= BOARD_HEIGHT) {
       return true;
     }
 
