@@ -164,6 +164,12 @@ bool Tetromino::canMoveRight(const grid_t& grid) const {
 
 void Tetromino::moveRight(int amount) { m_x += amount; }
 
+void Tetromino::hardDrop(int amount, const grid_t& grid) {
+  while (canMoveDown(grid)) {
+    moveDown(amount);
+  }
+}
+
 bool Tetromino::moveIfCan(Direction dir, int amount, const grid_t& grid) {
   switch (dir) {
     case Direction::DOWN:

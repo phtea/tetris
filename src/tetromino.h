@@ -26,6 +26,7 @@ class Tetromino {
   void moveDown(int amount);
   void moveLeft(int amount);
   void moveRight(int amount);
+  void hardDrop(int amount, const grid_t& grid);
 
   // Abstraction for moving if can (returns true if moved)
   bool moveIfCan(Direction dir, int amount, const grid_t& grid);

@@ -51,6 +51,22 @@ void Game::placeTetrominoOnGrid() {
     }
   }
 
+  // Check for full rows and remove them
+  for (int y = 0; y < BOARD_HEIGHT; ++y) {
+    if (std::all_of(m_grid[y].begin(), m_grid[y].end(),
+                    [](int cell) { return cell == 1; })) {
+      std::cout << "Row " << y << " is full and will be cleared" << std::endl;
+
+      // Move all rows above down by one
+      for (int row = y; row > 0; --row) {
+        m_grid[row] = m_grid[row - 1];
+      }
+
+      // Clear the top row
+      m_grid[0] = std::vector<int>(BOARD_WIDTH, 0);
+    }
+  }
+
   // Reset the touch state and timer after placing the tetromino
   m_touchState = TouchState::NotTouching;
   m_lastLockTime = 0;  // Reset lock timer
@@ -204,6 +220,12 @@ void Game::handleInput() {
 
   if (m_inputHandler.isKeyPressed(SDLK_DOWN)) {
     m_tetromino.moveIfCan(Direction::DOWN, BLOCK_SIZE, m_grid);
+  }
+
+  if (m_inputHandler.isKeyJustPressed(SDLK_SPACE)) {
+    m_tetromino.hardDrop(BLOCK_SIZE, m_grid);
+    placeTetrominoOnGrid();
+    createNewTetromino();
   }
 
   if (m_inputHandler.isKeyJustPressed(SDLK_Z) ||
