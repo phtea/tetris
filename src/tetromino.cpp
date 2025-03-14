@@ -300,8 +300,9 @@ std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
   std::array<std::array<int, 2>, 4> blockPositions;
 
   for (int i = 0; i < 4; i++) {
-    int absX = m_x + m_blocks[i][0] * BLOCK_SIZE;
-    int absY = m_y + m_blocks[i][1] * BLOCK_SIZE;
+    // good luck debugging, sucker
+    int absX = m_x / BLOCK_SIZE + m_blocks[i][0];
+    int absY = m_y / BLOCK_SIZE + m_blocks[i][1];
     blockPositions[i] = {absX, absY};
   }
 

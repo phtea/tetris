@@ -153,8 +153,8 @@ void Game::drawGrid() {
 bool Game::isGameOver() {
   std::array<std::array<int, 2>, 4> blocks = m_tetromino.getBlocks();
   for (const auto& block : blocks) {
-    int x = block[0] / BLOCK_SIZE;
-    int y = block[1] / BLOCK_SIZE;
+    int x = block[0];
+    int y = block[1];
     if (m_grid.isCellOccupied(x, y)) {
       return true;  // Collision at spawn → game over
     }
