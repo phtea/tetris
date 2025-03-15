@@ -132,6 +132,8 @@ void Tetromino::draw(Renderer& renderer) const {
   }
 }
 
+SDL_Color Tetromino::getColor() const { return m_color; }
+
 bool Tetromino::collidesWith(
     const blocks_t& testBlocks,
     const grid_t& grid) const {

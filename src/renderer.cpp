@@ -22,21 +22,18 @@ void Renderer::init(const char* title) {
 }
 
 void Renderer::clear() {
-  bool success = SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-  if (!success) {
+  if (!SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255)) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR,
                  "Could not set render draw color: %s\n", SDL_GetError());
   }
-  success = SDL_RenderClear(m_renderer);
-  if (!success) {
+  if (!SDL_RenderClear(m_renderer)) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not clear render: %s\n",
                  SDL_GetError());
   }
 }
 
 void Renderer::present() {
-  bool success = SDL_RenderPresent(m_renderer);
-  if (!success) {
+  if (!SDL_RenderPresent(m_renderer)) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not present render: %s\n",
                  SDL_GetError());
   }

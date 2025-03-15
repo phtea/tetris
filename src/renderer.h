@@ -14,8 +14,6 @@ class Renderer {
   void setDrawColor(const SDL_Color& color);
   void drawLine(int x1, int y1, int x2, int y2);
 
-  SDL_Renderer* getRenderer() { return m_renderer; }
-
  private:
   SDL_Window* m_window;
   SDL_Renderer* m_renderer;

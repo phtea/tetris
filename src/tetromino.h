@@ -25,6 +25,7 @@ class Tetromino {
   blocks_t getBlocks() const;
   std::array<int, 2> getPosition() const;
   void draw(Renderer& renderer) const;
+  SDL_Color getColor() const;
 
 
  private:
