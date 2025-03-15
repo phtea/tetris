@@ -140,9 +140,9 @@ void Game::handleInput() {
   Uint32 now = SDL_GetTicks();
 
   // hold delay logic => DSA + ARR
-  if (m_inputHandler.isKeyPressed(SDLK_LEFT)) {
-    Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_LEFT);
-    if (m_inputHandler.isKeyJustPressed(SDLK_LEFT) ||
+  if (m_inputHandler.isKeyPressed(SDL_SCANCODE_LEFT)) {
+    Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDL_SCANCODE_LEFT);
+    if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_LEFT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
       if (m_tetromino.canMove(Direction::LEFT, m_grid.getGrid())) {
         m_tetromino.move(Direction::LEFT);
@@ -152,9 +152,9 @@ void Game::handleInput() {
   }
 
   // hold delay logic => DSA + ARR
-  if (m_inputHandler.isKeyPressed(SDLK_RIGHT)) {
-    Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDLK_RIGHT);
-    if (m_inputHandler.isKeyJustPressed(SDLK_RIGHT) ||
+  if (m_inputHandler.isKeyPressed(SDL_SCANCODE_RIGHT)) {
+    Uint32 holdTime = m_inputHandler.getKeyHoldTime(SDL_SCANCODE_RIGHT);
+    if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_RIGHT) ||
         holdTime > m_DAS && now - m_lastMoveTime > m_ARR) {
       if (m_tetromino.canMove(Direction::RIGHT, m_grid.getGrid())) {
         m_tetromino.move(Direction::RIGHT);
@@ -163,27 +163,27 @@ void Game::handleInput() {
     }
   }
 
-  if (m_inputHandler.isKeyPressed(SDLK_DOWN)) {
+  if (m_inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
     if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
       m_tetromino.move(Direction::DOWN);
     }
   }
 
-  if (m_inputHandler.isKeyJustPressed(SDLK_SPACE)) {
+  if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_SPACE)) {
     m_tetromino.hardDrop(m_grid.getGrid());
     placeTetrominoOnGrid();
   }
 
-  if (m_inputHandler.isKeyJustPressed(SDLK_Z) ||
-      m_inputHandler.isKeyJustPressed(SDLK_UP)) {
+  if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_Z) ||
+      m_inputHandler.isKeyJustPressed(SDL_SCANCODE_UP)) {
     m_tetromino.rotate(-90, m_grid.getGrid());
   }
 
-  if (m_inputHandler.isKeyJustPressed(SDLK_X)) {
+  if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_X)) {
     m_tetromino.rotate(90, m_grid.getGrid());
   }
 
-  if (m_inputHandler.isKeyJustPressed(SDLK_C)) {
+  if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_C)) {
     m_tetromino.rotate(180, m_grid.getGrid());
   }
 }

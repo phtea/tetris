@@ -8,15 +8,8 @@
 #include "constants.h"
 
 Renderer::Renderer(const char* title) {
-	m_window = SDL_CreateWindow(title, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-	if (!m_window) {
-		// In the case that the m_window could not be made...
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n",
-			SDL_GetError());
-	}
-	m_renderer = SDL_CreateRenderer(m_window, NULL);
-	if (!m_renderer) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer: %s\n",
+	if (!SDL_CreateWindowAndRenderer(title, SCREEN_WIDTH, SCREEN_HEIGHT, 0, &m_window, &m_renderer)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window and renderer: %s\n",
 			SDL_GetError());
 	}
 	

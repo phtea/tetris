@@ -4,7 +4,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_scancode.h>
 
 #include <unordered_map>
 
@@ -16,14 +16,14 @@ public:
 	~InputHandler() = default;
 
 	void pollEvents();
-	bool isKeyPressed(SDL_Keycode key) const;
-	bool isKeyJustPressed(SDL_Keycode key);
-	Uint32 getKeyHoldTime(SDL_Keycode key) const;
+	bool isKeyPressed(SDL_Scancode key) const;
+	bool isKeyJustPressed(SDL_Scancode key);
+	Uint32 getKeyHoldTime(SDL_Scancode key) const;
 
 	bool shouldQuit() const { return quit; }
 
 private:
-	std::unordered_map<SDL_Keycode, KeyStateType> m_keyStates;
-	std::unordered_map<SDL_Keycode, Uint64> m_keyHoldStartTimes;
+	std::unordered_map<SDL_Scancode, KeyStateType> m_keyStates;
+	std::unordered_map<SDL_Scancode, Uint64> m_keyHoldStartTimes;
 	bool quit = false;
 };
