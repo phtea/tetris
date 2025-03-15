@@ -7,7 +7,7 @@
 
 #include "constants.h"
 
-void Renderer::init(const char* title) {
+Renderer::Renderer(const char* title) {
 	m_window = SDL_CreateWindow(title, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 	if (!m_window) {
 		// In the case that the m_window could not be made...
@@ -19,6 +19,18 @@ void Renderer::init(const char* title) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create renderer: %s\n",
 			SDL_GetError());
 	}
+	
+	m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
+	if (!m_blockTexture) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
+			SDL_GetError());
+	} 
+}
+
+Renderer::~Renderer() {
+	SDL_DestroyRenderer(m_renderer);
+	SDL_DestroyWindow(m_window);
+	SDL_DestroyTexture(m_blockTexture);
 }
 
 void Renderer::clear() {
@@ -39,25 +51,13 @@ void Renderer::present() {
 	}
 }
 
-Renderer::~Renderer() {
-	SDL_DestroyRenderer(m_renderer);
-	SDL_DestroyWindow(m_window);
-}
 
 void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
-	// Avoid rendering if the block is above the screen
 	if (y < 0) return;
 
 	SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
-
-	if (!SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR,
-			"Could not set render draw color: %s\n", SDL_GetError());
-	}
-
-	if (!SDL_RenderFillRect(m_renderer, &block)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render fill rect: %s\n",
-			SDL_GetError());
+	if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
 	}
 }
 

@@ -1,13 +1,12 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 
 class Renderer {
 public:
-	Renderer() : m_window(nullptr), m_renderer(nullptr) {}
+	Renderer(const char* title);
 	~Renderer();
-
-	void init(const char* title);
 	void clear();
 	void present();
 	void drawBlock(int x, int y, const SDL_Color& color);
@@ -17,4 +16,5 @@ public:
 private:
 	SDL_Window* m_window;
 	SDL_Renderer* m_renderer;
+	SDL_Texture* m_blockTexture;
 };

@@ -27,7 +27,6 @@ private:
 	void handleInput();
 	void placeTetrominoOnGrid();
 	void render();
-	void drawGrid();
 	bool isGameOver();
 	void stop();
 	Tetromino pickRandomTetromino();

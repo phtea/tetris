@@ -5,34 +5,26 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Define a CMake option for DEBUG, default is OFF (disabled)
 option(DEBUG "Enable debug mode" OFF)
-# Check if DEBUG is enabled and define it accordingly
 if(DEBUG)
     message(STATUS "Debug mode ENABLED")
     add_definitions(-DDEBUG=1)
 endif()
 
-# Enable debug information and edit-and-continue for Visual Studio in Debug mode
+# Enable debug information for MSVC
 if(MSVC)
-    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "EditAndContinue") # Ensures PDB is generated
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")  # Enable Program Database for Edit and Continue
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /DEBUG")  # Generate debug info in linker
-
-    # Ensure correct runtime linkage
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")  # Multi-threaded DLL runtime (Release)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")  # Multi-threaded Debug DLL runtime (Debug)
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "EditAndContinue")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /DEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
 
-include(FetchContent)
+# Set SDL paths
+set(SDL3_DIR "C:/lib/SDL3")
+set(SDL3_IMAGE_DIR "C:/lib/SDL3_image")
 
-# Fetch SDL3 from GitHub
-FetchContent_Declare(
-    SDL3
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG release-3.2.8
-)
-
-# Make SDL3 available
-FetchContent_MakeAvailable(SDL3)
+include_directories(${SDL3_DIR}/include ${SDL3_IMAGE_DIR}/include)
+link_directories(${SDL3_DIR}/lib/x64 ${SDL3_IMAGE_DIR}/lib/x64)
 
 # Add source files
 add_executable(tetris 
@@ -46,12 +38,12 @@ add_executable(tetris
     src/constants.h
 )
 
-# Link SDL3 dynamically
-target_link_libraries(tetris SDL3::SDL3)
+# Link prebuilt SDL3 and SDL3_image
+target_link_libraries(tetris SDL3 SDL3_image)
 
-# Copy SDL3.dll after build
+# Copy DLLs after build
 add_custom_command(TARGET tetris POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_RUNTIME_DLLS:tetris> $<TARGET_FILE_DIR:tetris>
+    ${SDL3_DIR}/lib/x64/SDL3.dll ${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.dll $<TARGET_FILE_DIR:tetris>
     COMMAND_EXPAND_LISTS
 )

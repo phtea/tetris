@@ -21,7 +21,7 @@ Game::Game()
       m_event(),
       m_lastFallTime(SDL_GetTicks()),
       m_lastMoveTime(0),
-      m_renderer(),
+      m_renderer(GAME_TITLE),
       m_bag7(),
       m_tetromino(pickRandomTetromino()) {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -30,8 +30,6 @@ Game::Game()
     stop();
     return;
   }
-
-  m_renderer.init(GAME_TITLE);
 
   m_tetromino.setStartPosition();
 }
