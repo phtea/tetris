@@ -62,6 +62,15 @@ void Grid::shiftDown(int row) {
 void Grid::reset() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
 
 void Grid::draw(Renderer& renderer) const {
+	// Draw occupied blocks
+	for (int y = 0; y < GRID_HEIGHT; ++y) {
+		for (int x = 0; x < m_width; ++x) {
+			if (m_grid[y][x] == 1) {  // If the cell is occupied
+				renderer.drawBlock(x * m_blockSize, y * m_blockSize, m_gridOfColors[y][x]);
+			}
+		}
+	}
+
 	// Set grid line color
 	SDL_Color gridColor = { 50, 50, 50, 255 };  // Light gray for grid lines
 	renderer.setDrawColor(gridColor);
@@ -78,12 +87,4 @@ void Grid::draw(Renderer& renderer) const {
 		renderer.drawLine(0, screenY, m_width * m_blockSize, screenY);
 	}
 
-	// Draw occupied blocks
-	for (int y = 0; y < GRID_HEIGHT; ++y) {
-		for (int x = 0; x < m_width; ++x) {
-			if (m_grid[y][x] == 1) {  // If the cell is occupied
-				renderer.drawBlock(x * m_blockSize, y * m_blockSize, m_gridOfColors[y][x]);
-			}
-		}
-	}
 }
