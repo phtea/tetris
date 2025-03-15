@@ -119,7 +119,6 @@ void Game::update() {
 void Game::render() {
   m_renderer.clear();
   //drawGrid();
-
   m_grid.draw(m_renderer);
   m_tetromino.draw(m_renderer);
   m_renderer.present();
