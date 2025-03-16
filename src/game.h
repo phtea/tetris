@@ -24,11 +24,13 @@ public:
 private:
 	void update();
 	void createNewTetromino();
-	void handleInput();
 	void placeTetrominoOnGrid();
 	void render();
 	bool isGameOver();
 	void stop();
+	void handleMovement(Direction dir, SDL_Scancode key);
+	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
+	void handleInput();
 	Tetromino pickRandomTetromino();
 
 	bool m_running;

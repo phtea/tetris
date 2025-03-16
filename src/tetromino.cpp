@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include <unordered_map>
 
 #include <algorithm>
 
@@ -13,29 +14,17 @@ Tetromino::Tetromino(TetrominoType type) : m_type(type), m_x(0), m_y(0) {
 }
 
 void Tetromino::setColor() {
-	switch (m_type) {
-	case TetrominoType::I:
-		m_color = { 0, 255, 255, 255 };
-		break;
-	case TetrominoType::J:
-		m_color = { 0, 0, 255, 255 };
-		break;
-	case TetrominoType::L:
-		m_color = { 255, 165, 0, 255 };
-		break;
-	case TetrominoType::O:
-		m_color = { 255, 255, 0, 255 };
-		break;
-	case TetrominoType::S:
-		m_color = { 0, 255, 0, 255 };
-		break;
-	case TetrominoType::T:
-		m_color = { 128, 0, 128, 255 };
-		break;
-	case TetrominoType::Z:
-		m_color = { 255, 0, 0, 255 };
-		break;
-	}
+	static const std::unordered_map<TetrominoType, SDL_Color> colorMap = {
+		{TetrominoType::I, {0, 255, 255, 255}},
+		{TetrominoType::J, {0, 0, 255, 255}},
+		{TetrominoType::L, {255, 165, 0, 255}},
+		{TetrominoType::O, {255, 255, 0, 255}},
+		{TetrominoType::S, {0, 255, 0, 255}},
+		{TetrominoType::T, {128, 0, 128, 255}},
+		{TetrominoType::Z, {255, 0, 0, 255}}
+	};
+	// careful! we get the color without checking if it exists
+	m_color = colorMap.at(m_type);
 }
 
 void Tetromino::setShape() {

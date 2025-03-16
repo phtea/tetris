@@ -17,7 +17,7 @@ Renderer::Renderer(const char* title) {
 	if (!m_blockTexture) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
 			SDL_GetError());
-	} 
+	}
 }
 
 Renderer::~Renderer() {
@@ -45,12 +45,29 @@ void Renderer::present() {
 }
 
 
+//void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
+//    if (y < 0) return;
+//
+//    SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+//    if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
+//        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
+//    }
+//}
+
 void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
+	// Avoid rendering if the block is above the screen
 	if (y < 0) return;
 
 	SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
-	if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
+
+	if (!SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR,
+			"Could not set render draw color: %s\n", SDL_GetError());
+	}
+
+	if (!SDL_RenderFillRect(m_renderer, &block)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render fill rect: %s\n",
+			SDL_GetError());
 	}
 }
 
