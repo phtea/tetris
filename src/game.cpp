@@ -20,23 +20,18 @@ Game::Game()
 	: m_running(true),
 	m_lastFallTime(SDL_GetTicks()),
 	m_renderer(GAME_TITLE, 1920, 1080),
-	m_tetromino(TetrominoType::I),
-	m_nextTetrominosSize(1) {
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		// Initialization failed, output the error
-		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		stop();
-		return;
-	}
+	m_tetromino(TetrominoType::NONE),
+	m_nextTetrominosSize(1),
+	m_canSwap(true),
+	m_bufferTetromino(TetrominoType::NONE) {
 	createNewTetromino();
 }
-
-Game::~Game() { SDL_Quit(); }
 
 void Game::placeTetrominoOnGrid() {
 	m_grid.placeTetromino(m_tetromino);
 	m_grid.checkFullRows();
 	createNewTetromino();
+	m_canSwap = true;  // Allow swapping again
 }
 
 void Game::createNewTetromino() {
@@ -127,7 +122,7 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
-	m_hud.update(m_renderer, m_nextTetrominos, m_nextTetrominosSize);
+	m_hud.update(m_renderer, m_nextTetrominos, m_nextTetrominosSize, m_bufferTetromino);
 	m_renderer.present();
 }
 
@@ -163,6 +158,10 @@ void Game::handleInput() {
 		placeTetrominoOnGrid();
 	}
 
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_LSHIFT) || m_inputHandler.isKeyJustPressed(SDL_SCANCODE_RSHIFT)) {
+		swapTetromino();
+	}
+
 	handleRotation(-90, { SDL_SCANCODE_Z, SDL_SCANCODE_UP });
 	handleRotation(90, { SDL_SCANCODE_X });
 	handleRotation(180, { SDL_SCANCODE_C });
@@ -173,6 +172,24 @@ void Game::handleInput() {
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_0)) {
 		m_renderer.setResolution(800, 600);
 	}
+}
+
+// Implement the swapTetromino method
+void Game::swapTetromino() {
+	if (!m_canSwap) return;
+
+	if (m_bufferTetromino.getType() == TetrominoType::NONE) {
+		// Buffer is empty, add current tetromino to buffer and get next one
+		m_bufferTetromino = m_tetromino;
+		createNewTetromino();
+	}
+	else {
+		// Swap current tetromino with the one in the buffer
+		std::swap(m_tetromino, m_bufferTetromino);
+		m_tetromino.setStartPosition();
+	}
+
+	m_canSwap = false;  // Prevent swapping again until the next tetromino is placed
 }
 
 void Game::handleMovement(Direction dir, SDL_Scancode key) {

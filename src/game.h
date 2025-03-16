@@ -20,7 +20,7 @@ typedef std::array<TetrominoType, 7> bag7_t;
 class Game {
 public:
 	Game();
-	~Game();
+	~Game() = default;
 	void run();
 
 private:
@@ -30,6 +30,8 @@ private:
 	void render();
 	bool isGameOver();
 	void stop();
+
+	void swapTetromino();
 
 	void handleMovement(Direction dir, SDL_Scancode key);
 	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
@@ -58,4 +60,8 @@ private:
 	// queue of future tetriminos
 	std::queue<Tetromino> m_nextTetrominos; // Queue to store upcoming pieces
 	int m_nextTetrominosSize;
+
+	// swap buffer
+	Tetromino m_bufferTetromino;
+	bool m_canSwap;
 };

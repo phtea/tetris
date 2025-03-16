@@ -1,19 +1,19 @@
-// hud.cpp
 #include "hud.h"
 #include <iostream>
 
 // TODO: change this awful hardcode
 Hud::Hud()
-    : m_nextTetrominoX(12), m_nextTetrominoY(3) {
+    : m_nextTetrominoX(12), m_nextTetrominoY(3), m_bufferTetrominoX(12), m_bufferTetrominoY(10) {
     // Position of the "Next" label and tetromino
 }
 
 Hud::~Hud() {}
 
-void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count) {
+void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count, const Tetromino& bufferTetromino) {
     // Here we could render the score, level, and linesCleared (optional)
     // For now, we just render the next tetromino
     renderNextTetromino(renderer, tetrominos, count);
+    renderBufferTetromino(renderer, bufferTetromino);
 }
 
 void Hud::render(Renderer& renderer) {
@@ -41,5 +41,21 @@ void Hud::renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetromin
         }
 
         yOffset += 3; // Move each next tetromino down visually
+    }
+}
+
+void Hud::renderBufferTetromino(Renderer& renderer, const Tetromino& bufferTetromino) {
+    // Draw "Hold:" label at a grid-based position
+    renderer.drawText("Hold:", m_bufferTetrominoX, m_bufferTetrominoY);
+
+    if (bufferTetromino.getType() != TetrominoType::NONE) {
+        SDL_Color blockColor = bufferTetromino.getColor();
+        auto blocks = bufferTetromino.getBlocks();
+
+        for (const auto& block : blocks) {
+            int x = m_bufferTetrominoX + block[0];
+            int y = m_bufferTetrominoY + block[1] + 2; // Offset to space out the tetromino visually
+            renderer.drawBlock(x, y, blockColor);
+        }
     }
 }

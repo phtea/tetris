@@ -21,22 +21,24 @@ public:
 
 	void setPosition(int x, int y);
 	void setStartPosition();
-	// Gets the blocks relative to grid
-	blocks_t getRelativeBlocks() const;
 	
 	// Gets fixed blocks for the tetromino
 	blocks_t getBlocks() const;
-	std::array<int, 2> getPosition() const;
-	void draw(Renderer& renderer) const;
-	SDL_Color getColor() const;
+	// Gets the blocks relative to grid
+	blocks_t getRelativeBlocks() const;
 
+	std::array<int, 2> getPosition() const;
+	SDL_Color getColor() const;
+	TetrominoType getType() const;
+
+	void draw(Renderer& renderer) const;
 
 private:
 	TetrominoType m_type;
 	SDL_Color m_color;
 	blocks_t m_blocks;
 
-	int m_x, m_y; // grid-based positions! (not pixel positions)
+	int m_X, m_Y; // grid-based positions! (not pixel positions)
 
 	std::array<int, 2> Tetromino::getPivot() const;
 

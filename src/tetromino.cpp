@@ -9,6 +9,7 @@
 #include "constants.h"
 
 Tetromino::Tetromino(TetrominoType type) : m_type(type) {
+	if (m_type == TetrominoType::NONE) return;
 	setColor();
 	setShape();
 	setStartPosition();
@@ -52,9 +53,9 @@ bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
 }
 
 void Tetromino::move(Direction dir) {
-	if (dir == Direction::LEFT) m_x--;
-	if (dir == Direction::RIGHT) m_x++;
-	if (dir == Direction::DOWN) m_y++;
+	if (dir == Direction::LEFT) m_X--;
+	if (dir == Direction::RIGHT) m_X++;
+	if (dir == Direction::DOWN) m_Y++;
 }
 
 void Tetromino::hardDrop(const grid_t& grid) {
@@ -96,20 +97,20 @@ std::array<int, 2> Tetromino::getPivot() const {
 }
 
 void Tetromino::setPosition(int x, int y) {
-	m_x = x;
-	m_y = y;
+	m_X = x;
+	m_Y = y;
 }
 
 void Tetromino::setStartPosition() {
-	m_x = GRID_WIDTH / 2 - 2;
-	m_y = 0;
+	m_X = GRID_WIDTH / 2 - 2;
+	m_Y = 0;
 }
 
 std::array<std::array<int, 2>, 4> Tetromino::getRelativeBlocks() const {
 	std::array<std::array<int, 2>, 4> blockPositions;
 	for (int i = 0; i < 4; i++) {
-		blockPositions[i] = { m_x + m_blocks[i][0],
-							 m_y + m_blocks[i][1] };
+		blockPositions[i] = { m_X + m_blocks[i][0],
+							 m_Y + m_blocks[i][1] };
 	}
 	return blockPositions;
 }
@@ -118,7 +119,7 @@ blocks_t Tetromino::getBlocks() const {
 	return m_blocks;
 }
 
-std::array<int, 2> Tetromino::getPosition() const { return { m_x, m_y }; }
+std::array<int, 2> Tetromino::getPosition() const { return { m_X, m_Y }; }
 
 void Tetromino::draw(Renderer& renderer) const {
 	for (const auto& block : getRelativeBlocks()) {
@@ -128,12 +129,16 @@ void Tetromino::draw(Renderer& renderer) const {
 
 SDL_Color Tetromino::getColor() const { return m_color; }
 
+TetrominoType Tetromino::getType() const {
+	return m_type;
+}
+
 bool Tetromino::collidesWith(
 	const blocks_t& testBlocks,
 	const grid_t& grid) const {
 	for (const auto& block : testBlocks) {
-		int x = block[0] + m_x;
-		int y = block[1] + m_y;
+		int x = block[0] + m_X;
+		int y = block[1] + m_Y;
 		if (y < 0) continue;
 		if (x < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT || grid[y][x] != 0) {
 			return true;
