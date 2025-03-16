@@ -38,7 +38,7 @@ add_executable(tetris
     src/grid.cpp src/grid.h
     src/constants.h
     src/hud.h src/hud.cpp
-)
+ "src/custom_types.h")
 
 # Link prebuilt SDL3 and SDL3_image
 target_link_libraries(tetris SDL3 SDL3_image SDL3_ttf)

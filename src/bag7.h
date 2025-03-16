@@ -4,7 +4,7 @@
 #include <iostream>
 #include <random>
 
-#include "tetromino.h"
+#include "custom_types.h"
 
 // The Bag7 class wraps around a std::array of 7 TetrominoType elements
 class Bag7 {

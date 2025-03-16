@@ -20,13 +20,15 @@ Game::Game()
 	: m_running(true),
 	m_lastFallTime(SDL_GetTicks()),
 	m_renderer(GAME_TITLE, 1920, 1080),
-	m_tetromino(pickRandomTetromino()) {
+	m_tetromino(TetrominoType::I),
+	m_nextTetrominosSize(1) {
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		// Initialization failed, output the error
 		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
 		stop();
 		return;
 	}
+	createNewTetromino();
 }
 
 Game::~Game() { SDL_Quit(); }
@@ -38,8 +40,25 @@ void Game::placeTetrominoOnGrid() {
 }
 
 void Game::createNewTetromino() {
-	m_tetromino = pickRandomTetromino();
+	if (m_nextTetrominos.empty()) {
+		// Pre-fill the queue with a few upcoming tetrominoes
+		for (int i = 0; i < m_nextTetrominosSize; ++i) {
+			m_nextTetrominos.push(pickRandomTetromino());
+		}
+	}
+
+	// Get the next tetromino from the queue
+	m_tetromino = m_nextTetrominos.front();
+	m_nextTetrominos.pop();
+
+	// Add a new random tetromino to the queue to maintain the flow
+	m_nextTetrominos.push(pickRandomTetromino());
+
 	m_tetromino.setStartPosition();
+}
+
+void Game::setNextTetrominosSize(int size) {
+	m_nextTetrominosSize = size;
 }
 
 Tetromino Game::pickRandomTetromino() { return Tetromino(m_bag7.pickNext()); }
@@ -63,6 +82,7 @@ void Game::run() {
 }
 
 void Game::update() {
+
 	Uint64 now = SDL_GetTicks();
 
 	// Handle the fall behavior (move tetromino down based on m_timeToFall)
@@ -70,12 +90,6 @@ void Game::update() {
 		if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
 			m_tetromino.move(Direction::DOWN);
 			m_lastFallTime = now;
-
-#ifdef DEBUG
-			auto pos = m_tetromino.getPosition();
-			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
-#endif  // DEBUG
-
 			return;
 		}
 	}
@@ -113,7 +127,7 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
-	m_hud.update(m_renderer, m_tetromino);
+	m_hud.update(m_renderer, m_nextTetrominos, m_nextTetrominosSize);
 	m_renderer.present();
 }
 

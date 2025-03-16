@@ -2,17 +2,18 @@
 #include "hud.h"
 #include <iostream>
 
+// TODO: change this awful hardcode
 Hud::Hud()
-    : m_nextTetrominoX(15), m_nextTetrominoY(5) {
+    : m_nextTetrominoX(12), m_nextTetrominoY(3) {
     // Position of the "Next" label and tetromino
 }
 
 Hud::~Hud() {}
 
-void Hud::update(Renderer& renderer, const Tetromino& nextTetromino) {
+void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count) {
     // Here we could render the score, level, and linesCleared (optional)
     // For now, we just render the next tetromino
-    renderNextTetromino(renderer, nextTetromino);
+    renderNextTetromino(renderer, tetrominos, count);
 }
 
 void Hud::render(Renderer& renderer) {
@@ -20,19 +21,25 @@ void Hud::render(Renderer& renderer) {
     // For now, we just need to display the next tetromino
 }
 
-void Hud::renderNextTetromino(Renderer& renderer, const Tetromino& tetromino) {
-    // Render the "Next" label not yet!
-    SDL_Color labelColor = { 255, 255, 255, 255 }; // White color
-    renderer.setDrawColor(labelColor); // Set color to white
-    renderer.drawText("Next:", m_nextTetrominoX, m_nextTetrominoY - 20); // Assuming you have a method for text
+void Hud::renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count) {
+    // Draw "Next:" label at a grid-based position
+    renderer.drawText("Next:", m_nextTetrominoX, m_nextTetrominoY);
 
-    // Draw the blocks for the next tetromino
-    auto blocks = tetromino.getBlocks();
-    SDL_Color blockColor = tetromino.getColor();
+    int yOffset = 2; // Offset to space out the tetrominos visually
 
-    for (const auto& block : blocks) {
-        int x = m_nextTetrominoX + block[0];  // Adjust this based on your block size
-        int y = m_nextTetrominoY + block[1];  // Adjust this based on your block size
-        renderer.drawBlock(x, y, blockColor);  // Use the Renderer to draw the block
+    for (size_t i = 0; i < count && !tetrominos.empty(); ++i) {
+        Tetromino t = tetrominos.front();
+        tetrominos.pop();
+
+        SDL_Color blockColor = t.getColor();
+        auto blocks = t.getBlocks();
+
+        for (const auto& block : blocks) {
+            int x = m_nextTetrominoX + block[0];
+            int y = m_nextTetrominoY + block[1] + yOffset;
+            renderer.drawBlock(x, y, blockColor);
+        }
+
+        yOffset += 3; // Move each next tetromino down visually
     }
 }

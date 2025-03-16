@@ -60,10 +60,10 @@ void Renderer::present() {
 }
 
 
-//void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
-//    if (y < 0) return;
+//void Renderer::drawBlock(int gridX, int gridY, const SDL_Color& color) {
+//    if (gridY < 0) return;
 //
-//    SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+//    SDL_FRect block = { gridX, gridY, BLOCK_SIZE, BLOCK_SIZE };
 //    if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
 //        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
 //    }
@@ -83,9 +83,7 @@ void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
 	SDL_RenderFillRect(m_renderer, &block);
 }
 
-void Renderer::drawText(const std::string& text, int x, int y) {
-
-
+void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	SDL_Color color = { 255, 255, 255, 255 }; // White text color
 
 	// Create a surface from the text
@@ -100,8 +98,12 @@ void Renderer::drawText(const std::string& text, int x, int y) {
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
 	SDL_DestroySurface(textSurface);  // No longer needed
 
+	// Convert grid position to pixel position
+	int pixelX = m_xOffset + gridX * m_blockSize;
+	int pixelY = m_yOffset + gridY * m_blockSize;
+
 	// Render the text
-	SDL_FRect renderQuad = { x+m_xOffset*2, y+m_blockSize, textSurface->w, textSurface->h };
+	SDL_FRect renderQuad = { pixelX, pixelY, textSurface->w, textSurface->h };
 	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
 
 	// Clean up

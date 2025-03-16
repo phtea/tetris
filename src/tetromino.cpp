@@ -8,7 +8,7 @@
 
 #include "constants.h"
 
-Tetromino::Tetromino(TetrominoType type) : m_type(type), m_x(0), m_y(0) {
+Tetromino::Tetromino(TetrominoType type) : m_type(type) {
 	setColor();
 	setShape();
 	setStartPosition();

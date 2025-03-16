@@ -5,12 +5,10 @@
 #include <array>
 #include <vector>
 #include "renderer.h"
+#include "custom_types.h"
 
 typedef std::vector<std::vector<int>> grid_t;
 typedef std::array<std::array<int, 2>, 4> blocks_t;
-
-enum class TetrominoType : uint8_t { I, J, L, O, S, T, Z };
-enum class Direction : uint8_t { LEFT, RIGHT, DOWN };
 
 class Tetromino {
 public:

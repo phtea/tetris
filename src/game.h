@@ -11,6 +11,7 @@
 #include "renderer.h"
 #include "tetromino.h"
 #include "hud.h"
+#include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 
@@ -29,10 +30,13 @@ private:
 	void render();
 	bool isGameOver();
 	void stop();
+
 	void handleMovement(Direction dir, SDL_Scancode key);
 	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
 	void handleInput();
+
 	Tetromino pickRandomTetromino();
+	void setNextTetrominosSize(int size);
 
 	Hud m_hud;
 	bool m_running;
@@ -50,5 +54,8 @@ private:
 	Renderer m_renderer;
 	Tetromino m_tetromino;
 	InputHandler m_inputHandler;
-	SDL_Event m_event;
+
+	// queue of future tetriminos
+	std::queue<Tetromino> m_nextTetrominos; // Queue to store upcoming pieces
+	int m_nextTetrominosSize;
 };
