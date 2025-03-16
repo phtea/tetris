@@ -12,6 +12,21 @@ Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
 	}
 	setGridSize(GRID_WIDTH, GRID_HEIGHT);
 	m_blockTexture = nullptr;
+
+	// Ensure SDL_ttf is initialized (you can do this once at the start of your program)
+	if (!TTF_Init()) {
+		std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		return;
+	}
+
+	// Load font
+	m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", 24);
+	if (!m_font) {
+		std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		return;
+	}
+
+
 	//m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
 	//if (!m_blockTexture) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
@@ -23,6 +38,7 @@ Renderer::~Renderer() {
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
 	SDL_DestroyTexture(m_blockTexture);
+	TTF_CloseFont(m_font);
 }
 
 void Renderer::clear() {
@@ -53,6 +69,8 @@ void Renderer::present() {
 //    }
 //}
 
+
+// Draws block based on X and Y (compared to grid). blockSize is handled here 
 void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
 	if (y < 0) return;
 
@@ -63,6 +81,31 @@ void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
 
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(m_renderer, &block);
+}
+
+void Renderer::drawText(const std::string& text, int x, int y) {
+
+
+	SDL_Color color = { 255, 255, 255, 255 }; // White text color
+
+	// Create a surface from the text
+	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, text.c_str(), 0, color);
+	if (!textSurface) {
+		std::cerr << "Unable to create text surface! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		TTF_CloseFont(m_font);
+		return;
+	}
+
+	// Create texture from surface
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+	SDL_DestroySurface(textSurface);  // No longer needed
+
+	// Render the text
+	SDL_FRect renderQuad = { x+m_xOffset*2, y+m_blockSize, textSurface->w, textSurface->h };
+	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
+
+	// Clean up
+	SDL_DestroyTexture(textTexture);
 }
 
 void Renderer::setDrawColor(const SDL_Color& color) {

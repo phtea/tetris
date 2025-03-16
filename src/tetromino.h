@@ -23,6 +23,10 @@ public:
 
 	void setPosition(int x, int y);
 	void setStartPosition();
+	// Gets the blocks relative to grid
+	blocks_t getRelativeBlocks() const;
+	
+	// Gets fixed blocks for the tetromino
 	blocks_t getBlocks() const;
 	std::array<int, 2> getPosition() const;
 	void draw(Renderer& renderer) const;

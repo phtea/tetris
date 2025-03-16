@@ -105,7 +105,7 @@ void Tetromino::setStartPosition() {
 	m_y = 0;
 }
 
-std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
+std::array<std::array<int, 2>, 4> Tetromino::getRelativeBlocks() const {
 	std::array<std::array<int, 2>, 4> blockPositions;
 	for (int i = 0; i < 4; i++) {
 		blockPositions[i] = { m_x + m_blocks[i][0],
@@ -114,10 +114,14 @@ std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
 	return blockPositions;
 }
 
+blocks_t Tetromino::getBlocks() const {
+	return m_blocks;
+}
+
 std::array<int, 2> Tetromino::getPosition() const { return { m_x, m_y }; }
 
 void Tetromino::draw(Renderer& renderer) const {
-	for (const auto& block : getBlocks()) {
+	for (const auto& block : getRelativeBlocks()) {
 		renderer.drawBlock(block[0], block[1], m_color);
 	}
 }

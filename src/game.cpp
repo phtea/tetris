@@ -113,11 +113,12 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
+	m_hud.update(m_renderer, m_tetromino);
 	m_renderer.present();
 }
 
 bool Game::isGameOver() {
-	std::array<std::array<int, 2>, 4> blocks = m_tetromino.getBlocks();
+	std::array<std::array<int, 2>, 4> blocks = m_tetromino.getRelativeBlocks();
 	for (const auto& block : blocks) {
 		int x = block[0];
 		int y = block[1];

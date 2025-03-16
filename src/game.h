@@ -10,6 +10,7 @@
 #include "input_handler.h"
 #include "renderer.h"
 #include "tetromino.h"
+#include "hud.h"
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 
@@ -33,6 +34,7 @@ private:
 	void handleInput();
 	Tetromino pickRandomTetromino();
 
+	Hud m_hud;
 	bool m_running;
 	TouchState m_touchState = TouchState::NotTouching;
 	Bag7 m_bag7;
