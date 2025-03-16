@@ -24,5 +24,4 @@ private:
 	std::vector<std::vector<SDL_Color>> m_gridOfColors;
 	int m_width;
 	int m_height;
-	int m_blockSize;
 };

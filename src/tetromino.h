@@ -20,6 +20,7 @@ public:
 	void move(Direction dir);
 	void hardDrop(const grid_t& grid);
 	bool rotate(int angle, const grid_t& grid);
+
 	void setPosition(int x, int y);
 	void setStartPosition();
 	blocks_t getBlocks() const;
@@ -32,7 +33,8 @@ private:
 	TetrominoType m_type;
 	SDL_Color m_color;
 	blocks_t m_blocks;
-	int m_x, m_y;
+
+	int m_x, m_y; // grid-based positions! (not pixel positions)
 
 	std::array<int, 2> Tetromino::getPivot() const;
 

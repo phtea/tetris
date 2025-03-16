@@ -4,8 +4,7 @@ Grid::Grid()
 	: m_grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
 	m_gridOfColors(GRID_HEIGHT, std::vector<SDL_Color>(GRID_WIDTH, { 0, 0, 0, 255 })),
 	m_width(GRID_WIDTH),
-	m_height(GRID_HEIGHT),
-	m_blockSize(BLOCK_SIZE) {
+	m_height(GRID_HEIGHT) {
 }
 
 bool Grid::isCellOccupied(int x, int y) const {
@@ -66,25 +65,13 @@ void Grid::draw(Renderer& renderer) const {
 	for (int y = 0; y < GRID_HEIGHT; ++y) {
 		for (int x = 0; x < m_width; ++x) {
 			if (m_grid[y][x] == 1) {  // If the cell is occupied
-				renderer.drawBlock(x * m_blockSize, y * m_blockSize, m_gridOfColors[y][x]);
+				renderer.drawBlock(x, y, m_gridOfColors[y][x]);
 			}
 		}
 	}
 
-	// Set grid line color
-	SDL_Color gridColor = { 50, 50, 50, 255 };  // Light gray for grid lines
+	// Draw grid lines
+	SDL_Color gridColor = { 50, 50, 50, 255 };
 	renderer.setDrawColor(gridColor);
-
-	// Draw vertical grid lines
-	for (int x = 0; x <= m_width; ++x) {
-		int screenX = x * m_blockSize;
-		renderer.drawLine(screenX, 0, screenX, GRID_HEIGHT * m_blockSize);
-	}
-
-	// Draw horizontal grid lines
-	for (int y = 0; y <= GRID_HEIGHT; ++y) {
-		int screenY = y * m_blockSize;
-		renderer.drawLine(0, screenY, m_width * m_blockSize, screenY);
-	}
-
+	renderer.drawGrid(m_width, m_height);
 }

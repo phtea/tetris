@@ -18,11 +18,8 @@
 
 Game::Game()
 	: m_running(true),
-	m_event(),
 	m_lastFallTime(SDL_GetTicks()),
-	m_lastMoveTime(0),
-	m_renderer(GAME_TITLE),
-	m_bag7(),
+	m_renderer(GAME_TITLE, 1920, 1080),
 	m_tetromino(pickRandomTetromino()) {
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		// Initialization failed, output the error
@@ -30,8 +27,6 @@ Game::Game()
 		stop();
 		return;
 	}
-
-	m_tetromino.setStartPosition();
 }
 
 Game::~Game() { SDL_Quit(); }
@@ -116,7 +111,6 @@ void Game::update() {
 
 void Game::render() {
 	m_renderer.clear();
-	//drawGrid();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
 	m_renderer.present();

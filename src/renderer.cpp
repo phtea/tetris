@@ -4,12 +4,13 @@
 
 #include "constants.h"
 
-Renderer::Renderer(const char* title) {
-	if (!SDL_CreateWindowAndRenderer(title, SCREEN_WIDTH, SCREEN_HEIGHT, 0, &m_window, &m_renderer)) {
+Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
+	: m_screenWidth(screenWidth), m_screenHeight(screenHeight) {
+	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, 0, &m_window, &m_renderer)) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window and renderer: %s\n",
 			SDL_GetError());
 	}
-
+	setGridSize(GRID_WIDTH, GRID_HEIGHT);
 	m_blockTexture = nullptr;
 	//m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
 	//if (!m_blockTexture) {
@@ -56,7 +57,7 @@ void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
 	// Avoid rendering if the block is above the screen
 	if (y < 0) return;
 
-	SDL_FRect block = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+	SDL_FRect block = { x * m_blockSize, y * m_blockSize, m_blockSize, m_blockSize };
 
 	if (!SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a)) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR,
@@ -75,4 +76,23 @@ void Renderer::setDrawColor(const SDL_Color& color) {
 
 void Renderer::drawLine(int x1, int y1, int x2, int y2) {
 	SDL_RenderLine(m_renderer, x1, y1, x2, y2);
+}
+
+void Renderer::drawGrid(int gridWidth, int gridHeight) {
+	m_blockSize = std::min(m_screenWidth / gridWidth, m_screenHeight / gridHeight);
+
+	for (int x = 0; x <= gridWidth; ++x) {
+		int screenX = x * m_blockSize;
+		drawLine(screenX, 0, screenX, gridHeight * m_blockSize);
+	}
+
+	for (int y = 0; y <= gridHeight; ++y) {
+		int screenY = y * m_blockSize;
+		drawLine(0, screenY, gridWidth * m_blockSize, screenY);
+	}
+}
+
+void Renderer::setGridSize(int gridWidth, int gridHeight)
+{
+	m_blockSize = std::min(m_screenWidth / gridWidth, m_screenHeight / gridHeight);
 }

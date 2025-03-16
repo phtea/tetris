@@ -11,6 +11,7 @@
 Tetromino::Tetromino(TetrominoType type) : m_type(type), m_x(0), m_y(0) {
 	setColor();
 	setShape();
+	setStartPosition();
 }
 
 void Tetromino::setColor() {
@@ -51,9 +52,9 @@ bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
 }
 
 void Tetromino::move(Direction dir) {
-	if (dir == Direction::LEFT) m_x -= BLOCK_SIZE;
-	if (dir == Direction::RIGHT) m_x += BLOCK_SIZE;
-	if (dir == Direction::DOWN) m_y += BLOCK_SIZE;
+	if (dir == Direction::LEFT) m_x--;
+	if (dir == Direction::RIGHT) m_x++;
+	if (dir == Direction::DOWN) m_y++;
 }
 
 void Tetromino::hardDrop(const grid_t& grid) {
@@ -100,15 +101,15 @@ void Tetromino::setPosition(int x, int y) {
 }
 
 void Tetromino::setStartPosition() {
-	m_x = (GRID_WIDTH / 2 - 2) * BLOCK_SIZE;
+	m_x = GRID_WIDTH / 2 - 2;
 	m_y = 0;
 }
 
 std::array<std::array<int, 2>, 4> Tetromino::getBlocks() const {
 	std::array<std::array<int, 2>, 4> blockPositions;
 	for (int i = 0; i < 4; i++) {
-		blockPositions[i] = { m_x / BLOCK_SIZE + m_blocks[i][0],
-							 m_y / BLOCK_SIZE + m_blocks[i][1] };
+		blockPositions[i] = { m_x + m_blocks[i][0],
+							 m_y + m_blocks[i][1] };
 	}
 	return blockPositions;
 }
@@ -117,7 +118,7 @@ std::array<int, 2> Tetromino::getPosition() const { return { m_x, m_y }; }
 
 void Tetromino::draw(Renderer& renderer) const {
 	for (const auto& block : getBlocks()) {
-		renderer.drawBlock(block[0] * BLOCK_SIZE, block[1] * BLOCK_SIZE, m_color);
+		renderer.drawBlock(block[0], block[1], m_color);
 	}
 }
 
@@ -127,8 +128,8 @@ bool Tetromino::collidesWith(
 	const blocks_t& testBlocks,
 	const grid_t& grid) const {
 	for (const auto& block : testBlocks) {
-		int x = block[0] + m_x / BLOCK_SIZE;
-		int y = block[1] + m_y / BLOCK_SIZE;
+		int x = block[0] + m_x;
+		int y = block[1] + m_y;
 		if (y < 0) continue;
 		if (x < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT || grid[y][x] != 0) {
 			return true;
