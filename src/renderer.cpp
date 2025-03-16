@@ -12,12 +12,13 @@ Renderer::Renderer(const char* title) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window and renderer: %s\n",
 			SDL_GetError());
 	}
-	
-	m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
-	if (!m_blockTexture) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
-			SDL_GetError());
-	}
+
+	m_blockTexture = nullptr;
+	//m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
+	//if (!m_blockTexture) {
+	//	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
+	//		SDL_GetError());
+	//}
 }
 
 Renderer::~Renderer() {
