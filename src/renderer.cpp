@@ -5,7 +5,7 @@
 #include "constants.h"
 
 Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
-	: m_screenWidth(screenWidth), m_screenHeight(screenHeight) {
+	: m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0), m_yOffset(0) {
 	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, 0, &m_window, &m_renderer)) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window and renderer: %s\n",
 			SDL_GetError());
@@ -54,20 +54,15 @@ void Renderer::present() {
 //}
 
 void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
-	// Avoid rendering if the block is above the screen
 	if (y < 0) return;
 
-	SDL_FRect block = { x * m_blockSize, y * m_blockSize, m_blockSize, m_blockSize };
+	SDL_FRect block = { m_xOffset + x * m_blockSize,
+						m_yOffset + y * m_blockSize,
+						m_blockSize,
+						m_blockSize };
 
-	if (!SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR,
-			"Could not set render draw color: %s\n", SDL_GetError());
-	}
-
-	if (!SDL_RenderFillRect(m_renderer, &block)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render fill rect: %s\n",
-			SDL_GetError());
-	}
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(m_renderer, &block);
 }
 
 void Renderer::setDrawColor(const SDL_Color& color) {
@@ -79,20 +74,35 @@ void Renderer::drawLine(int x1, int y1, int x2, int y2) {
 }
 
 void Renderer::drawGrid(int gridWidth, int gridHeight) {
-	m_blockSize = std::min(m_screenWidth / gridWidth, m_screenHeight / gridHeight);
-
 	for (int x = 0; x <= gridWidth; ++x) {
-		int screenX = x * m_blockSize;
-		drawLine(screenX, 0, screenX, gridHeight * m_blockSize);
+		int screenX = m_xOffset + x * m_blockSize;
+		drawLine(screenX, m_yOffset, screenX, m_yOffset + gridHeight * m_blockSize);
 	}
 
 	for (int y = 0; y <= gridHeight; ++y) {
-		int screenY = y * m_blockSize;
-		drawLine(0, screenY, gridWidth * m_blockSize, screenY);
+		int screenY = m_yOffset + y * m_blockSize;
+		drawLine(m_xOffset, screenY, m_xOffset + gridWidth * m_blockSize, screenY);
 	}
 }
 
-void Renderer::setGridSize(int gridWidth, int gridHeight)
-{
+void Renderer::setGridSize(int gridWidth, int gridHeight) {
 	m_blockSize = std::min(m_screenWidth / gridWidth, m_screenHeight / gridHeight);
+
+	// Calculate offsets to center the grid
+	int gridWidthPx = gridWidth * m_blockSize;
+	int gridHeightPx = gridHeight * m_blockSize;
+
+	m_xOffset = (m_screenWidth - gridWidthPx) / 2;
+	m_yOffset = (m_screenHeight - gridHeightPx) / 2;
+}
+
+void Renderer::setResolution(int newWidth, int newHeight) {
+	m_screenWidth = newWidth;
+	m_screenHeight = newHeight;
+
+	// Update SDL window size
+	SDL_SetWindowSize(m_window, m_screenWidth, m_screenHeight);
+
+	// Recalculate grid and block size
+	setGridSize(GRID_WIDTH, GRID_HEIGHT);
 }

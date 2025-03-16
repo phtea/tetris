@@ -13,6 +13,8 @@ public:
 	void setDrawColor(const SDL_Color& color);
 	void setGridSize(int gridWidth, int gridHeight);
 
+	void setResolution(int newWidth, int newHeight);
+
 	void drawLine(int x1, int y1, int x2, int y2);
 	void drawGrid(int gridWidth, int gridHeight);
 
@@ -22,5 +24,7 @@ private:
 	SDL_Texture* m_blockTexture;
 	int m_screenWidth;
 	int m_screenHeight;
+	int m_xOffset;
+	int m_yOffset;
 	int m_blockSize;
 };

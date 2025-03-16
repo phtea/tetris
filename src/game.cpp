@@ -151,6 +151,13 @@ void Game::handleInput() {
 	handleRotation(-90, { SDL_SCANCODE_Z, SDL_SCANCODE_UP });
 	handleRotation(90, { SDL_SCANCODE_X });
 	handleRotation(180, { SDL_SCANCODE_C });
+
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_1)) {
+		m_renderer.setResolution(1920, 1080);
+	}
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_0)) {
+		m_renderer.setResolution(800, 600);
+	}
 }
 
 void Game::handleMovement(Direction dir, SDL_Scancode key) {
