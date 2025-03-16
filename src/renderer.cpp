@@ -1,6 +1,3 @@
-// m_renderer.cpp
-// Implements rendering logic
-
 #include "renderer.h"
 
 #include <iostream>
