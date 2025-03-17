@@ -26,7 +26,7 @@ Game::Game()
 	m_canSwap(true),
 	m_bufferTetromino(TetrominoType::NONE) {
 	HudBuilder hudBuilder;
-	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(50, 50).build());
+	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(1300, 200).build());
 	createNewTetromino();
 }
 
@@ -174,7 +174,7 @@ void Game::handleInput() {
 		m_renderer.setResolution(1920, 1080);
 	}
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_0)) {
-		m_renderer.setResolution(800, 600);
+		m_renderer.setResolution(1280, 720);
 	}
 }
 

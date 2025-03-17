@@ -5,7 +5,7 @@
 #include "constants.h"
 
 Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
-	: m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0), m_yOffset(0) {
+	: m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0), m_yOffset(0), m_font(nullptr) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		// Initialization failed, output the error
@@ -27,13 +27,14 @@ Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
 		return;
 	}
 
-	// Load font
-	m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", 24);
-	if (!m_font) {
-		std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
-		return;
-	}
+	//// Load font
+	//m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", 24);
+	//if (!m_font) {
+	//	std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
+	//	return;
+	//}
 
+	loadFont(BASE_FONT_SIZE);
 
 	//m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
 	//if (!m_blockTexture) {
@@ -95,7 +96,7 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	// Create texture from surface
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
 	SDL_DestroySurface(textSurface);  // No longer needed
-	
+
 	// Convert grid position to pixel position
 	int pixelX = m_xOffset + gridX * m_blockSize;
 	int pixelY = m_yOffset + gridY * m_blockSize;
@@ -196,6 +197,8 @@ void Renderer::setResolution(int newWidth, int newHeight) {
 
 	// Recalculate grid and block size
 	setGridSize(GRID_WIDTH, GRID_HEIGHT);
+	int scaledFontSize = calculateFontSize(BASE_FONT_SIZE);
+	loadFont(scaledFontSize);
 }
 
 int Renderer::calculateHudX(int baseX) const {
@@ -212,4 +215,21 @@ int Renderer::calculateHudBlockSize() const {
 	float scaleX = static_cast<float>(m_screenWidth) / BASE_WIDTH;
 	float scaleY = static_cast<float>(m_screenHeight) / BASE_HEIGHT;
 	return static_cast<int>(m_blockSize * std::max(scaleX, scaleY));
+}
+
+int Renderer::calculateFontSize(int baseFontSize) const {
+	float scaleX = static_cast<float>(m_screenWidth) / BASE_WIDTH;
+	float scaleY = static_cast<float>(m_screenHeight) / BASE_HEIGHT;
+	return static_cast<int>(baseFontSize * std::min(scaleX, scaleY));
+}
+
+void Renderer::loadFont(int fontSize) {
+	if (m_font) {
+		TTF_CloseFont(m_font);
+	}
+
+	m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", fontSize);
+	if (!m_font) {
+		std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
+	}
 }

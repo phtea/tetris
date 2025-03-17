@@ -33,9 +33,13 @@ public:
 	int calculateHudY(int baseY) const;
 	int calculateHudBlockSize() const;
 
+	int calculateFontSize(int baseFontSize) const;
+
 	int getBlockSize() const { return m_blockSize; }
 
 private:
+	void loadFont(int fontSize);
+
 	SDL_Window* m_window;
 	SDL_Renderer* m_renderer;
 	SDL_Texture* m_blockTexture;
@@ -49,4 +53,5 @@ private:
 
 	static constexpr int BASE_WIDTH = 1920;
 	static constexpr int BASE_HEIGHT = 1080;
+	static constexpr int BASE_FONT_SIZE = 24;
 };

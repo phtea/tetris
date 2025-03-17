@@ -1,9 +1,14 @@
 #include "hud.h"
 #include <iostream>
 
-Hud::Hud(int hudX, int hudY)
-	: m_hudX(hudX), m_hudY(hudY), m_elementSpacing(50), m_hudScale(0.5f) { // Example spacing
-}
+Hud::Hud(int hudX, int hudY) :
+	m_hudX(hudX),
+	m_hudY(hudY),
+	m_elementSpacing(50),
+	m_hudScale(0.5f),
+	m_showHold(true),
+	m_showNext(true),
+	m_currentElementPos(0) {}
 
 Hud::~Hud() {}
 
