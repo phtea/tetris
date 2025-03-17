@@ -3,59 +3,59 @@
 
 // TODO: change this awful hardcode
 Hud::Hud()
-    : m_nextTetrominoX(12), m_nextTetrominoY(3), m_bufferTetrominoX(12), m_bufferTetrominoY(10) {
-    // Position of the "Next" label and tetromino
+	: m_nextTetrominoX(12), m_nextTetrominoY(3), m_bufferTetrominoX(12), m_bufferTetrominoY(10) {
+	// Position of the "Next" label and tetromino
 }
 
 Hud::~Hud() {}
 
 void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count, const Tetromino& bufferTetromino) {
-    // Here we could render the score, level, and linesCleared (optional)
-    // For now, we just render the next tetromino
-    renderNextTetromino(renderer, tetrominos, count);
-    renderBufferTetromino(renderer, bufferTetromino);
+	// Here we could render the score, level, and linesCleared (optional)
+	// For now, we just render the next tetromino
+	renderNextTetromino(renderer, tetrominos, count);
+	renderBufferTetromino(renderer, bufferTetromino);
 }
 
 void Hud::render(Renderer& renderer) {
-    // You could render additional information like score, level, etc. here
-    // For now, we just need to display the next tetromino
+	// You could render additional information like score, level, etc. here
+	// For now, we just need to display the next tetromino
 }
 
 void Hud::renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count) {
-    // Draw "Next:" label at a grid-based position
-    renderer.drawText("Next:", m_nextTetrominoX, m_nextTetrominoY);
+	// Draw "Next:" label at a grid-based position
+	renderer.drawTextAtPixel("Next:", renderer.calculateHudX(1330), renderer.calculateHudY(172)); // Example base position
 
-    int yOffset = 2; // Offset to space out the tetrominos visually
+	int yOffset = 2; // Offset to space out the tetrominos visually
 
-    for (size_t i = 0; i < count && !tetrominos.empty(); ++i) {
-        Tetromino t = tetrominos.front();
-        tetrominos.pop();
+	for (size_t i = 0; i < count && !tetrominos.empty(); ++i) {
+		Tetromino t = tetrominos.front();
+		tetrominos.pop();
 
-        SDL_Color blockColor = t.getColor();
-        auto blocks = t.getBlocks();
+		SDL_Color blockColor = t.getColor();
+		auto blocks = t.getBlocks();
 
-        for (const auto& block : blocks) {
-            int x = m_nextTetrominoX + block[0];
-            int y = m_nextTetrominoY + block[1] + yOffset;
-            renderer.drawBlock(x, y, blockColor);
-        }
+		for (const auto& block : blocks) {
+			int x = m_nextTetrominoX + block[0];
+			int y = m_nextTetrominoY + block[1] + yOffset;
+			renderer.drawBlock(x, y, blockColor);
+		}
 
-        yOffset += 3; // Move each next tetromino down visually
-    }
+		yOffset += 3; // Move each next tetromino down visually
+	}
 }
 
 void Hud::renderBufferTetromino(Renderer& renderer, const Tetromino& bufferTetromino) {
-    // Draw "Hold:" label at a grid-based position
-    renderer.drawText("Hold:", m_bufferTetrominoX, m_bufferTetrominoY);
+	// Draw "Hold:" label at a grid-based position
+	renderer.drawText("Hold:", m_bufferTetrominoX, m_bufferTetrominoY);
 
-    if (bufferTetromino.getType() != TetrominoType::NONE) {
-        SDL_Color blockColor = bufferTetromino.getColor();
-        auto blocks = bufferTetromino.getBlocks();
+	if (bufferTetromino.getType() != TetrominoType::NONE) {
+		SDL_Color blockColor = bufferTetromino.getColor();
+		auto blocks = bufferTetromino.getBlocks();
 
-        for (const auto& block : blocks) {
-            int x = m_bufferTetrominoX + block[0];
-            int y = m_bufferTetrominoY + block[1] + 2; // Offset to space out the tetromino visually
-            renderer.drawBlock(x, y, blockColor);
-        }
-    }
+		for (const auto& block : blocks) {
+			int x = m_bufferTetrominoX + block[0];
+			int y = m_bufferTetrominoY + block[1] + 2; // Offset to space out the tetromino visually
+			renderer.drawBlock(x, y, blockColor);
+		}
+	}
 }

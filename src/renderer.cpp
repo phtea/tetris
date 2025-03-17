@@ -80,17 +80,6 @@ void Renderer::present() {
 
 
 // Draws block based on X and Y (compared to grid). blockSize is handled here 
-void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
-	if (y < 0) return;
-
-	SDL_FRect block = { m_xOffset + x * m_blockSize,
-						m_yOffset + y * m_blockSize,
-						m_blockSize,
-						m_blockSize };
-
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderFillRect(m_renderer, &block);
-}
 
 void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	SDL_Color color = { 255, 255, 255, 255 }; // White text color
@@ -119,18 +108,11 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	SDL_DestroyTexture(textTexture);
 }
 
-void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color) {
-	SDL_FRect block = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(m_blockSize), static_cast<float>(m_blockSize) };
-
-	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderFillRect(m_renderer, &block);
-}
-
 void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) {
 	SDL_Color color = { 255, 255, 255, 255 }; // White text color
 
 	// Create a surface from the text
-	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, text.c_str(), color);
+	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, text.c_str(), 0, color);
 	if (!textSurface) {
 		std::cerr << "Unable to create text surface! SDL_ttf Error: " << SDL_GetError() << std::endl;
 		return;
@@ -147,6 +129,27 @@ void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) 
 	// Clean up
 	SDL_DestroyTexture(textTexture);
 }
+
+void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color) {
+	SDL_FRect block = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(m_blockSize), static_cast<float>(m_blockSize) };
+
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(m_renderer, &block);
+}
+
+
+void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
+	if (y < 0) return;
+
+	SDL_FRect block = { m_xOffset + x * m_blockSize,
+						m_yOffset + y * m_blockSize,
+						m_blockSize,
+						m_blockSize };
+
+	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(m_renderer, &block);
+}
+
 
 void Renderer::setDrawColor(const SDL_Color& color) {
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
