@@ -50,7 +50,7 @@ bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
 		if (dir == Direction::RIGHT) block[0]++;
 		if (dir == Direction::DOWN) block[1]++;
 	}
-	return !collidesWith(testBlocks, grid);
+	return !collidesWithGrid(testBlocks, grid);
 }
 
 void Tetromino::move(Direction dir) {
@@ -86,10 +86,22 @@ bool Tetromino::rotate(int angle, const grid_t& grid) {
 		rotatedBlocks[i][1] = pivotY + (relX * sinTheta + relY * cosTheta);
 	}
 
-	if (!collidesWith(rotatedBlocks, grid)) {
-		m_blocks = rotatedBlocks;
-		return true;
+	std::array<std::array<int, 2>, 5> kickOffsets{ {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}} };
+
+	for (const auto& offset : kickOffsets) {
+		std::array<std::array<int, 2>, 4> kickedBlocks = rotatedBlocks;
+		for (auto& block : kickedBlocks) {
+			block[0] += offset[0];
+			block[1] += offset[1];
+		}
+		if (!collidesWithGrid(kickedBlocks, grid)) {
+			// No collisions with the kick offset, update the blocks and position
+			m_blocks = kickedBlocks;
+			return true;
+		}
 	}
+
+	// If all kicks fail, the rotation is not possible
 	return false;
 }
 
@@ -138,7 +150,7 @@ TetrominoType Tetromino::getType() const {
 	return m_type;
 }
 
-bool Tetromino::collidesWith(
+bool Tetromino::collidesWithGrid(
 	const blocks_t& testBlocks,
 	const grid_t& grid) const {
 	for (const auto& block : testBlocks) {

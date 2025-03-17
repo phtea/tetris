@@ -45,5 +45,5 @@ private:
 
 	void setColor();
 	void setShape();
-	bool collidesWith(const blocks_t& testBlocks, const grid_t& grid) const;
+	bool collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const;
 };
