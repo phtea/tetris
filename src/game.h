@@ -40,7 +40,8 @@ private:
 	Tetromino pickRandomTetromino();
 	void setNextTetrominosSize(int size);
 
-	Hud m_hud;
+	//Hud m_hud;
+	std::unique_ptr<Hud> m_hud;
 	bool m_running;
 	TouchState m_touchState = TouchState::NotTouching;
 	Bag7 m_bag7;

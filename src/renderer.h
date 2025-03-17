@@ -25,12 +25,15 @@ public:
 
 	// New methods for drawing at pixel positions
 	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color);
+	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color, int blockSize);
 	void drawTextAtPixel(const std::string& text, int pixelX, int pixelY);
 
 	// New methods for position and size calculation
 	int calculateHudX(int baseX) const;
 	int calculateHudY(int baseY) const;
 	int calculateHudBlockSize() const;
+
+	int getBlockSize() const { return m_blockSize; }
 
 private:
 	SDL_Window* m_window;

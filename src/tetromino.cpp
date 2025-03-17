@@ -92,6 +92,10 @@ bool Tetromino::rotate(int angle, const grid_t& grid) {
 	return false;
 }
 
+void Tetromino::setOriginalRotationState() {
+	setShape();
+}
+
 std::array<int, 2> Tetromino::getPivot() const {
 	return (m_type == TetrominoType::I) ? m_blocks[1] : m_blocks[2];
 }

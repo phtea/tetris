@@ -131,7 +131,12 @@ void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) 
 }
 
 void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color) {
-	SDL_FRect block = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(m_blockSize), static_cast<float>(m_blockSize) };
+	drawBlockAtPixel(pixelX, pixelY, color, m_blockSize);
+}
+
+void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color, int blockSize)
+{
+	SDL_FRect block = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(blockSize), static_cast<float>(blockSize) };
 
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(m_renderer, &block);
@@ -206,5 +211,5 @@ int Renderer::calculateHudY(int baseY) const {
 int Renderer::calculateHudBlockSize() const {
 	float scaleX = static_cast<float>(m_screenWidth) / BASE_WIDTH;
 	float scaleY = static_cast<float>(m_screenHeight) / BASE_HEIGHT;
-	return static_cast<int>(m_blockSize * std::min(scaleX, scaleY));
+	return static_cast<int>(m_blockSize * std::max(scaleX, scaleY));
 }

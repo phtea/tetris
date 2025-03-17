@@ -18,6 +18,7 @@ public:
 	void move(Direction dir);
 	void hardDrop(const grid_t& grid);
 	bool rotate(int angle, const grid_t& grid);
+	void setOriginalRotationState();
 
 	void setPosition(int x, int y);
 	void setStartPosition();

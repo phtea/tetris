@@ -15,6 +15,7 @@
 
 #include "constants.h"
 #include "tetromino.h"
+#include "HudBuilder.h"
 
 Game::Game()
 	: m_running(true),
@@ -24,6 +25,8 @@ Game::Game()
 	m_nextTetrominosSize(1),
 	m_canSwap(true),
 	m_bufferTetromino(TetrominoType::NONE) {
+	HudBuilder hudBuilder;
+	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(50, 50).build());
 	createNewTetromino();
 }
 
@@ -122,7 +125,8 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
-	m_hud.update(m_renderer, m_nextTetrominos, m_nextTetrominosSize, m_bufferTetromino);
+	m_hud->update(m_renderer, m_nextTetrominos, m_nextTetrominosSize, m_bufferTetromino);
+
 	m_renderer.present();
 }
 
@@ -177,7 +181,8 @@ void Game::handleInput() {
 // Implement the swapTetromino method
 void Game::swapTetromino() {
 	if (!m_canSwap) return;
-
+	m_tetromino.setOriginalRotationState();
+	// TODO: bring back to original rotate state
 	if (m_bufferTetromino.getType() == TetrominoType::NONE) {
 		// Buffer is empty, add current tetromino to buffer and get next one
 		m_bufferTetromino = m_tetromino;
