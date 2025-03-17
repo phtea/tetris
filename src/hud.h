@@ -16,10 +16,12 @@ public:
     void setShowNext(bool show);
     void setShowHold(bool show);
 
+    // New method for drawing HUD borders
+    void drawBorders(Renderer& renderer);
+
 private:
     void renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count);
     void renderBufferTetromino(Renderer& renderer, const Tetromino& bufferTetromino);
-
     void renderTetromino(Renderer& renderer, const std::string& label, std::queue<Tetromino> tetrominos, int count);
 
     int m_hudX;
@@ -29,4 +31,6 @@ private:
     int m_currentElementPos;
     bool m_showNext;
     bool m_showHold;
+
+	bool m_hudBordersEnabled; // New member variable to control HUD borders
 };

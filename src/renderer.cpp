@@ -4,8 +4,12 @@
 
 #include "constants.h"
 
-Renderer::Renderer(const char* title, int screenWidth, int screenHeight)
-	: m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0), m_yOffset(0), m_font(nullptr) {
+Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
+	m_screenWidth(screenWidth),
+	m_screenHeight(screenHeight),
+	m_xOffset(0),
+	m_yOffset(0),
+	m_font(nullptr) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		// Initialization failed, output the error

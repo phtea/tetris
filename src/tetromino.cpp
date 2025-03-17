@@ -30,14 +30,15 @@ void Tetromino::setColor() {
 }
 
 void Tetromino::setShape() {
+	// the order of the blocks is important for the rotation!
 	static const std::array<std::array<int, 2>, 4> shapes[] = {
-		{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}},  // I
-		{{{0, 0}, {0, 1}, {1, 1}, {2, 1}}},  // J
-		{{{2, 0}, {0, 1}, {1, 1}, {2, 1}}},  // L
-		{{{1, 0}, {2, 0}, {1, 1}, {2, 1}}},  // O
-		{{{1, 0}, {2, 0}, {0, 1}, {1, 1}}},  // S
-		{{{1, 0}, {0, 1}, {1, 1}, {2, 1}}},  // T
-		{{{0, 0}, {1, 0}, {1, 1}, {2, 1}}}   // Z
+		{{{1, 1}, {0, 1}, {2, 1}, {3, 1}}},  // I
+		{{{1, 1}, {0, 0}, {0, 1}, {2, 1}}},  // J
+		{{{1, 1}, {2, 0}, {0, 1}, {2, 1}}},  // L
+		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // O
+		{{{1, 1}, {1, 0}, {2, 0}, {0, 1}}},  // S
+		{{{1, 1}, {1, 0}, {0, 1}, {2, 1}}},  // T
+		{{{1, 1}, {0, 0}, {1, 0}, {2, 1}}}   // Z
 	};
 	m_blocks = shapes[static_cast<int>(m_type)];
 }
@@ -97,7 +98,7 @@ void Tetromino::setOriginalRotationState() {
 }
 
 std::array<int, 2> Tetromino::getPivot() const {
-	return (m_type == TetrominoType::I) ? m_blocks[1] : m_blocks[2];
+	return m_blocks[0];
 }
 
 void Tetromino::setPosition(int x, int y) {

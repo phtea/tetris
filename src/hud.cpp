@@ -8,7 +8,9 @@ Hud::Hud(int hudX, int hudY) :
 	m_hudScale(0.5f),
 	m_showHold(true),
 	m_showNext(true),
-	m_currentElementPos(0) {}
+	m_currentElementPos(0),
+	m_hudBordersEnabled(true) {
+}
 
 Hud::~Hud() {}
 
@@ -20,6 +22,9 @@ void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, in
 	}
 	if (m_showHold) {
 		renderBufferTetromino(renderer, bufferTetromino);
+	}
+	if (m_hudBordersEnabled) {
+		drawBorders(renderer);
 	}
 }
 
@@ -39,6 +44,26 @@ void Hud::setShowNext(bool show) {
 
 void Hud::setShowHold(bool show) {
 	m_showHold = show;
+}
+
+void Hud::drawBorders(Renderer& renderer) {
+	// Set the border color (e.g., white)
+	SDL_Color borderColor = { 255, 255, 255, 255 };
+	renderer.setDrawColor(borderColor);
+
+	// Calculate HUD dimensions
+	int hudX = renderer.calculateHudX(m_hudX) * 0.99;
+	int hudY = renderer.calculateHudY(m_hudY);
+
+	// Calculate the width and height based on the elements
+	int hudWidth = renderer.getBlockSize() * 4; // Assuming the width of the HUD is 4 blocks
+	int hudHeight = m_currentElementPos; // Total height of the elements plus some spacing
+
+	// Draw the borders
+	renderer.drawLine(hudX, hudY, hudX + hudWidth, hudY); // Top border
+	renderer.drawLine(hudX, hudY, hudX, hudY + hudHeight); // Left border
+	renderer.drawLine(hudX + hudWidth, hudY, hudX + hudWidth, hudY + hudHeight); // Right border
+	renderer.drawLine(hudX, hudY + hudHeight, hudX + hudWidth, hudY + hudHeight); // Bottom border
 }
 
 void Hud::renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count) {
