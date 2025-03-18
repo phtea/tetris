@@ -4,8 +4,6 @@
 #include <SDL3/SDL_render.h>
 #include <unordered_map>
 
-#include <algorithm>
-
 #include "constants.h"
 
 const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> Tetromino::shapes = {
