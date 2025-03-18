@@ -25,6 +25,7 @@ public:
 	void move(Direction dir);
 	void hardDrop(const grid_t& grid);
 	bool rotate(int angle, const grid_t& grid);
+	bool setNewState(int angle, RotationState& newState, bool& retFlag);
 	void setOriginalRotationState();
 
 	void setPosition(int x, int y);
@@ -54,5 +55,6 @@ private:
 
 	void setColor();
 	void setShape(RotationState state);
+	bool getNewRotationState(int angle, RotationState& newState);
 	bool collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const;
 };

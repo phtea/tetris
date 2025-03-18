@@ -19,10 +19,10 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
 
-# Set SDL paths
-set(SDL3_DIR "C:/lib/SDL3")
-set(SDL3_IMAGE_DIR "C:/lib/SDL3_image")
-set(SDL3_TTF_DIR "C:/lib/SDL3_ttf")
+# Set paths to our local dependencies
+set(SDL3_DIR "${CMAKE_SOURCE_DIR}/libs/SDL3")
+set(SDL3_IMAGE_DIR "${CMAKE_SOURCE_DIR}/libs/SDL3_image")
+set(SDL3_TTF_DIR "${CMAKE_SOURCE_DIR}/libs/SDL3_ttf")
 
 include_directories(${SDL3_DIR}/include ${SDL3_IMAGE_DIR}/include ${SDL3_TTF_DIR}/include)
 link_directories(${SDL3_DIR}/lib/x64 ${SDL3_IMAGE_DIR}/lib/x64 ${SDL3_TTF_DIR}/lib/x64)

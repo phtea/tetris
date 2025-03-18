@@ -102,6 +102,34 @@ bool Tetromino::rotate(int angle, const grid_t& grid) {
 	if (m_type == TetrominoType::O) return false;  // O piece doesn't rotate
 
 	RotationState newState;
+	if (!getNewRotationState(angle, newState)) {
+		return false;
+	}
+	std::array<std::array<int, 2>, 4> rotatedBlocks = shapes.at(m_type)[static_cast<int>(newState)];
+
+	std::array<std::array<int, 2>, 5> kickOffsets{ {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}} };
+
+	for (const auto& offset : kickOffsets) {
+		std::array<std::array<int, 2>, 4> kickedBlocks = rotatedBlocks;
+		for (auto& block : kickedBlocks) {
+			block[0] += offset[0];
+			block[1] += offset[1];
+		}
+		if (!collidesWithGrid(kickedBlocks, grid)) {
+			// No collisions with the kick offset, update the blocks and position
+			m_rotationState = newState;
+			m_blocks = kickedBlocks;
+			return true;
+		}
+	}
+
+	// If all kicks fail, the rotation is not possible
+	return false;
+}
+
+// Changes rotation state based on angle
+// true on success, false on failure
+bool Tetromino::getNewRotationState(int angle, RotationState& newState) {
 	switch (angle) {
 	case 90:
 		newState = (m_rotationState == RotationState::ORIGINAL) ? RotationState::RIGHT :
@@ -124,27 +152,7 @@ bool Tetromino::rotate(int angle, const grid_t& grid) {
 	default:
 		return false;
 	}
-
-	std::array<std::array<int, 2>, 4> rotatedBlocks = shapes.at(m_type)[static_cast<int>(newState)];
-
-	std::array<std::array<int, 2>, 5> kickOffsets{ {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}} };
-
-	for (const auto& offset : kickOffsets) {
-		std::array<std::array<int, 2>, 4> kickedBlocks = rotatedBlocks;
-		for (auto& block : kickedBlocks) {
-			block[0] += offset[0];
-			block[1] += offset[1];
-		}
-		if (!collidesWithGrid(kickedBlocks, grid)) {
-			// No collisions with the kick offset, update the blocks and position
-			m_rotationState = newState;
-			m_blocks = kickedBlocks;
-			return true;
-		}
-	}
-
-	// If all kicks fail, the rotation is not possible
-	return false;
+	return true;
 }
 
 void Tetromino::setOriginalRotationState() {
