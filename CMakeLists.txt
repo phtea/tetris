@@ -22,9 +22,10 @@ endif()
 # Set SDL paths
 set(SDL3_DIR "C:/lib/SDL3")
 set(SDL3_IMAGE_DIR "C:/lib/SDL3_image")
+set(SDL3_TTF_DIR "C:/lib/SDL3_ttf")
 
-include_directories(${SDL3_DIR}/include ${SDL3_IMAGE_DIR}/include)
-link_directories(${SDL3_DIR}/lib/x64 ${SDL3_IMAGE_DIR}/lib/x64)
+include_directories(${SDL3_DIR}/include ${SDL3_IMAGE_DIR}/include ${SDL3_TTF_DIR}/include)
+link_directories(${SDL3_DIR}/lib/x64 ${SDL3_IMAGE_DIR}/lib/x64 ${SDL3_TTF_DIR}/lib/x64)
 
 # Add source files
 add_executable(tetris 
@@ -36,14 +37,16 @@ add_executable(tetris
     src/bag7.cpp src/bag7.h
     src/grid.cpp src/grid.h
     src/constants.h
-)
+    src/hud.h src/hud.cpp
+    src/custom_types.h
+    src/HudBuilder.h src/HudBuilder.cpp)
 
 # Link prebuilt SDL3 and SDL3_image
-target_link_libraries(tetris SDL3 SDL3_image)
+target_link_libraries(tetris SDL3 SDL3_image SDL3_ttf)
 
 # Copy DLLs after build
 add_custom_command(TARGET tetris POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${SDL3_DIR}/lib/x64/SDL3.dll ${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.dll $<TARGET_FILE_DIR:tetris>
+    ${SDL3_DIR}/lib/x64/SDL3.dll ${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.dll ${SDL3_TTF_DIR}/lib/x64/SDL3_ttf.dll $<TARGET_FILE_DIR:tetris>
     COMMAND_EXPAND_LISTS
 )

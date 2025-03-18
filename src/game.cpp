@@ -15,31 +15,49 @@
 
 #include "constants.h"
 #include "tetromino.h"
+#include "HudBuilder.h"
 
 Game::Game()
 	: m_running(true),
 	m_lastFallTime(SDL_GetTicks()),
 	m_renderer(GAME_TITLE, 1920, 1080),
-	m_tetromino(pickRandomTetromino()) {
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		// Initialization failed, output the error
-		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		stop();
-		return;
-	}
+	m_tetromino(TetrominoType::NONE),
+	m_nextTetrominosSize(1),
+	m_canSwap(true),
+	m_bufferTetromino(TetrominoType::NONE),
+	m_SDF(100) {
+	HudBuilder hudBuilder;
+	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(1300, 200).build());
+	createNewTetromino();
 }
-
-Game::~Game() { SDL_Quit(); }
 
 void Game::placeTetrominoOnGrid() {
 	m_grid.placeTetromino(m_tetromino);
 	m_grid.checkFullRows();
 	createNewTetromino();
+	m_canSwap = true;  // Allow swapping again
 }
 
 void Game::createNewTetromino() {
-	m_tetromino = pickRandomTetromino();
+	if (m_nextTetrominos.empty()) {
+		// Pre-fill the queue with a few upcoming tetrominoes
+		for (int i = 0; i < m_nextTetrominosSize; ++i) {
+			m_nextTetrominos.push(pickRandomTetromino());
+		}
+	}
+
+	// Get the next tetromino from the queue
+	m_tetromino = m_nextTetrominos.front();
+	m_nextTetrominos.pop();
+
+	// Add a new random tetromino to the queue to maintain the flow
+	m_nextTetrominos.push(pickRandomTetromino());
+
 	m_tetromino.setStartPosition();
+}
+
+void Game::setNextTetrominosSize(int size) {
+	m_nextTetrominosSize = size;
 }
 
 Tetromino Game::pickRandomTetromino() { return Tetromino(m_bag7.pickNext()); }
@@ -63,21 +81,15 @@ void Game::run() {
 }
 
 void Game::update() {
+
 	Uint64 now = SDL_GetTicks();
 
 	// Handle the fall behavior (move tetromino down based on m_timeToFall)
-	if (now - m_lastFallTime >= m_timeToFall) {
-		if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
-			m_tetromino.move(Direction::DOWN);
-			m_lastFallTime = now;
-
-#ifdef DEBUG
-			auto pos = m_tetromino.getPosition();
-			std::cout << "[" << pos[0] << " " << pos[1] << "]" << std::endl;
-#endif  // DEBUG
-
-			return;
-		}
+	bool canFall = now - m_lastFallTime >= m_timeToFall;
+	if (canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+		m_tetromino.move(Direction::DOWN);
+		m_lastFallTime = now;
+		return;
 	}
 
 	// Independently check the lock timer
@@ -113,11 +125,13 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_tetromino.draw(m_renderer);
+	m_hud->update(m_renderer, m_nextTetrominos, m_nextTetrominosSize, m_bufferTetromino);
+
 	m_renderer.present();
 }
 
 bool Game::isGameOver() {
-	std::array<std::array<int, 2>, 4> blocks = m_tetromino.getBlocks();
+	std::array<std::array<int, 2>, 4> blocks = m_tetromino.getRelativeBlocks();
 	for (const auto& block : blocks) {
 		int x = block[0];
 		int y = block[1];
@@ -138,14 +152,20 @@ void Game::handleInput() {
 	handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT);
 
 	if (m_inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-		if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+		bool canFall = (now - m_lastFallTime) * m_SDF >= m_timeToFall;
+		if (canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
 			m_tetromino.move(Direction::DOWN);
+			m_lastFallTime = now;
 		}
 	}
 
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_SPACE)) {
 		m_tetromino.hardDrop(m_grid.getGrid());
 		placeTetrominoOnGrid();
+	}
+
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_LSHIFT) || m_inputHandler.isKeyJustPressed(SDL_SCANCODE_RSHIFT)) {
+		swapTetromino();
 	}
 
 	handleRotation(-90, { SDL_SCANCODE_Z, SDL_SCANCODE_UP });
@@ -156,8 +176,26 @@ void Game::handleInput() {
 		m_renderer.setResolution(1920, 1080);
 	}
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_0)) {
-		m_renderer.setResolution(800, 600);
+		m_renderer.setResolution(1280, 720);
 	}
+}
+
+// Implement the swapTetromino method
+void Game::swapTetromino() {
+	if (!m_canSwap) return;
+	// TODO: bring back to original rotate state
+	if (m_bufferTetromino.getType() == TetrominoType::NONE) {
+		// Buffer is empty, add current tetromino to buffer and get next one
+		m_bufferTetromino = m_tetromino;
+		createNewTetromino();
+	}
+	else {
+		// Swap current tetromino with the one in the buffer
+		std::swap(m_tetromino, m_bufferTetromino);
+		m_tetromino.setStartPosition();
+	}
+	m_bufferTetromino.setOriginalRotationState();
+	m_canSwap = false;  // Prevent swapping again until the next tetromino is placed
 }
 
 void Game::handleMovement(Direction dir, SDL_Scancode key) {

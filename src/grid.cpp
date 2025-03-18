@@ -1,7 +1,8 @@
 #include "Grid.h"
 
-Grid::Grid()
-	: m_grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
+// TODO: add 2 extra rows for spawning pieces!
+Grid::Grid() :
+	m_grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
 	m_gridOfColors(GRID_HEIGHT, std::vector<SDL_Color>(GRID_WIDTH, { 0, 0, 0, 255 })),
 	m_width(GRID_WIDTH),
 	m_height(GRID_HEIGHT) {
@@ -15,7 +16,7 @@ bool Grid::isCellOccupied(int x, int y) const {
 }
 
 void Grid::placeTetromino(const Tetromino& tetromino) {
-	for (const auto& cell : tetromino.getBlocks()) {
+	for (const auto& cell : tetromino.getRelativeBlocks()) {
 		int x = cell[0];
 		int y = cell[1];
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
@@ -62,7 +63,7 @@ void Grid::reset() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
 
 void Grid::draw(Renderer& renderer) const {
 	// Draw occupied blocks
-	for (int y = 0; y < GRID_HEIGHT; ++y) {
+	for (int y = 0; y < m_height; ++y) {
 		for (int x = 0; x < m_width; ++x) {
 			if (m_grid[y][x] == 1) {  // If the cell is occupied
 				renderer.drawBlock(x, y, m_gridOfColors[y][x]);
