@@ -6,9 +6,16 @@
 #include <vector>
 #include "renderer.h"
 #include "custom_types.h"
+#include <unordered_map>
 
 typedef std::vector<std::vector<int>> grid_t;
 typedef std::array<std::array<int, 2>, 4> blocks_t;
+enum class RotationState : uint8_t {
+	ORIGINAL,
+	LEFT,
+	RIGHT,
+	FLIPPED
+};
 
 class Tetromino {
 public:
@@ -38,12 +45,14 @@ private:
 	TetrominoType m_type;
 	SDL_Color m_color;
 	blocks_t m_blocks;
+	RotationState m_rotationState;
+	static const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> shapes;
 
 	int m_X, m_Y; // grid-based positions! (not pixel positions)
 
 	std::array<int, 2> Tetromino::getPivot() const;
 
 	void setColor();
-	void setShape();
+	void setShape(RotationState state);
 	bool collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const;
 };

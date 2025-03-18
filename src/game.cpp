@@ -183,7 +183,6 @@ void Game::handleInput() {
 // Implement the swapTetromino method
 void Game::swapTetromino() {
 	if (!m_canSwap) return;
-	m_tetromino.setOriginalRotationState();
 	// TODO: bring back to original rotate state
 	if (m_bufferTetromino.getType() == TetrominoType::NONE) {
 		// Buffer is empty, add current tetromino to buffer and get next one
@@ -195,7 +194,7 @@ void Game::swapTetromino() {
 		std::swap(m_tetromino, m_bufferTetromino);
 		m_tetromino.setStartPosition();
 	}
-
+	m_bufferTetromino.setOriginalRotationState();
 	m_canSwap = false;  // Prevent swapping again until the next tetromino is placed
 }
 
