@@ -24,7 +24,8 @@ Game::Game()
 	m_tetromino(TetrominoType::NONE),
 	m_nextTetrominosSize(1),
 	m_canSwap(true),
-	m_bufferTetromino(TetrominoType::NONE) {
+	m_bufferTetromino(TetrominoType::NONE),
+	m_SDF(100) {
 	HudBuilder hudBuilder;
 	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(1300, 200).build());
 	createNewTetromino();
@@ -84,12 +85,11 @@ void Game::update() {
 	Uint64 now = SDL_GetTicks();
 
 	// Handle the fall behavior (move tetromino down based on m_timeToFall)
-	if (now - m_lastFallTime >= m_timeToFall) {
-		if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
-			m_tetromino.move(Direction::DOWN);
-			m_lastFallTime = now;
-			return;
-		}
+	bool canFall = now - m_lastFallTime >= m_timeToFall;
+	if (canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+		m_tetromino.move(Direction::DOWN);
+		m_lastFallTime = now;
+		return;
 	}
 
 	// Independently check the lock timer
@@ -152,8 +152,10 @@ void Game::handleInput() {
 	handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT);
 
 	if (m_inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-		if (m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+		bool canFall = (now - m_lastFallTime) * m_SDF >= m_timeToFall;
+		if (canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
 			m_tetromino.move(Direction::DOWN);
+			m_lastFallTime = now;
 		}
 	}
 

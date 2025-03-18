@@ -45,13 +45,17 @@ private:
 	bool m_running;
 	TouchState m_touchState = TouchState::NotTouching;
 	Bag7 m_bag7;
+
 	Uint32 m_timeToFall = 1000;
+
 	Uint32 m_lastFallTime = 0;
 	Uint32 m_lastMoveTime = 0;
 	Uint32 m_lockDelayTime = 500;  // Lock delay time (milliseconds)
 	Uint32 m_lastLockTime = 0;     // Time when tetromino last touched the grid
-	const Uint32 m_DAS = 167;      // Delay before auto-repeat (milliseconds)
-	const Uint32 m_ARR = 33;       // Auto-repeat rate (milliseconds)
+
+	Uint32 m_DAS = 167;      // Delay before auto-repeat (milliseconds)
+	Uint32 m_ARR = 33;       // Auto-repeat rate (milliseconds)
+	Uint32 m_SDF; // Soft-drop factor (the factor with which soft drop changes the gravity)
 
 	Grid m_grid;
 	Renderer m_renderer;

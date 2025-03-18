@@ -128,6 +128,8 @@ void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) 
 	SDL_DestroySurface(textSurface);  // No longer needed
 
 	// Render the text
+	// TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
+	// OF renderQuad W and H!
 	SDL_FRect renderQuad = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(textSurface->w), static_cast<float>(textSurface->h) };
 	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
 

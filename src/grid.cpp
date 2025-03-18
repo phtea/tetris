@@ -1,7 +1,8 @@
 #include "Grid.h"
 
-Grid::Grid()
-	: m_grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
+// TODO: add 2 extra rows for spawning pieces!
+Grid::Grid() :
+	m_grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
 	m_gridOfColors(GRID_HEIGHT, std::vector<SDL_Color>(GRID_WIDTH, { 0, 0, 0, 255 })),
 	m_width(GRID_WIDTH),
 	m_height(GRID_HEIGHT) {
