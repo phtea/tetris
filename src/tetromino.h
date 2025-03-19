@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <SDL3/SDL.h>
 
@@ -10,12 +10,6 @@
 
 typedef std::vector<std::vector<int>> grid_t;
 typedef std::array<std::array<int, 2>, 4> blocks_t;
-enum class RotationState : uint8_t {
-	ORIGINAL,
-	LEFT,
-	RIGHT,
-	FLIPPED
-};
 
 class Tetromino {
 public:
@@ -25,8 +19,8 @@ public:
 	void move(Direction dir);
 	void hardDrop(const grid_t& grid);
 	bool rotate(int angle, const grid_t& grid);
-	bool setNewState(int angle, RotationState& newState, bool& retFlag);
 	void setOriginalRotationState();
+
 
 	void setPosition(int x, int y);
 	void setStartPosition();
@@ -43,18 +37,53 @@ public:
 	void draw(Renderer& renderer) const;
 
 private:
+	void setColor();
+	bool collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const;
+
+	// rotation logic
+	void setShape(int newRotation);
+	constexpr static std::array<std::array<int, 2>, 11> getWallKicks(int newRotation, TetrominoType type);
+	constexpr static std::array<std::array<int, 2>, 11> get180WallKicks(int newRotation, TetrominoType type);
+	blocks_t applyRotation(int newRotation);
+
+private:
 	TetrominoType m_type;
 	SDL_Color m_color;
 	blocks_t m_blocks;
-	RotationState m_rotationState;
+	int m_rotationState = 0;
 	static const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> shapes;
 
 	int m_X, m_Y; // grid-based positions! (not pixel positions)
 
-	std::array<int, 2> Tetromino::getPivot() const;
-
-	void setColor();
-	void setShape(RotationState state);
-	bool getNewRotationState(int angle, RotationState& newState);
-	bool collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const;
 };
+
+
+// ✅ `constexpr` Standard Wall Kick Table
+constexpr std::array<std::array<std::array<int, 2>, 5>, 4> iKicks = { {
+	{{{0, 0}, {-2, 0}, {1, 0}, {-2, -1}, {1, 2}}},
+	{{{0, 0}, {-1, 0}, {2, 0}, {-1, 2}, {2, -1}}},
+	{{{0, 0}, {1, 0}, {-2, 0}, {1, -2}, {-2, 1}}},
+	{{{0, 0}, {2, 0}, {-1, 0}, {2, 1}, {-1, -2}}}
+} };
+
+constexpr std::array<std::array<std::array<int, 2>, 5>, 4> otherKicks = { {
+	{{{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}}},
+	{{{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}}},
+	{{{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}}},
+	{{{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}}}
+} };
+
+// ✅ `constexpr` 180° Wall Kick Table
+constexpr std::array<std::array<std::array<int, 2>, 11>, 4> otherBlock180KickTable = { {
+	{{{{1, 0}}, {{2, 0}}, {{1, 1}}, {{2, 1}}, {{-1, 0}}, {{-2, 0}}, {{-1, 1}}, {{-2, 1}}, {{0, -1}}, {{3, 0}}, {{-3, 0}}}},
+	{{{{0, 1}}, {{0, 2}}, {{-1, 1}}, {{-1, 2}}, {{0, -1}}, {{0, -2}}, {{-1, -1}}, {{-1, -2}}, {{1, 0}}, {{0, 3}}, {{0, -3}}}},
+	{{{{-1, 0}}, {{-2, 0}}, {{-1, -1}}, {{-2, -1}}, {{1, 0}}, {{2, 0}}, {{1, -1}}, {{2, -1}}, {{0, 1}}, {{-3, 0}}, {{3, 0}}}},
+	{{{{0, 1}}, {{0, 2}}, {{1, 1}}, {{1, 2}}, {{0, -1}}, {{0, -2}}, {{1, -1}}, {{1, -2}}, {{-1, 0}}, {{0, 3}}, {{0, -3}}}}
+} };
+
+constexpr std::array<std::array<std::array<int, 2>, 11>, 4> iBlock180KickTable = { {
+	{{{{-1, 0}}, {{-2, 0}}, {{1, 0}}, {{2, 0}}, {{0, 1}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}}},
+	{{{{0, 1}}, {{0, 2}}, {{0, -1}}, {{0, -2}}, {{-1, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}}},
+	{{{{1, 0}}, {{2, 0}}, {{-1, 0}}, {{-2, 0}}, {{0, -1}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}}},
+	{{{{0, 1}}, {{0, 2}}, {{0, -1}}, {{0, -2}}, {{1, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}, {{0, 0}}}}
+} };

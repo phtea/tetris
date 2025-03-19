@@ -1,6 +1,3 @@
-// input_handler.h
-// Defines input handling logic
-
 #pragma once
 
 #include <SDL3/SDL.h>
@@ -16,6 +13,7 @@ public:
 	~InputHandler() = default;
 
 	void pollEvents();
+
 	bool isKeyPressed(SDL_Scancode key) const;
 	bool isKeyJustPressed(SDL_Scancode key);
 	Uint32 getKeyHoldTime(SDL_Scancode key) const;

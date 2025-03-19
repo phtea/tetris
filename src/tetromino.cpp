@@ -6,52 +6,11 @@
 
 #include "constants.h"
 
-const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> Tetromino::shapes = {
-	{TetrominoType::I, {{
-		{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}},  // ORIGINAL
-		{{{1, 0}, {1, 1}, {1, 2}, {1, 3}}},  // LEFT
-		{{{2, 0}, {2, 1}, {2, 2}, {2, 3}}},  // RIGHT (same as ORIGINAL)
-		{{{0, 2}, {1, 2}, {2, 2}, {3, 2}}}   // FLIPPED (same as LEFT)
-	}}},
-	{TetrominoType::J, {{
-		{{{0, 0}, {0, 1}, {1, 1}, {2, 1}}},  // ORIGINAL
-		{{{0, 2}, {1, 2}, {1, 1}, {1, 0}}},  // LEFT
-		{{{2, 0}, {1, 0}, {1, 1}, {1, 2}}},  // RIGHT
-		{{{0, 1}, {1, 1}, {2, 1}, {2, 2}}}   // FLIPPED
-	}}},
-	{TetrominoType::L, {{
-		{{{0, 1}, {1, 1}, {2, 1}, {2, 0}}},  // ORIGINAL
-		{{{0, 0}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
-		{{{1, 0}, {1, 1}, {1, 2}, {2, 2}}},  // RIGHT
-		{{{0, 2}, {0, 1}, {1, 1}, {2, 1}}}   // FLIPPED
-	}}},
-	{TetrominoType::O, {{
-		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // ORIGINAL
-		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // LEFT (same as ORIGINAL)
-		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // RIGHT (same as ORIGINAL)
-		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}}   // FLIPPED (same as ORIGINAL)
-	}}},
-	{TetrominoType::S, {{
-		{{{0, 1}, {1, 1}, {1, 0}, {2, 0}}},  // ORIGINAL
-		{{{0, 0}, {0, 1}, {1, 1}, {1, 2}}},  // LEFT
-		{{{1, 0}, {1, 1}, {2, 1}, {2, 2}}},  // RIGHT (same as ORIGINAL)
-		{{{0, 2}, {1, 2}, {1, 1}, {2, 1}}}   // FLIPPED (same as LEFT)
-	}}},
-	{TetrominoType::T, {{
-		{{{0, 1}, {1, 1}, {1, 0}, {2, 1}}},  // ORIGINAL
-		{{{0, 1}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
-		{{{1, 0}, {1, 1}, {2, 1}, {1, 2}}},  // RIGHT
-		{{{0, 1}, {1, 1}, {1, 2}, {2, 1}}}   // FLIPPED
-	}}},
-	{TetrominoType::Z, {{
-		{{{0, 0}, {1, 0}, {1, 1}, {2, 1}}},  // ORIGINAL
-		{{{0, 2}, {0, 1}, {1, 1}, {1, 0}}},  // LEFT
-		{{{1, 2}, {1, 1}, {2, 1}, {2, 0}}},  // RIGHT (same as ORIGINAL)
-		{{{0, 1}, {1, 1}, {1, 2}, {2, 2}}}   // FLIPPED (same as LEFT)
-	}}}
-};
+blocks_t Tetromino::applyRotation(int newRotation) {
+	return shapes.at(m_type)[newRotation];
+}
 
-Tetromino::Tetromino(TetrominoType type) : m_type(type), m_rotationState(RotationState::ORIGINAL) {
+Tetromino::Tetromino(TetrominoType type) : m_type(type), m_rotationState(0) {
 	if (m_type == TetrominoType::NONE) return;
 	setColor();
 	setShape(m_rotationState);
@@ -72,8 +31,8 @@ void Tetromino::setColor() {
 	m_color = colorMap.at(m_type);
 }
 
-void Tetromino::setShape(RotationState state) {
-	m_blocks = shapes.at(m_type)[static_cast<int>(state)];
+void Tetromino::setShape(int newRotation) {
+	m_blocks = shapes.at(m_type)[newRotation];
 }
 
 bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
@@ -98,27 +57,54 @@ void Tetromino::hardDrop(const grid_t& grid) {
 	}
 }
 
+std::array<std::array<int, 2>, 11> Tetromino::get180WallKicks(int newRotation, TetrominoType type) {
+	static const std::array<std::array<std::array<int, 2>, 11>, 4> otherBlock180KickTable = { {
+			// 0 >> 2
+			{{{{  1,  0 }}, {{  2,  0 }}, {{  1,  1 }}, {{  2,  1 }}, {{ -1,  0 }}, {{ -2,  0 }}, {{ -1,  1 }}, {{ -2,  1 }}, {{  0, -1 }}, {{  3,  0 }}, {{ -3,  0 }}}},
+			// 1 >> 3
+			{{{{  0,  1 }}, {{  0,  2 }}, {{ -1,  1 }}, {{ -1,  2 }}, {{  0, -1 }}, {{  0, -2 }}, {{ -1, -1 }}, {{ -1, -2 }}, {{  1,  0 }}, {{  0,  3 }}, {{  0, -3 }}}},
+			// 2 >> 0
+			{{{{ -1,  0 }}, {{ -2,  0 }}, {{ -1, -1 }}, {{ -2, -1 }}, {{  1,  0 }}, {{  2,  0 }}, {{  1, -1 }}, {{  2, -1 }}, {{  0,  1 }}, {{ -3,  0 }}, {{  3,  0 }}}},
+			// 3 >> 1
+			{{{{ 0,  1 } }, {{  0,  2 }}, {{  1,  1 }}, {{  1,  2 }}, {{  0, -1 }}, {{  0, -2 }}, {{  1, -1 }}, {{  1, -2 }}, {{ -1,  0 }}, {{  0,  3 }}, {{  0, -3 }}}}
+	  }
+	};
+
+	static const std::array<std::array<std::array<int, 2>, 11>, 4> iBlock180KickTable = { {
+			// 0 >> 2
+			{{{{ -1,  0 }}, {{ -2,  0 }}, {{  1,  0 }}, {{  2,  0 }}, {{  0,  1 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}}},
+			// 1 >> 3
+			{{{{  0,  1 }}, {{  0,  2 }}, {{  0, -1 }}, {{  0, -2 }}, {{ -1,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}}},
+			// 2 >> 0
+			{{{{  1,  0 }}, {{  2,  0 }}, {{ -1,  0 }}, {{ -2,  0 }}, {{  0, -1 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}}},
+			// 3 >> 1
+			{{{{  0,  1 }}, {{  0,  2 }}, {{  0, -1 }}, {{  0, -2 }}, {{  1,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}, {{  0,  0 }}}},
+		   } };
+
+	return (type == TetrominoType::I) ? iBlock180KickTable[newRotation] : otherBlock180KickTable[newRotation];
+}
+
 bool Tetromino::rotate(int angle, const grid_t& grid) {
 	if (m_type == TetrominoType::O) return false;  // O piece doesn't rotate
 
-	RotationState newState;
-	if (!getNewRotationState(angle, newState)) {
-		return false;
-	}
-	std::array<std::array<int, 2>, 4> rotatedBlocks = shapes.at(m_type)[static_cast<int>(newState)];
+	int newRotation = (m_rotationState + (angle == 180 ? 2 : 1)) % 4;
 
-	std::array<std::array<int, 2>, 5> kickOffsets{ {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}} };
+	auto wallKicks = (angle == 180) ? get180WallKicks(m_rotationState, m_type) : getWallKicks(m_rotationState, m_type);
 
-	for (const auto& offset : kickOffsets) {
-		std::array<std::array<int, 2>, 4> kickedBlocks = rotatedBlocks;
-		for (auto& block : kickedBlocks) {
+
+	// Loop through the wall kick offsets
+	for (const auto& offset : wallKicks) {
+		blocks_t rotatedBlocks = applyRotation(newRotation);
+
+		for (auto& block : rotatedBlocks) {
 			block[0] += offset[0];
 			block[1] += offset[1];
 		}
-		if (!collidesWithGrid(kickedBlocks, grid)) {
+
+		if (!collidesWithGrid(rotatedBlocks, grid)) {
 			// No collisions with the kick offset, update the blocks and position
-			m_rotationState = newState;
-			m_blocks = kickedBlocks;
+			m_blocks = rotatedBlocks;
+			m_rotationState = newRotation;
 			return true;
 		}
 	}
@@ -127,41 +113,9 @@ bool Tetromino::rotate(int angle, const grid_t& grid) {
 	return false;
 }
 
-// Changes rotation state based on angle
-// true on success, false on failure
-bool Tetromino::getNewRotationState(int angle, RotationState& newState) {
-	switch (angle) {
-	case 90:
-		newState = (m_rotationState == RotationState::ORIGINAL) ? RotationState::RIGHT :
-			(m_rotationState == RotationState::RIGHT) ? RotationState::FLIPPED :
-			(m_rotationState == RotationState::FLIPPED) ? RotationState::LEFT :
-			RotationState::ORIGINAL;
-		break;
-	case -90:
-		newState = (m_rotationState == RotationState::ORIGINAL) ? RotationState::LEFT :
-			(m_rotationState == RotationState::LEFT) ? RotationState::FLIPPED :
-			(m_rotationState == RotationState::FLIPPED) ? RotationState::RIGHT :
-			RotationState::ORIGINAL;
-		break;
-	case 180:
-		newState = (m_rotationState == RotationState::ORIGINAL) ? RotationState::FLIPPED :
-			(m_rotationState == RotationState::FLIPPED) ? RotationState::ORIGINAL :
-			(m_rotationState == RotationState::LEFT) ? RotationState::RIGHT :
-			RotationState::LEFT;
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
 void Tetromino::setOriginalRotationState() {
-	m_rotationState = RotationState::ORIGINAL;
+	m_rotationState = 0; // original rotation state
 	setShape(m_rotationState);
-}
-
-std::array<int, 2> Tetromino::getPivot() const {
-	return m_blocks[0];
 }
 
 void Tetromino::setPosition(int x, int y) {
@@ -212,3 +166,68 @@ bool Tetromino::collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid)
 	}
 	return false;
 }
+
+constexpr std::array<std::array<int, 2>, 11> Tetromino::getWallKicks(int newRotation, TetrominoType type) {
+	std::array<std::array<int, 2>, 11> paddedWallKicks = {}; // Initialize with zeros
+
+	const auto& selectedKicks = (type == TetrominoType::I) ? iKicks[newRotation] : otherKicks[newRotation];
+
+	for (size_t i = 0; i < selectedKicks.size(); i++) {
+		paddedWallKicks[i] = selectedKicks[i];
+	}
+
+	return paddedWallKicks;
+}
+
+constexpr std::array<std::array<int, 2>, 11> Tetromino::get180WallKicks(int newRotation, TetrominoType type) {
+	return (type == TetrominoType::I) ? iBlock180KickTable[newRotation] : otherBlock180KickTable[newRotation];
+}
+
+
+// MAYBE IT'S WRONG
+// and it should be
+// 0 - ORIGINAL, 1 - RIGHT, 2 - FLIPPED, 3 - LEFT
+const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> Tetromino::shapes = {
+	{TetrominoType::I, {{
+		{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}},  // ORIGINAL
+		{{{1, 0}, {1, 1}, {1, 2}, {1, 3}}},  // LEFT
+		{{{2, 0}, {2, 1}, {2, 2}, {2, 3}}},  // RIGHT (same as ORIGINAL)
+		{{{0, 2}, {1, 2}, {2, 2}, {3, 2}}}   // FLIPPED (same as LEFT)
+	}}},
+	{TetrominoType::J, {{
+		{{{0, 0}, {0, 1}, {1, 1}, {2, 1}}},  // ORIGINAL
+		{{{0, 2}, {1, 2}, {1, 1}, {1, 0}}},  // LEFT
+		{{{2, 0}, {1, 0}, {1, 1}, {1, 2}}},  // RIGHT
+		{{{0, 1}, {1, 1}, {2, 1}, {2, 2}}}   // FLIPPED
+	}}},
+	{TetrominoType::L, {{
+		{{{0, 1}, {1, 1}, {2, 1}, {2, 0}}},  // ORIGINAL
+		{{{0, 0}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
+		{{{1, 0}, {1, 1}, {1, 2}, {2, 2}}},  // RIGHT
+		{{{0, 2}, {0, 1}, {1, 1}, {2, 1}}}   // FLIPPED
+	}}},
+	{TetrominoType::O, {{
+		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // ORIGINAL
+		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // LEFT (same as ORIGINAL)
+		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // RIGHT (same as ORIGINAL)
+		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}}   // FLIPPED (same as ORIGINAL)
+	}}},
+	{TetrominoType::S, {{
+		{{{0, 1}, {1, 1}, {1, 0}, {2, 0}}},  // ORIGINAL
+		{{{0, 0}, {0, 1}, {1, 1}, {1, 2}}},  // LEFT
+		{{{1, 0}, {1, 1}, {2, 1}, {2, 2}}},  // RIGHT (same as ORIGINAL)
+		{{{0, 2}, {1, 2}, {1, 1}, {2, 1}}}   // FLIPPED (same as LEFT)
+	}}},
+	{TetrominoType::T, {{
+		{{{0, 1}, {1, 1}, {1, 0}, {2, 1}}},  // ORIGINAL
+		{{{0, 1}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
+		{{{1, 0}, {1, 1}, {2, 1}, {1, 2}}},  // RIGHT
+		{{{0, 1}, {1, 1}, {1, 2}, {2, 1}}}   // FLIPPED
+	}}},
+	{TetrominoType::Z, {{
+		{{{0, 0}, {1, 0}, {1, 1}, {2, 1}}},  // ORIGINAL
+		{{{0, 2}, {0, 1}, {1, 1}, {1, 0}}},  // LEFT
+		{{{1, 2}, {1, 1}, {2, 1}, {2, 0}}},  // RIGHT (same as ORIGINAL)
+		{{{0, 1}, {1, 1}, {1, 2}, {2, 2}}}   // FLIPPED (same as LEFT)
+	}}}
+};

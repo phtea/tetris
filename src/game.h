@@ -53,9 +53,9 @@ private:
 	Uint32 m_lockDelayTime = 500;  // Lock delay time (milliseconds)
 	Uint32 m_lastLockTime = 0;     // Time when tetromino last touched the grid
 
-	Uint32 m_DAS = 167;      // Delay before auto-repeat (milliseconds)
-	Uint32 m_ARR = 33;       // Auto-repeat rate (milliseconds)
-	Uint32 m_SDF; // Soft-drop factor (the factor with which soft drop changes the gravity)
+	Uint32 m_DAS = 167;     // Delay before auto-repeat (milliseconds)
+	Uint32 m_ARR = 33;      // Auto-repeat rate (milliseconds)
+	Uint32 m_SDF;			// Soft-drop factor (the factor with which soft drop changes the gravity)
 
 	Grid m_grid;
 	Renderer m_renderer;
