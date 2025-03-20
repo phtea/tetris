@@ -11,9 +11,9 @@
 typedef std::vector<std::vector<int>> grid_t;
 typedef std::array<std::array<int, 2>, 4> blocks_t;
 
-class Tetromino {
+class Mino {
 public:
-	Tetromino(TetrominoType type);
+	Mino(MinoType type);
 
 	bool canMove(Direction dir, const grid_t& grid) const;
 	void move(Direction dir);
@@ -32,7 +32,7 @@ public:
 
 	std::array<int, 2> getPosition() const { return { m_X, m_Y }; }
 	SDL_Color getColor() const { return m_color; }
-	TetrominoType getType() const { return m_type; }
+	MinoType getType() const { return m_type; }
 
 	void draw(Renderer& renderer) const;
 
@@ -42,16 +42,16 @@ private:
 
 	// rotation logic
 	void setShape(int newRotation);
-	constexpr static std::array<std::array<int, 2>, 12> getWallKicks(int newRotation, TetrominoType type);
-	constexpr static std::array<std::array<int, 2>, 12> get180WallKicks(int newRotation, TetrominoType type);
+	constexpr static std::array<std::array<int, 2>, 12> getWallKicks(int newRotation, MinoType type);
+	constexpr static std::array<std::array<int, 2>, 12> get180WallKicks(int newRotation, MinoType type);
 	blocks_t applyRotation(int newRotation);
 
 private:
-	TetrominoType m_type;
+	MinoType m_type;
 	SDL_Color m_color;
 	blocks_t m_blocks;
 	int m_rotationState = 0;
-	static const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> shapes;
+	static const std::unordered_map<MinoType, std::array<std::array<std::array<int, 2>, 4>, 4>> shapes;
 
 	int m_X, m_Y; // grid-based positions! (not pixel positions)
 
@@ -62,14 +62,14 @@ constexpr std::array<std::array<std::array<int, 2>, 5>, 4> iKicks = { {
 	{{{0, 0}, {-2, 0}, {1, 0}, {-2, -1}, {1, 2}}},
 	{{{0, 0}, {-1, 0}, {2, 0}, {-1, 2}, {2, -1}}},
 	{{{0, 0}, {1, 0}, {-2, 0}, {1, -2}, {-2, 1}}},
-	{{{0, 0}, {2, 0}, {-1, 0}, {2, 1}, {-1, -2}}}
+	{{{0, 0}, {2, 0}, {-1, 0}, {2, 1}, {-1, -2}}},
 } };
 
 constexpr std::array<std::array<std::array<int, 2>, 5>, 4> otherKicks = { {
-	{{{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}}},
-	{{{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}}},
-	{{{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}}},
-	{{{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}}}
+	{{{0, 0}, {1, 0}, {1, -1}, {0, 2}, {1, 2}}},		// 1>>0─┐
+	{{{0, 0}, {-1, 0}, {-1, 1}, {0, -2}, {-1, -2}}},	// 0>>1─┘
+	{{{0, 0}, {1, 0}, {1, 1}, {0, -2}, {1, -2}}},		// 1>>2─┐
+	{{{0, 0}, {-1, 0}, {-1, -1}, {0, 2}, {-1, 2}}},		// 2>>1─┘
 } };
 
 constexpr std::array<std::array<std::array<int, 2>, 12>, 4> otherBlock180KickTable = { {

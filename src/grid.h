@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "tetromino.h"
+#include "Mino.h"
 #include "constants.h"
 #include "renderer.h"
 
@@ -10,7 +10,7 @@ public:
 	Grid();
 
 	bool isCellOccupied(int x, int y) const;
-	void placeTetromino(const Tetromino& tetromino);
+	void placeTetromino(const Mino& tetromino);
 	bool checkFullRows();
 	void clearRow(int row);
 	void shiftDown(int row);

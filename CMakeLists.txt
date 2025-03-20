@@ -32,7 +32,7 @@ add_executable(tetris
     src/main.cpp 
     src/game.cpp src/game.h
     src/renderer.cpp src/renderer.h
-    src/tetromino.cpp src/tetromino.h
+    "src/Mino.cpp" "src/Mino.h"
     src/input_handler.cpp src/input_handler.h
     src/bag7.cpp src/bag7.h
     src/grid.cpp src/grid.h

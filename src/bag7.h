@@ -6,16 +6,16 @@
 
 #include "custom_types.h"
 
-// The Bag7 class wraps around a std::array of 7 TetrominoType elements
+// The Bag7 class wraps around a std::array of 7 MinoType elements
 class Bag7 {
 public:
-	using bag7_t = std::array<TetrominoType, 7>;
+	using bag7_t = std::array<MinoType, 7>;
 
 	Bag7();
 
 	void shuffle();
 	void print() const;
-	TetrominoType pickNext();
+	MinoType pickNext();
 
 private:
 	bag7_t m_bag;

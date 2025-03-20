@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderer.h"
-#include "tetromino.h"
+#include "Mino.h"
 #include <queue>
 
 class Hud {
@@ -10,7 +10,7 @@ public:
 	Hud() = delete;
     ~Hud();
 
-    void update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count, const Tetromino& bufferTetromino);
+    void update(Renderer& renderer, const std::queue<Mino>& tetrominos, int count, const Mino& bufferTetromino);
     void render(Renderer& renderer);
     void move(int deltaX, int deltaY);
     void setShowNext(bool show);
@@ -20,9 +20,9 @@ public:
     void drawBorders(Renderer& renderer);
 
 private:
-    void renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count);
-    void renderBufferTetromino(Renderer& renderer, const Tetromino& bufferTetromino);
-    void renderTetromino(Renderer& renderer, const std::string& label, std::queue<Tetromino> tetrominos, int count);
+    void renderNextTetromino(Renderer& renderer, std::queue<Mino> tetrominos, int count);
+    void renderBufferTetromino(Renderer& renderer, const Mino& bufferTetromino);
+    void renderTetromino(Renderer& renderer, const std::string& label, std::queue<Mino> tetrominos, int count);
 
     int m_hudX;
     int m_hudY;

@@ -1,40 +1,40 @@
-﻿#include "tetromino.h"
+﻿#include "Mino.h"
 
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <unordered_map>
 #include "constants.h"
 
-blocks_t Tetromino::applyRotation(int newRotation) {
+blocks_t Mino::applyRotation(int newRotation) {
 	return shapes.at(m_type)[newRotation];
 }
 
-Tetromino::Tetromino(TetrominoType type) : m_type(type), m_rotationState(0) {
-	if (m_type == TetrominoType::NONE) return;
+Mino::Mino(MinoType type) : m_type(type), m_rotationState(0) {
+	if (m_type == MinoType::NONE) return;
 	setColor();
 	setShape(m_rotationState);
 	setStartPosition();
 }
 
-void Tetromino::setColor() {
-	static const std::unordered_map<TetrominoType, SDL_Color> colorMap = {
-		{TetrominoType::I, {0, 255, 255, 255}},
-		{TetrominoType::J, {0, 0, 255, 255}},
-		{TetrominoType::L, {255, 165, 0, 255}},
-		{TetrominoType::O, {255, 255, 0, 255}},
-		{TetrominoType::S, {0, 255, 0, 255}},
-		{TetrominoType::T, {128, 0, 128, 255}},
-		{TetrominoType::Z, {255, 0, 0, 255}}
+void Mino::setColor() {
+	static const std::unordered_map<MinoType, SDL_Color> colorMap = {
+		{MinoType::I, {0, 255, 255, 255}},
+		{MinoType::J, {0, 0, 255, 255}},
+		{MinoType::L, {255, 165, 0, 255}},
+		{MinoType::O, {255, 255, 0, 255}},
+		{MinoType::S, {0, 255, 0, 255}},
+		{MinoType::T, {128, 0, 128, 255}},
+		{MinoType::Z, {255, 0, 0, 255}}
 	};
 	// careful! we get the color without checking if it exists
 	m_color = colorMap.at(m_type);
 }
 
-void Tetromino::setShape(int newRotation) {
+void Mino::setShape(int newRotation) {
 	m_blocks = shapes.at(m_type)[newRotation];
 }
 
-bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
+bool Mino::canMove(Direction dir, const grid_t& grid) const {
 	std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
 	for (auto& block : testBlocks) {
 		if (dir == Direction::LEFT) block[0]--;
@@ -44,13 +44,13 @@ bool Tetromino::canMove(Direction dir, const grid_t& grid) const {
 	return !collidesWithGrid(testBlocks, grid);
 }
 
-void Tetromino::move(Direction dir) {
+void Mino::move(Direction dir) {
 	if (dir == Direction::LEFT) m_X--;
 	if (dir == Direction::RIGHT) m_X++;
 	if (dir == Direction::DOWN) m_Y++;
 }
 
-void Tetromino::hardDrop(const grid_t& grid) {
+void Mino::hardDrop(const grid_t& grid) {
 	while (canMove(Direction::DOWN, grid)) {
 		move(Direction::DOWN);
 	}
@@ -58,12 +58,14 @@ void Tetromino::hardDrop(const grid_t& grid) {
 
 // try to rotate piece N times
 // returns true on success
-bool Tetromino::rotate(int rotations, const grid_t& grid) {
-	if (m_type == TetrominoType::O) return false;  // O piece doesn't rotate
+bool Mino::rotate(int rotations, const grid_t& grid) {
+	if (m_type == MinoType::O) return false;  // O piece doesn't rotate
 
 	// Calculate new rotation state
 	int newRotation = (m_rotationState + rotations + 4) % 4;
 
+	// get180 is stable!
+	// get90 is buggy
 	auto wallKicks = (rotations == 2) ? get180WallKicks(newRotation, m_type) : getWallKicks(newRotation, m_type);
 
 	// Loop through the wall kick offsets
@@ -85,22 +87,22 @@ bool Tetromino::rotate(int rotations, const grid_t& grid) {
 	return false;
 }
 
-void Tetromino::setOriginalRotationState() {
+void Mino::setOriginalRotationState() {
 	m_rotationState = 0; // original rotation state
 	setShape(m_rotationState);
 }
 
-void Tetromino::setPosition(int x, int y) {
+void Mino::setPosition(int x, int y) {
 	m_X = x;
 	m_Y = y;
 }
 
-void Tetromino::setStartPosition() {
+void Mino::setStartPosition() {
 	m_X = GRID_WIDTH / 2 - 2;
 	m_Y = 0;
 }
 
-std::array<std::array<int, 2>, 4> Tetromino::getRelativeBlocks() const {
+std::array<std::array<int, 2>, 4> Mino::getRelativeBlocks() const {
 	std::array<std::array<int, 2>, 4> blockPositions;
 	for (int i = 0; i < 4; i++) {
 		blockPositions[i] = { m_X + m_blocks[i][0],
@@ -109,17 +111,17 @@ std::array<std::array<int, 2>, 4> Tetromino::getRelativeBlocks() const {
 	return blockPositions;
 }
 
-blocks_t Tetromino::getBlocks() const {
+blocks_t Mino::getBlocks() const {
 	return m_blocks;
 }
 
-void Tetromino::draw(Renderer& renderer) const {
+void Mino::draw(Renderer& renderer) const {
 	for (const auto& block : getRelativeBlocks()) {
 		renderer.drawBlock(block[0], block[1], m_color);
 	}
 }
 
-bool Tetromino::collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const {
+bool Mino::collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) const {
 	for (const auto& block : testBlocks) {
 		int x = block[0] + m_X;
 		int y = block[1] + m_Y;
@@ -131,10 +133,11 @@ bool Tetromino::collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid)
 	return false;
 }
 
-constexpr std::array<std::array<int, 2>, 12> Tetromino::getWallKicks(int newRotation, TetrominoType type) {
+// TODO: FIX IT, ITS WRONG RIGHT NOW!
+constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int newRotation, MinoType type) {
 	std::array<std::array<int, 2>, 12> paddedWallKicks = {}; // Initialize with zeros
 
-	const auto& selectedKicks = (type == TetrominoType::I) ? iKicks[newRotation] : otherKicks[newRotation];
+	const auto& selectedKicks = (type == MinoType::I) ? iKicks[newRotation] : otherKicks[newRotation];
 
 	for (size_t i = 0; i < selectedKicks.size(); i++) {
 		paddedWallKicks[i] = selectedKicks[i];
@@ -143,51 +146,51 @@ constexpr std::array<std::array<int, 2>, 12> Tetromino::getWallKicks(int newRota
 	return paddedWallKicks;
 }
 
-constexpr std::array<std::array<int, 2>, 12> Tetromino::get180WallKicks(int newRotation, TetrominoType type) {
-	return (type == TetrominoType::I) ? iBlock180KickTable[newRotation] : otherBlock180KickTable[newRotation];
+constexpr std::array<std::array<int, 2>, 12> Mino::get180WallKicks(int newRotation, MinoType type) {
+	return (type == MinoType::I) ? iBlock180KickTable[newRotation] : otherBlock180KickTable[newRotation];
 }
 
 // MAYBE IT'S WRONG
 // and it should be
 // 0 - ORIGINAL, 1 - RIGHT, 2 - FLIPPED, 3 - LEFT
-const std::unordered_map<TetrominoType, std::array<std::array<std::array<int, 2>, 4>, 4>> Tetromino::shapes = {
-	{TetrominoType::I, {{
+const std::unordered_map<MinoType, std::array<std::array<std::array<int, 2>, 4>, 4>> Mino::shapes = {
+	{MinoType::I, {{
 		{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}},  // ORIGINAL
 		{{{2, 0}, {2, 1}, {2, 2}, {2, 3}}},  // RIGHT (same as ORIGINAL)
 		{{{0, 2}, {1, 2}, {2, 2}, {3, 2}}},  // FLIPPED (same as LEFT)
 		{{{1, 0}, {1, 1}, {1, 2}, {1, 3}}},  // LEFT
 	}}},
-	{TetrominoType::J, {{
+	{MinoType::J, {{
 		{{{0, 0}, {0, 1}, {1, 1}, {2, 1}}},  // ORIGINAL
 		{{{2, 0}, {1, 0}, {1, 1}, {1, 2}}},  // RIGHT
 		{{{0, 1}, {1, 1}, {2, 1}, {2, 2}}},  // FLIPPED
 		{{{0, 2}, {1, 2}, {1, 1}, {1, 0}}},  // LEFT
 	}}},
-	{TetrominoType::L, {{
+	{MinoType::L, {{
 		{{{0, 1}, {1, 1}, {2, 1}, {2, 0}}},  // ORIGINAL
 		{{{1, 0}, {1, 1}, {1, 2}, {2, 2}}},  // RIGHT
 		{{{0, 2}, {0, 1}, {1, 1}, {2, 1}}},  // FLIPPED
 		{{{0, 0}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
 	}}},
-	{TetrominoType::O, {{
+	{MinoType::O, {{
 		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // ORIGINAL
 		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // RIGHT (same as ORIGINAL)
 		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // FLIPPED (same as ORIGINAL)
 		{{{1, 1}, {1, 0}, {2, 0}, {2, 1}}},  // LEFT (same as ORIGINAL)
 	}}},
-	{TetrominoType::S, {{
+	{MinoType::S, {{
 		{{{0, 1}, {1, 1}, {1, 0}, {2, 0}}},  // ORIGINAL
 		{{{1, 0}, {1, 1}, {2, 1}, {2, 2}}},  // RIGHT (same as ORIGINAL)
 		{{{0, 2}, {1, 2}, {1, 1}, {2, 1}}},  // FLIPPED (same as LEFT)
 		{{{0, 0}, {0, 1}, {1, 1}, {1, 2}}},  // LEFT
 	}}},
-	{TetrominoType::T, {{
+	{MinoType::T, {{
 		{{{0, 1}, {1, 1}, {1, 0}, {2, 1}}},  // ORIGINAL
 		{{{1, 0}, {1, 1}, {2, 1}, {1, 2}}},  // RIGHT
 		{{{0, 1}, {1, 1}, {1, 2}, {2, 1}}},  // FLIPPED
 		{{{0, 1}, {1, 0}, {1, 1}, {1, 2}}},  // LEFT
 	}}},
-	{TetrominoType::Z, {{
+	{MinoType::Z, {{
 		{{{0, 0}, {1, 0}, {1, 1}, {2, 1}}},  // ORIGINAL
 		{{{1, 2}, {1, 1}, {2, 1}, {2, 0}}},  // RIGHT (same as ORIGINAL)
 		{{{0, 1}, {1, 1}, {1, 2}, {2, 2}}},  // FLIPPED (same as LEFT)

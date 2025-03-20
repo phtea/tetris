@@ -14,7 +14,7 @@ Hud::Hud(int hudX, int hudY, float scale) :
 
 Hud::~Hud() {}
 
-void Hud::update(Renderer& renderer, const std::queue<Tetromino>& tetrominos, int count, const Tetromino& bufferTetromino) {
+void Hud::update(Renderer& renderer, const std::queue<Mino>& tetrominos, int count, const Mino& bufferTetromino) {
 	m_elementSpacing = renderer.getBlockSize();
 	m_currentElementPos = 0; // Reset the current element position
 	if (m_showNext) {
@@ -66,19 +66,19 @@ void Hud::drawBorders(Renderer& renderer) {
 	renderer.drawLine(hudX, hudY + hudHeight, hudX + hudWidth, hudY + hudHeight); // Bottom border
 }
 
-void Hud::renderNextTetromino(Renderer& renderer, std::queue<Tetromino> tetrominos, int count) {
+void Hud::renderNextTetromino(Renderer& renderer, std::queue<Mino> tetrominos, int count) {
 	renderTetromino(renderer, "Next:", tetrominos, count);
 }
 
-void Hud::renderBufferTetromino(Renderer& renderer, const Tetromino& bufferTetromino) {
-	std::queue<Tetromino> bufferQueue;
-	if (bufferTetromino.getType() != TetrominoType::NONE) {
+void Hud::renderBufferTetromino(Renderer& renderer, const Mino& bufferTetromino) {
+	std::queue<Mino> bufferQueue;
+	if (bufferTetromino.getType() != MinoType::NONE) {
 		bufferQueue.push(bufferTetromino);
 	}
 	renderTetromino(renderer, "Hold:", bufferQueue, 1);
 }
 
-void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::queue<Tetromino> tetrominos, int count) {
+void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::queue<Mino> tetrominos, int count) {
 	int labelX = renderer.calculateHudX(m_hudX);
 	int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
 	renderer.drawTextAtPixel(label, labelX, labelY);
@@ -88,7 +88,7 @@ void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::que
 	int blockSize = renderer.getBlockSize() * m_hudScale;
 
 	for (size_t i = 0; i < count && !tetrominos.empty(); ++i) {
-		Tetromino t = tetrominos.front();
+		Mino t = tetrominos.front();
 		tetrominos.pop();
 
 		SDL_Color blockColor = t.getColor();

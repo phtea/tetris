@@ -9,13 +9,13 @@
 #include "grid.h"
 #include "input_handler.h"
 #include "renderer.h"
-#include "tetromino.h"
+#include "Mino.h"
 #include "hud.h"
 #include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 
-typedef std::array<TetrominoType, 7> bag7_t;
+typedef std::array<MinoType, 7> bag7_t;
 
 class Game {
 public:
@@ -37,7 +37,7 @@ private:
 	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
 	void handleInput();
 
-	Tetromino pickRandomTetromino();
+	Mino pickRandomTetromino();
 	void setNextTetrominosSize(int size);
 
 	//Hud m_hud;
@@ -59,14 +59,14 @@ private:
 
 	Grid m_grid;
 	Renderer m_renderer;
-	Tetromino m_tetromino;
+	Mino m_Mino;
 	InputHandler m_inputHandler;
 
 	// queue of future tetriminos
-	std::queue<Tetromino> m_nextTetrominos; // Queue to store upcoming pieces
+	std::queue<Mino> m_nextTetrominos; // Queue to store upcoming pieces
 	int m_nextTetrominosSize;
 
 	// swap buffer
-	Tetromino m_bufferTetromino;
+	Mino m_bufferTetromino;
 	bool m_canSwap;
 };

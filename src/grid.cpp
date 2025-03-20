@@ -15,7 +15,7 @@ bool Grid::isCellOccupied(int x, int y) const {
 	return m_grid[y][x] != 0;
 }
 
-void Grid::placeTetromino(const Tetromino& tetromino) {
+void Grid::placeTetromino(const Mino& tetromino) {
 	for (const auto& cell : tetromino.getRelativeBlocks()) {
 		int x = cell[0];
 		int y = cell[1];
