@@ -4,6 +4,7 @@
 #include <SDL3/SDL_render.h>
 #include <unordered_map>
 #include "constants.h"
+#include <cassert>
 
 blocks_t Mino::applyRotation(int newRotation) {
 	return shapes.at(m_type)[newRotation];
@@ -66,7 +67,7 @@ bool Mino::rotate(int rotations, const grid_t& grid) {
 
 	// get180 is stable!
 	// get90 is buggy
-	auto wallKicks = (rotations == 2) ? get180WallKicks(newRotation, m_type) : getWallKicks(newRotation, m_type);
+	auto wallKicks = (rotations == 2) ? get180WallKicks(m_rotationState, newRotation, m_type) : getWallKicks(m_rotationState, newRotation, m_type);
 
 	// Loop through the wall kick offsets
 	for (const auto& offset : wallKicks) {
@@ -74,10 +75,11 @@ bool Mino::rotate(int rotations, const grid_t& grid) {
 
 		for (auto& block : rotatedBlocks) {
 			block[0] += offset[0];
-			block[1] += offset[1];
+			block[1] -= offset[1]; // using minus to invert y to our grid (0 is top!)
 		}
 
 		if (!collidesWithGrid(rotatedBlocks, grid)) {
+			std::cout << "used offset: " << offset[0] << " " << offset[1] << std::endl;
 			m_blocks = rotatedBlocks;
 			m_rotationState = newRotation;
 			return true;
@@ -102,17 +104,12 @@ void Mino::setStartPosition() {
 	m_Y = 0;
 }
 
-std::array<std::array<int, 2>, 4> Mino::getRelativeBlocks() const {
-	std::array<std::array<int, 2>, 4> blockPositions;
-	for (int i = 0; i < 4; i++) {
-		blockPositions[i] = { m_X + m_blocks[i][0],
-							 m_Y + m_blocks[i][1] };
+blocks_t Mino::getRelativeBlocks() const {
+	blocks_t relativeBlocks;
+	for (size_t i = 0; i < 4; i++) {
+		relativeBlocks[i] = { m_X + m_blocks[i][0], m_Y + m_blocks[i][1] };
 	}
-	return blockPositions;
-}
-
-blocks_t Mino::getBlocks() const {
-	return m_blocks;
+	return relativeBlocks;
 }
 
 void Mino::draw(Renderer& renderer) const {
@@ -133,11 +130,21 @@ bool Mino::collidesWithGrid(const blocks_t& testBlocks, const grid_t& grid) cons
 	return false;
 }
 
-// TODO: FIX IT, ITS WRONG RIGHT NOW!
-constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int newRotation, MinoType type) {
+constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int from, int to, MinoType type) {
 	std::array<std::array<int, 2>, 12> paddedWallKicks = {}; // Initialize with zeros
 
-	const auto& selectedKicks = (type == MinoType::I) ? iKicks[newRotation] : otherKicks[newRotation];
+	int index = 0;
+	// Compute index based on (from, to) rotation pair
+	if (from == 0 && to == 1) { index = 0; }
+	if (from == 1 && to == 0) { index = 1; }
+	if (from == 1 && to == 2) { index = 2; }
+	if (from == 2 && to == 1) { index = 3; }
+	if (from == 2 && to == 3) { index = 4; }
+	if (from == 3 && to == 2) { index = 5; }
+	if (from == 3 && to == 0) { index = 6; }
+	if (from == 0 && to == 3) { index = 7; }
+
+	const auto& selectedKicks = (type == MinoType::I) ? iKicks[index] : otherKicks[index];
 
 	for (size_t i = 0; i < selectedKicks.size(); i++) {
 		paddedWallKicks[i] = selectedKicks[i];
@@ -146,7 +153,7 @@ constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int newRotation,
 	return paddedWallKicks;
 }
 
-constexpr std::array<std::array<int, 2>, 12> Mino::get180WallKicks(int newRotation, MinoType type) {
+constexpr std::array<std::array<int, 2>, 12> Mino::get180WallKicks(int currentRotation, int newRotation, MinoType type) {
 	return (type == MinoType::I) ? iBlock180KickTable[newRotation] : otherBlock180KickTable[newRotation];
 }
 

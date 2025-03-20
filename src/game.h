@@ -19,7 +19,7 @@ typedef std::array<MinoType, 7> bag7_t;
 
 class Game {
 public:
-	Game();
+	Game(int screenWidth, int screenHeight);
 	~Game() = default;
 	void run();
 

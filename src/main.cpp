@@ -3,6 +3,7 @@
 #include "game.h"
 
 int main() {
-	Game game;
+	// TODO: add GameBuilder
+	Game game(500, 500);
 	game.run();
 }

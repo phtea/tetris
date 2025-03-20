@@ -17,10 +17,10 @@
 #include "Mino.h"
 #include "HudBuilder.h"
 
-Game::Game()
+Game::Game(int screenWidth, int screenHeight)
 	: m_running(true),
 	m_lastFallTime(SDL_GetTicks()),
-	m_renderer(GAME_TITLE, 1920, 1080),
+	m_renderer(GAME_TITLE, screenWidth, screenHeight),
 	m_Mino(MinoType::NONE),
 	m_nextTetrominosSize(1),
 	m_canSwap(true),
