@@ -12,7 +12,7 @@ public:
 	InputHandler() = default;
 	~InputHandler() = default;
 
-	void pollEvents();
+	void pollEvents(SDL_Event& event);
 
 	bool isKeyPressed(SDL_Scancode key) const;
 	bool isKeyJustPressed(SDL_Scancode key);

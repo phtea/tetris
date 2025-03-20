@@ -8,8 +8,7 @@
 
 #include <iostream>
 
-void InputHandler::pollEvents() {
-	SDL_Event event;
+void InputHandler::pollEvents(SDL_Event& event) {
 	Uint64 now = SDL_GetTicks();
 
 	while (SDL_PollEvent(&event)) {

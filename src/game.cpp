@@ -78,8 +78,9 @@ void Game::createNewMino() {
 Mino Game::pickRandomMino() { return Mino(m_bag7.pickNext()); }
 
 void Game::run() {
+	SDL_Event event;
 	while (m_running) {
-		m_inputHandler.pollEvents();
+		m_inputHandler.pollEvents(event);
 
 		if (m_inputHandler.shouldQuit()) {
 			stop();
@@ -157,6 +158,7 @@ void Game::update() {
 }
 
 void Game::render() {
+	m_renderer.update();
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_Mino.draw(m_renderer);

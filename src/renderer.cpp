@@ -16,7 +16,7 @@ Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
 		return;
 	}
 
-	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, 0, &m_window, &m_renderer)) {
+	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer)) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateWindowAndRenderer Error: %s\n", SDL_GetError());
 		return;
 	}
@@ -100,6 +100,15 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 
 	// Clean up
 	SDL_DestroyTexture(textTexture);
+}
+
+void Renderer::update() {
+	int width(0);
+	int height(0);
+	SDL_GetWindowSize(m_window, &width, &height);
+	if (m_screenWidth != width || m_screenHeight != height) {
+		setResolution(width, height);
+	}
 }
 
 void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) {

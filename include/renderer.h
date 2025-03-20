@@ -23,6 +23,8 @@ public:
 	void drawBlock(int x, int y, const SDL_Color& color);
 	void drawText(const std::string& text, int x, int y);
 
+	void update();
+
 	// New methods for drawing at pixel positions
 	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color);
 	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color, int blockSize);
