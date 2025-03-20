@@ -34,7 +34,7 @@ link_directories(${SDL3_DIR}/lib/x64 ${SDL3_IMAGE_DIR}/lib/x64 ${SDL3_TTF_DIR}/l
 # Define MY_SOURCES to be a list of all source files for the project
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-add_executable(tetris "${MY_SOURCES}")
+add_executable(tetris "${MY_SOURCES}" "include/GameBuilder.h")
 
 # Link prebuilt SDL3 and SDL3_image
 target_link_libraries(tetris SDL3 SDL3_image SDL3_ttf)

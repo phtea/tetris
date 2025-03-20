@@ -26,8 +26,10 @@ void Grid::placeTetromino(const Mino& tetromino) {
 	}
 }
 
-bool Grid::checkFullRows() {
-	bool cleared = false;
+// clears rows
+// returns how many rows were cleared
+int Grid::checkFullRows() {
+	int cleared = 0;
 	for (int y = 0; y < m_height; ++y) {
 		bool fullRow = true;
 		for (int x = 0; x < m_width; ++x) {
@@ -38,7 +40,7 @@ bool Grid::checkFullRows() {
 		}
 		if (fullRow) {
 			clearRow(y);
-			cleared = true;
+			cleared++;
 		}
 	}
 	return cleared;

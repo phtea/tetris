@@ -20,13 +20,21 @@ typedef std::array<MinoType, 7> bag7_t;
 class Game {
 public:
 	Game(int screenWidth, int screenHeight);
+	Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das, Uint32 arr, Uint32 sdf, int nextMinosSize);
 	~Game() = default;
 	void run();
 
+	void setTimeToFall(Uint32 timeToFall);
+	void setLockDelayTime(Uint32 lockDelayTime);
+	void setDAS(Uint32 das);
+	void setARR(Uint32 arr);
+	void setSDF(Uint32 sdf);
+	void setNextMinosSize(int size);
+
 private:
 	void update();
-	void createNewTetromino();
-	void placeTetrominoOnGrid();
+	void createNewMino();
+	void placeMinoOnGrid();
 	void render();
 	bool isGameOver();
 	void stop() { m_running = false; }
@@ -37,8 +45,7 @@ private:
 	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
 	void handleInput();
 
-	Mino pickRandomTetromino();
-	void setNextTetrominosSize(int size);
+	Mino pickRandomMino();
 
 	//Hud m_hud;
 	std::unique_ptr<Hud> m_hud;
@@ -64,9 +71,9 @@ private:
 
 	// queue of future tetriminos
 	std::queue<Mino> m_nextTetrominos; // Queue to store upcoming pieces
-	int m_nextTetrominosSize;
+	int m_nextMinosSize;
 
 	// swap buffer
-	Mino m_bufferTetromino;
+	Mino m_bufferMino;
 	bool m_canSwap;
 };

@@ -11,7 +11,7 @@ public:
 
 	bool isCellOccupied(int x, int y) const;
 	void placeTetromino(const Mino& tetromino);
-	bool checkFullRows();
+	int checkFullRows();
 	void clearRow(int row);
 	void shiftDown(int row);
 	void reset();

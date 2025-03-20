@@ -22,27 +22,45 @@ Game::Game(int screenWidth, int screenHeight)
 	m_lastFallTime(SDL_GetTicks()),
 	m_renderer(GAME_TITLE, screenWidth, screenHeight),
 	m_Mino(MinoType::NONE),
-	m_nextTetrominosSize(1),
+	m_nextMinosSize(1),
 	m_canSwap(true),
-	m_bufferTetromino(MinoType::NONE),
+	m_bufferMino(MinoType::NONE),
 	m_SDF(100) {
 	HudBuilder hudBuilder;
 	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
-	createNewTetromino();
+	createNewMino();
 }
 
-void Game::placeTetrominoOnGrid() {
+Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das, Uint32 arr, Uint32 sdf, int nextMinosSize)
+	: m_running(true),
+	m_lastFallTime(SDL_GetTicks()),
+	m_timeToFall(timeToFall),
+	m_lockDelayTime(lockDelayTime),
+	m_DAS(das),
+	m_ARR(arr),
+	m_SDF(sdf),
+	m_renderer(GAME_TITLE, screenWidth, screenHeight),
+	m_Mino(MinoType::NONE),
+	m_nextMinosSize(nextMinosSize),
+	m_canSwap(true),
+	m_bufferMino(MinoType::NONE) {
+	HudBuilder hudBuilder;
+	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
+	createNewMino();
+}
+
+void Game::placeMinoOnGrid() {
 	m_grid.placeTetromino(m_Mino);
 	m_grid.checkFullRows();
-	createNewTetromino();
+	createNewMino();
 	m_canSwap = true;  // Allow swapping again
 }
 
-void Game::createNewTetromino() {
+void Game::createNewMino() {
 	if (m_nextTetrominos.empty()) {
 		// Pre-fill the queue with a few upcoming tetrominoes
-		for (int i = 0; i < m_nextTetrominosSize; ++i) {
-			m_nextTetrominos.push(pickRandomTetromino());
+		for (int i = 0; i < m_nextMinosSize; ++i) {
+			m_nextTetrominos.push(pickRandomMino());
 		}
 	}
 
@@ -51,16 +69,13 @@ void Game::createNewTetromino() {
 	m_nextTetrominos.pop();
 
 	// Add a new random tetromino to the queue to maintain the flow
-	m_nextTetrominos.push(pickRandomTetromino());
+	m_nextTetrominos.push(pickRandomMino());
 
 	m_Mino.setStartPosition();
 }
 
-void Game::setNextTetrominosSize(int size) {
-	m_nextTetrominosSize = size;
-}
 
-Mino Game::pickRandomTetromino() { return Mino(m_bag7.pickNext()); }
+Mino Game::pickRandomMino() { return Mino(m_bag7.pickNext()); }
 
 void Game::run() {
 	while (m_running) {
@@ -79,6 +94,18 @@ void Game::run() {
 		SDL_Delay(1000 / FPS);
 	}
 }
+
+void Game::setTimeToFall(Uint32 timeToFall) { m_timeToFall = timeToFall; }
+
+void Game::setLockDelayTime(Uint32 lockDelayTime) { m_lockDelayTime = lockDelayTime; }
+
+void Game::setDAS(Uint32 das) { m_DAS = das;  }
+
+void Game::setARR(Uint32 arr) {	m_ARR = arr; }
+
+void Game::setSDF(Uint32 sdf) { m_SDF = sdf; }
+
+void Game::setNextMinosSize(int size) {	m_nextMinosSize = size; }
 
 void Game::update() {
 
@@ -115,7 +142,7 @@ void Game::update() {
 		return;  // Prevents locking in debug mode
 #endif
 		if (now - m_lastLockTime >= m_lockDelayTime) {
-			placeTetrominoOnGrid();
+			placeMinoOnGrid();
 
 			if (isGameOver()) {
 				stop();
@@ -133,7 +160,7 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_Mino.draw(m_renderer);
-	m_hud->update(m_renderer, m_nextTetrominos, m_nextTetrominosSize, m_bufferTetromino);
+	m_hud->update(m_renderer, m_nextTetrominos, m_nextMinosSize, m_bufferMino);
 
 	m_renderer.present();
 }
@@ -166,7 +193,7 @@ void Game::handleInput() {
 
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_SPACE)) {
 		m_Mino.hardDrop(m_grid.getGrid());
-		placeTetrominoOnGrid();
+		placeMinoOnGrid();
 	}
 
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_LSHIFT) || m_inputHandler.isKeyJustPressed(SDL_SCANCODE_RSHIFT)) {
@@ -189,17 +216,17 @@ void Game::handleInput() {
 void Game::swapTetromino() {
 	if (!m_canSwap) return;
 	// TODO: bring back to original rotate state
-	if (m_bufferTetromino.getType() == MinoType::NONE) {
+	if (m_bufferMino.getType() == MinoType::NONE) {
 		// Buffer is empty, add current tetromino to buffer and get next one
-		m_bufferTetromino = m_Mino;
-		createNewTetromino();
+		m_bufferMino = m_Mino;
+		createNewMino();
 	}
 	else {
 		// Swap current tetromino with the one in the buffer
-		std::swap(m_Mino, m_bufferTetromino);
+		std::swap(m_Mino, m_bufferMino);
 		m_Mino.setStartPosition();
 	}
-	m_bufferTetromino.setOriginalRotationState();
+	m_bufferMino.setOriginalRotationState();
 	m_canSwap = false;  // Prevent swapping again until the next tetromino is placed
 }
 
