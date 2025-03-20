@@ -6,7 +6,7 @@
 
 class Hud {
 public:
-    Hud(int hudX, int hudY);
+    Hud(int hudX, int hudY, float scale);
 	Hud() = delete;
     ~Hud();
 

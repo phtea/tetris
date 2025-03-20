@@ -27,7 +27,7 @@ Game::Game()
 	m_bufferTetromino(TetrominoType::NONE),
 	m_SDF(100) {
 	HudBuilder hudBuilder;
-	m_hud = std::make_unique<Hud>(hudBuilder.setHudPosition(1300, 200).build());
+	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
 	createNewTetromino();
 }
 
@@ -142,9 +142,6 @@ bool Game::isGameOver() {
 	return false;
 }
 
-void Game::stop() { m_running = false; }
-
-
 void Game::handleInput() {
 	Uint32 now = SDL_GetTicks();
 
@@ -168,9 +165,9 @@ void Game::handleInput() {
 		swapTetromino();
 	}
 
-	handleRotation(-90, { SDL_SCANCODE_Z, SDL_SCANCODE_UP });
-	handleRotation(90, { SDL_SCANCODE_X });
-	handleRotation(180, { SDL_SCANCODE_C });
+	handleRotation(-1, { SDL_SCANCODE_Z, SDL_SCANCODE_UP });
+	handleRotation(1, { SDL_SCANCODE_X });
+	handleRotation(2, { SDL_SCANCODE_C });
 
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_1)) {
 		m_renderer.setResolution(1920, 1080);
@@ -211,10 +208,11 @@ void Game::handleMovement(Direction dir, SDL_Scancode key) {
 	}
 }
 
-void Game::handleRotation(int angle, std::initializer_list<SDL_Scancode> keys) {
+// Rotations is the number of rotations of piece
+void Game::handleRotation(int rotations, std::initializer_list<SDL_Scancode> keys) {
 	for (SDL_Scancode key : keys) {
 		if (m_inputHandler.isKeyJustPressed(key)) {
-			m_tetromino.rotate(angle, m_grid.getGrid());
+			m_tetromino.rotate(rotations, m_grid.getGrid());
 			return;
 		}
 	}

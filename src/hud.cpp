@@ -1,11 +1,11 @@
 #include "hud.h"
 #include <iostream>
 
-Hud::Hud(int hudX, int hudY) :
+Hud::Hud(int hudX, int hudY, float scale) :
 	m_hudX(hudX),
 	m_hudY(hudY),
 	m_elementSpacing(50),
-	m_hudScale(0.5f),
+	m_hudScale(scale),
 	m_showHold(true),
 	m_showNext(true),
 	m_currentElementPos(0),

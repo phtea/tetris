@@ -29,7 +29,7 @@ private:
 	void placeTetrominoOnGrid();
 	void render();
 	bool isGameOver();
-	void stop();
+	void stop() { m_running = false; }
 
 	void swapTetromino();
 
