@@ -3,7 +3,6 @@
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <unordered_map>
-
 #include "constants.h"
 
 blocks_t Tetromino::applyRotation(int newRotation) {

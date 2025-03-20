@@ -1,5 +1,5 @@
-// game.cpp
-// Implements the main game loop, state transitions, and game logic.
+#define DEBUG_NO_FALL
+#define DEBUG_NO_LOCK
 
 #include "game.h"
 
@@ -86,7 +86,12 @@ void Game::update() {
 
 	// Handle the fall behavior (move tetromino down based on m_timeToFall)
 	bool canFall = now - m_lastFallTime >= m_timeToFall;
-	if (canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
+	bool toFall = true;
+#ifdef DEBUG_NO_FALL
+	toFall = false;
+#endif // DEBUG
+
+	if (toFall && canFall && m_tetromino.canMove(Direction::DOWN, m_grid.getGrid())) {
 		m_tetromino.move(Direction::DOWN);
 		m_lastFallTime = now;
 		return;
@@ -106,6 +111,9 @@ void Game::update() {
 		m_touchState = TouchState::KeepsTouching;
 		break;
 	case TouchState::KeepsTouching:
+#ifdef DEBUG_NO_LOCK
+		return;  // Prevents locking in debug mode
+#endif
 		if (now - m_lastLockTime >= m_lockDelayTime) {
 			placeTetrominoOnGrid();
 
