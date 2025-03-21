@@ -1,7 +1,7 @@
 // input_handler.cpp
 // Implements input handling logic
 
-#include "input_handler.h"
+#include "InputHandler.h"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keyboard.h>

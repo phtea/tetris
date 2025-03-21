@@ -787,7 +787,7 @@ extern SDL_DECLSPEC int SDLCALL TTF_GetFontLineSkip(const TTF_Font *font);
  *
  * Newly-opened fonts default to allowing kerning. This is generally a good
  * policy unless you have a strong reason to disable it, as it tends to
- * produce better rendering (with kerning disabled, some fonts might render
+ * produce better rendering (with kerning disabled, some fonts might draw
  * the word `kerning` as something that looks like `keming` for example).
  *
  * This updates any TTF_Text objects using this font.
@@ -1169,7 +1169,7 @@ extern SDL_DECLSPEC bool SDLCALL TTF_GetGlyphKerning(TTF_Font *font, Uint32 prev
  * Calculate the dimensions of a rendered string of UTF-8 text.
  *
  * This will report the width and height, in pixels, of the space that the
- * specified string will take to fully render.
+ * specified string will take to fully draw.
  *
  * \param font the font to query.
  * \param text text to calculate, in UTF-8 encoding.
@@ -1191,7 +1191,7 @@ extern SDL_DECLSPEC bool SDLCALL TTF_GetStringSize(TTF_Font *font, const char *t
  * Calculate the dimensions of a rendered string of UTF-8 text.
  *
  * This will report the width and height, in pixels, of the space that the
- * specified string will take to fully render.
+ * specified string will take to fully draw.
  *
  * Text is wrapped to multiple lines on line endings and on word boundaries if
  * it extends beyond `wrap_width` in pixels.
@@ -1221,7 +1221,7 @@ extern SDL_DECLSPEC bool SDLCALL TTF_GetStringSizeWrapped(TTF_Font *font, const 
  * This reports the number of characters that can be rendered before reaching
  * `max_width`.
  *
- * This does not need to render the string to do this calculation.
+ * This does not need to draw the string to do this calculation.
  *
  * \param font the font to query.
  * \param text text to calculate, in UTF-8 encoding.
@@ -1257,11 +1257,11 @@ extern SDL_DECLSPEC bool SDLCALL TTF_MeasureString(TTF_Font *font, const char *t
  *
  * This will not wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Shaded,
+ * You can draw at other quality levels with TTF_RenderText_Shaded,
  * TTF_RenderText_Blended, and TTF_RenderText_LCD.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1292,11 +1292,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid(TTF_Font *font, c
  *
  * If wrapLength is 0, this function will only wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Shaded_Wrapped,
+ * You can draw at other quality levels with TTF_RenderText_Shaded_Wrapped,
  * TTF_RenderText_Blended_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1326,11 +1326,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid_Wrapped(TTF_Font 
  * The glyph is rendered without any padding or centering in the X direction,
  * and aligned normally in the Y direction.
  *
- * You can render at other quality levels with TTF_RenderGlyph_Shaded,
+ * You can draw at other quality levels with TTF_RenderGlyph_Shaded,
  * TTF_RenderGlyph_Blended, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to render with.
- * \param ch the character to render.
+ * \param font the font to draw with.
+ * \param ch the character to draw.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1360,11 +1360,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Solid(TTF_Font *font, 
  *
  * This will not wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid,
+ * You can draw at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Blended, and TTF_RenderText_LCD.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1396,11 +1396,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded(TTF_Font *font, 
  *
  * If wrap_width is 0, this function will only wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can draw at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Blended_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1432,11 +1432,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded_Wrapped(TTF_Font
  * The glyph is rendered without any padding or centering in the X direction,
  * and aligned normally in the Y direction.
  *
- * You can render at other quality levels with TTF_RenderGlyph_Solid,
+ * You can draw at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Blended, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to render with.
- * \param ch the codepoint to render.
+ * \param font the font to draw with.
+ * \param ch the codepoint to draw.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
@@ -1466,11 +1466,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Shaded(TTF_Font *font,
  *
  * This will not wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid,
+ * You can draw at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Shaded, and TTF_RenderText_LCD.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1500,11 +1500,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended(TTF_Font *font,
  *
  * If wrap_width is 0, this function will only wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can draw at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Shaded_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1534,11 +1534,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended_Wrapped(TTF_Fon
  * The glyph is rendered without any padding or centering in the X direction,
  * and aligned normally in the Y direction.
  *
- * You can render at other quality levels with TTF_RenderGlyph_Solid,
+ * You can draw at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Shaded, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to render with.
- * \param ch the codepoint to render.
+ * \param font the font to draw with.
+ * \param ch the codepoint to draw.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1556,7 +1556,7 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Blended(TTF_Font *font
 /**
  * Render UTF-8 text at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and render
+ * This function will allocate a new 32-bit, ARGB surface, and draw
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1567,11 +1567,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Blended(TTF_Font *font
  *
  * This will not wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid,
+ * You can draw at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Shaded, and TTF_RenderText_Blended.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1594,7 +1594,7 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD(TTF_Font *font, con
  * Render word-wrapped UTF-8 text at LCD subpixel quality to a new ARGB
  * surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and render
+ * This function will allocate a new 32-bit, ARGB surface, and draw
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1603,11 +1603,11 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD(TTF_Font *font, con
  *
  * If wrap_width is 0, this function will only wrap on newline characters.
  *
- * You can render at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can draw at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Shaded_Wrapped, and TTF_RenderText_Blended_Wrapped.
  *
- * \param font the font to render with.
- * \param text text to render, in UTF-8 encoding.
+ * \param font the font to draw with.
+ * \param text text to draw, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
  * \param fg the foreground color for the text.
@@ -1632,18 +1632,18 @@ extern SDL_DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD_Wrapped(TTF_Font *f
  * Render a single UNICODE codepoint at LCD subpixel quality to a new ARGB
  * surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and render
+ * This function will allocate a new 32-bit, ARGB surface, and draw
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
  * The glyph is rendered without any padding or centering in the X direction,
  * and aligned normally in the Y direction.
  *
- * You can render at other quality levels with TTF_RenderGlyph_Solid,
+ * You can draw at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Shaded, and TTF_RenderGlyph_Blended.
  *
- * \param font the font to render with.
- * \param ch the codepoint to render.
+ * \param font the font to draw with.
+ * \param ch the codepoint to draw.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -2020,7 +2020,7 @@ extern SDL_DECLSPEC TTF_GPUTextEngineWinding SDLCALL TTF_GetGPUTextEngineWinding
  *
  * \param engine the text engine to use when creating the text object, may be
  *               NULL.
- * \param font the font to render with.
+ * \param font the font to draw with.
  * \param text the text to use, in UTF-8 encoding.
  * \param length the length of the text, in bytes, or 0 for null terminated
  *               text.
@@ -2090,7 +2090,7 @@ extern SDL_DECLSPEC TTF_TextEngine * SDLCALL TTF_GetTextEngine(TTF_Text *text);
  *
  * When a text object has a font, any changes to the font will automatically
  * regenerate the text. If you set the font to NULL, the text will continue to
- * render but changes to the font will no longer affect the text.
+ * draw but changes to the font will no longer affect the text.
  *
  * This function may cause the internal text representation to be rebuilt.
  *

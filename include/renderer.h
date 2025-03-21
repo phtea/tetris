@@ -5,7 +5,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 
-#include "custom_types.h"
+#include "CustomTypes.h"
 
 class Renderer {
 public:

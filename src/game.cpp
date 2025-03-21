@@ -1,7 +1,7 @@
-#define DEBUG_NO_FALL
-#define DEBUG_NO_LOCK
+constexpr bool DEBUG_NO_FALL = true;
+constexpr bool DEBUG_NO_LOCK = true;
 
-#include "game.h"
+#include "Game.h"
 
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_scancode.h>
@@ -13,7 +13,7 @@
 #include <ostream>
 #include <vector>
 
-#include "constants.h"
+#include "Constants.h"
 #include "Mino.h"
 #include "HudBuilder.h"
 
@@ -25,10 +25,8 @@ Game::Game(int screenWidth, int screenHeight)
 	m_nextMinosSize(1),
 	m_canSwap(true),
 	m_bufferMino(MinoType::NONE),
-	m_SDF(100) {
-	HudBuilder hudBuilder;
-	// why ptr?
-	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
+	m_SDF(100),
+	m_Hud(1300, 200, 1.0f) {
 	createNewMino();
 }
 
@@ -44,9 +42,8 @@ Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDela
 	m_Mino(MinoType::NONE),
 	m_nextMinosSize(nextMinosSize),
 	m_canSwap(true),
-	m_bufferMino(MinoType::NONE) {
-	HudBuilder hudBuilder;
-	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
+	m_bufferMino(MinoType::NONE),
+	m_Hud(1300, 200, 1.0f) {
 	createNewMino();
 }
 
@@ -58,19 +55,19 @@ void Game::placeMinoOnGrid() {
 }
 
 void Game::createNewMino() {
-	if (m_nextTetrominos.empty()) {
+	if (m_nextMinos.empty()) {
 		// Pre-fill the queue with a few upcoming tetrominoes
 		for (int i = 0; i < m_nextMinosSize; ++i) {
-			m_nextTetrominos.push(pickRandomMino());
+			m_nextMinos.push(pickRandomMino());
 		}
 	}
 
 	// Get the next tetromino from the queue
-	m_Mino = m_nextTetrominos.front();
-	m_nextTetrominos.pop();
+	m_Mino = m_nextMinos.front();
+	m_nextMinos.pop();
 
 	// Add a new random tetromino to the queue to maintain the flow
-	m_nextTetrominos.push(pickRandomMino());
+	m_nextMinos.push(pickRandomMino());
 
 	m_Mino.setStartPosition();
 }
@@ -112,24 +109,25 @@ void Game::setNextMinosSize(int size) {	m_nextMinosSize = size; }
 void Game::update() {
 
 	Uint64 now = SDL_GetTicks();
+	m_Hud.update(m_renderer, m_nextMinosSize);
 
+	handleFallDelay(now);
+	handleLockDelay(now);
+}
+
+void Game::handleFallDelay(Uint64 now) {
 	// Handle the fall behavior (move tetromino down based on m_timeToFall)
 	bool canFall = now - m_lastFallTime >= m_timeToFall;
-	bool toFall = true;
-#ifdef DEBUG_NO_FALL
-	toFall = false;
-#endif // DEBUG
-
-	if (toFall && canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
+	if (!DEBUG_NO_FALL && canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
 		m_Mino.move(Direction::DOWN);
 		m_lastFallTime = now;
-		return;
 	}
+}
 
+void Game::handleLockDelay(Uint64 now) {
 	// Independently check the lock timer
 	if (m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
 		m_touchState = TouchState::NotTouching;
-		return;
 	}
 	switch (m_touchState) {
 	case TouchState::NotTouching:
@@ -140,10 +138,7 @@ void Game::update() {
 		m_touchState = TouchState::KeepsTouching;
 		break;
 	case TouchState::KeepsTouching:
-#ifdef DEBUG_NO_LOCK
-		return;  // Prevents locking in debug mode
-#endif
-		if (now - m_lastLockTime >= m_lockDelayTime) {
+		if (now - m_lastLockTime >= m_lockDelayTime && !DEBUG_NO_LOCK) {
 			placeMinoOnGrid();
 
 			if (isGameOver()) {
@@ -163,7 +158,7 @@ void Game::render() {
 	m_renderer.clear();
 	m_grid.draw(m_renderer);
 	m_Mino.draw(m_renderer);
-	m_hud->update(m_renderer, m_nextTetrominos, m_nextMinosSize, m_bufferMino);
+	m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino);
 
 	m_renderer.present();
 }

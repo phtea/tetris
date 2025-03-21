@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderer.h"
+#include "Renderer.h"
 #include "Mino.h"
 #include <queue>
 
@@ -10,8 +10,8 @@ public:
 	Hud() = delete;
     ~Hud();
 
-    void update(Renderer& renderer, const std::queue<Mino>& tetrominos, int count, const Mino& bufferTetromino);
-    void render(Renderer& renderer);
+    void update(Renderer& renderer, int nextCount);
+    void draw(Renderer& renderer, const std::queue<Mino>& tetrominos, const Mino& bufferTetromino);
     void move(int deltaX, int deltaY);
     void setShowNext(bool show);
     void setShowHold(bool show);
@@ -29,6 +29,9 @@ private:
     int m_elementSpacing;
     float m_hudScale;
     int m_currentElementPos;
+
+    int m_NextCount = 1;
+
     bool m_showNext;
     bool m_showHold;
 

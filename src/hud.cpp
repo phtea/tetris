@@ -1,4 +1,4 @@
-#include "hud.h"
+#include "Hud.h"
 #include <iostream>
 
 Hud::Hud(int hudX, int hudY, float scale) :
@@ -14,23 +14,22 @@ Hud::Hud(int hudX, int hudY, float scale) :
 
 Hud::~Hud() {}
 
-void Hud::update(Renderer& renderer, const std::queue<Mino>& tetrominos, int count, const Mino& bufferTetromino) {
+void Hud::update(Renderer& renderer, int nextCount) {
 	m_elementSpacing = renderer.getBlockSize();
 	m_currentElementPos = 0; // Reset the current element position
+	m_NextCount = nextCount;
+}
+
+void Hud::draw(Renderer& renderer, const std::queue<Mino>& nextMinos, const Mino& bufferMino) {
 	if (m_showNext) {
-		renderNextTetromino(renderer, tetrominos, count);
+		renderNextTetromino(renderer, nextMinos, m_NextCount);
 	}
 	if (m_showHold) {
-		renderBufferTetromino(renderer, bufferTetromino);
+		renderBufferTetromino(renderer, bufferMino);
 	}
 	if (m_hudBordersEnabled) {
 		drawBorders(renderer);
 	}
-}
-
-void Hud::render(Renderer& renderer) {
-	// You could render additional information like score, level, etc. here
-	// For now, we just need to display the next tetromino and buffer tetromino
 }
 
 void Hud::move(int deltaX, int deltaY) {
@@ -83,7 +82,7 @@ void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::que
 	int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
 	renderer.drawTextAtPixel(label, labelX, labelY);
 
-	int yOffset = m_elementSpacing; // Offset to space out the tetrominos visually
+	int yOffset = m_elementSpacing; // Offset to space out the nextMinos visually
 
 	int blockSize = renderer.getBlockSize() * m_hudScale;
 
@@ -100,7 +99,7 @@ void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::que
 			renderer.drawBlockAtPixel(x, y, blockColor, blockSize);
 		}
 
-		yOffset += m_elementSpacing; // Move each next tetromino down visually
+		yOffset += m_elementSpacing; // Move each next mino down visually
 	}
 
 	m_currentElementPos += yOffset + m_elementSpacing; // Update the current element position

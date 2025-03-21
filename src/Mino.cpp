@@ -3,7 +3,7 @@
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <unordered_map>
-#include "constants.h"
+#include "Constants.h"
 #include <cassert>
 
 blocks_t Mino::applyRotation(int newRotation) {

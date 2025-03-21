@@ -5,12 +5,12 @@
 
 #include <vector>
 
-#include "bag7.h"
-#include "grid.h"
-#include "input_handler.h"
-#include "renderer.h"
+#include "Bag7.h"
+#include "Grid.h"
+#include "InputHandler.h"
+#include "Renderer.h"
 #include "Mino.h"
-#include "hud.h"
+#include "Hud.h"
 #include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
@@ -33,6 +33,8 @@ public:
 
 private:
 	void update();
+	void handleFallDelay(Uint64 now);
+	void handleLockDelay(Uint64 now);
 	void createNewMino();
 	void placeMinoOnGrid();
 	void render();
@@ -47,8 +49,8 @@ private:
 
 	Mino pickRandomMino();
 
-	//Hud m_hud;
-	std::unique_ptr<Hud> m_hud;
+	//Hud m_Hud;
+	Hud m_Hud;
 	bool m_running;
 	TouchState m_touchState = TouchState::NotTouching;
 	Bag7 m_bag7;
@@ -70,7 +72,7 @@ private:
 	InputHandler m_inputHandler;
 
 	// queue of future tetriminos
-	std::queue<Mino> m_nextTetrominos; // Queue to store upcoming pieces
+	std::queue<Mino> m_nextMinos; // Queue to store upcoming pieces
 	int m_nextMinosSize;
 
 	// swap buffer

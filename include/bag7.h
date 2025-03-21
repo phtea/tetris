@@ -4,7 +4,7 @@
 #include <iostream>
 #include <random>
 
-#include "custom_types.h"
+#include "CustomTypes.h"
 
 // The Bag7 class wraps around a std::array of 7 MinoType elements
 class Bag7 {

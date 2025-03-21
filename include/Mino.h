@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 #include "renderer.h"
-#include "custom_types.h"
+#include "CustomTypes.h"
 #include <unordered_map>
 
 typedef std::vector<std::vector<int>> grid_t;

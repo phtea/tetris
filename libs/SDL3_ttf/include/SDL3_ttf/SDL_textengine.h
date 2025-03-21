@@ -115,15 +115,15 @@ struct TTF_TextData
     int y;                      /**< The y offset of the upper left corner of this text, in pixels, read-only. */
     int w;                      /**< The width of this text, in pixels, read-only. */
     int h;                      /**< The height of this text, in pixels, read-only. */
-    int num_ops;                /**< The number of drawing operations to render this text, read-only. */
-    TTF_DrawOperation *ops;     /**< The drawing operations used to render this text, read-only. */
+    int num_ops;                /**< The number of drawing operations to draw this text, read-only. */
+    TTF_DrawOperation *ops;     /**< The drawing operations used to draw this text, read-only. */
     int num_clusters;           /**< The number of substrings representing clusters of glyphs in the string, read-only */
     TTF_SubString *clusters;    /**< Substrings representing clusters of glyphs in the string, read-only */
 
     SDL_PropertiesID props;     /**< Custom properties associated with this text, read-only. This field is created as-needed using TTF_GetTextProperties() and the properties may be then set and read normally */
 
     bool needs_engine_update;   /**< True if the engine text needs to be updated */
-    TTF_TextEngine *engine;     /**< The engine used to render this text, read-only. */
+    TTF_TextEngine *engine;     /**< The engine used to draw this text, read-only. */
     void *engine_text;          /**< The implementation-specific representation of this text */
 };
 

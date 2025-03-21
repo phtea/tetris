@@ -1,4 +1,4 @@
-#include "bag7.h"
+#include "Bag7.h"
 
 #include <algorithm>
 

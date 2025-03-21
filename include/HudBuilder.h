@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hud.h"
+#include "Hud.h"
 
 class HudBuilder {
 public:

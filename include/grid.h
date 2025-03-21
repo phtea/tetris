@@ -2,8 +2,8 @@
 #include <vector>
 
 #include "Mino.h"
-#include "constants.h"
-#include "renderer.h"
+#include "Constants.h"
+#include "Renderer.h"
 
 class Grid {
 public:

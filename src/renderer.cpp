@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "constants.h"
+#include "Constants.h"
 
 Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
 	m_screenWidth(screenWidth),
@@ -68,7 +68,7 @@ void Renderer::present() {
 //
 //    SDL_FRect block = { gridX, gridY, BLOCK_SIZE, BLOCK_SIZE };
 //    if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
-//        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
+//        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not draw block texture: %s\n", SDL_GetError());
 //    }
 //}
 
