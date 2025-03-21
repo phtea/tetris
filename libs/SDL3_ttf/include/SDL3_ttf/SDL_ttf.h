@@ -1041,7 +1041,7 @@ extern SDL_DECLSPEC Uint32 SDLCALL TTF_GetGlyphScript(Uint32 ch);
  *
  * \param font the font to specify a language for.
  * \param language_bcp47 a null-terminated string containing the desired
- *                       language's BCP47 code. Or null to reset the value.
+ *                       language's BCP47 code. Or null to clear the value.
  * \returns true on success or false on failure; call SDL_GetError() for more
  *          information.
  *

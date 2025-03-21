@@ -39,7 +39,8 @@ private:
 	void placeMinoOnGrid();
 	void render();
 	bool isGameOver();
-	void stop() { m_running = false; }
+	void stopGame() { m_running = false; }
+	void restartGame();
 
 	void swapTetromino();
 

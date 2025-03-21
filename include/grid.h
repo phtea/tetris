@@ -14,7 +14,7 @@ public:
 	int checkFullRows();
 	void clearRow(int row);
 	void shiftDown(int row);
-	void reset();
+	void clear();
 	void draw(Renderer& renderer) const;
 
 	const std::vector<std::vector<int>>& getGrid() const { return m_grid; }

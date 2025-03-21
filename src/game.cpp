@@ -81,7 +81,7 @@ void Game::run() {
 		m_inputHandler.pollEvents(event);
 
 		if (m_inputHandler.shouldQuit()) {
-			stop();
+			stopGame();
 		}
 
 		handleInput();
@@ -142,7 +142,7 @@ void Game::handleLockDelay(Uint64 now) {
 			placeMinoOnGrid();
 
 			if (isGameOver()) {
-				stop();
+				restartGame();
 				std::cout << "Game over!" << std::endl;
 			}
 		}
@@ -175,6 +175,33 @@ bool Game::isGameOver() {
 	return false;
 }
 
+void Game::restartGame() {
+	// Clear the grid
+	m_grid.clear();
+
+	// Reset timers
+	m_lastFallTime = SDL_GetTicks();
+	m_lastLockTime = SDL_GetTicks();
+	m_lastMoveTime = SDL_GetTicks();
+
+	// Reset touch state
+	m_touchState = TouchState::NotTouching;
+
+	// Reset ability to swap
+	m_canSwap = true;
+
+	// Clear mino queue and refill it
+	std::queue<Mino> emptyQueue;
+	std::swap(m_nextMinos, emptyQueue);  // Clear queue
+	m_bufferMino = Mino(MinoType::NONE); // Reset buffer mino
+
+	// Recreate minos
+	createNewMino();
+
+	// Mark game as running again
+	m_running = true;
+}
+
 void Game::handleInput() {
 	Uint32 now = SDL_GetTicks();
 
@@ -192,6 +219,10 @@ void Game::handleInput() {
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_SPACE)) {
 		m_Mino.hardDrop(m_grid.getGrid());
 		placeMinoOnGrid();
+	}
+
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_R)) {
+		restartGame();
 	}
 
 	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_LSHIFT) || m_inputHandler.isKeyJustPressed(SDL_SCANCODE_RSHIFT)) {

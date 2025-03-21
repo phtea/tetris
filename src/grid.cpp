@@ -61,7 +61,7 @@ void Grid::shiftDown(int row) {
 	m_grid[0] = std::vector<int>(m_width, 0);  // Empty top row
 }
 
-void Grid::reset() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
+void Grid::clear() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
 
 void Grid::draw(Renderer& renderer) const {
 	// Draw occupied blocks
