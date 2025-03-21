@@ -11,7 +11,7 @@ int main() {
 		.setDAS(150)
 		.setARR(30)
 		.setSDF(120)
-		.setNextTetrominosSize(3);
+		.setNextTetrominosSize(1);
 
 	Game game = builder.build();
 

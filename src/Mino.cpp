@@ -69,18 +69,20 @@ bool Mino::rotate(int rotations, const grid_t& grid) {
 	// get90 is buggy
 	auto wallKicks = (rotations == 2) ? get180WallKicks(m_rotationState, newRotation, m_type) : getWallKicks(m_rotationState, newRotation, m_type);
 
+	blocks_t rotatedBlocks = applyRotation(newRotation);
 	// Loop through the wall kick offsets
 	for (const auto& offset : wallKicks) {
-		blocks_t rotatedBlocks = applyRotation(newRotation);
-
-		for (auto& block : rotatedBlocks) {
+		auto testBlocks = rotatedBlocks;
+		for (auto& block : testBlocks) {
 			block[0] += offset[0];
 			block[1] -= offset[1]; // using minus to invert y to our grid (0 is top!)
 		}
 
-		if (!collidesWithGrid(rotatedBlocks, grid)) {
+		if (!collidesWithGrid(testBlocks, grid)) {
 			std::cout << "used offset: " << offset[0] << " " << offset[1] << std::endl;
 			m_blocks = rotatedBlocks;
+			m_X += offset[0];
+			m_Y -= offset[1];
 			m_rotationState = newRotation;
 			return true;
 		}

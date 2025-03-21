@@ -27,6 +27,7 @@ Game::Game(int screenWidth, int screenHeight)
 	m_bufferMino(MinoType::NONE),
 	m_SDF(100) {
 	HudBuilder hudBuilder;
+	// why ptr?
 	m_hud = std::make_unique<Hud>(hudBuilder.setPosition(1300, 200).build());
 	createNewMino();
 }
