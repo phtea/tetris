@@ -1,6 +1,3 @@
-// game.h
-// Handles game logic
-
 #pragma once
 
 #include <vector>
@@ -14,6 +11,7 @@
 #include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
+enum class GameState : uint8_t { START, RUNNING, PAUSED, GAMEOVER };
 
 typedef std::array<MinoType, 7> bag7_t;
 
@@ -44,15 +42,18 @@ private:
 
 	void swapTetromino();
 
-	void handleMovement(Direction dir, SDL_Scancode key);
+	void handleMovement(Direction dir, SDL_Scancode key, Uint32 now);
 	void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
 	void handleInput();
 
 	Mino pickRandomMino();
 
-	//Hud m_Hud;
 	Hud m_Hud;
+
+	// Game state
+	GameState m_gameState = GameState::START;
 	bool m_running;
+
 	TouchState m_touchState = TouchState::NotTouching;
 	Bag7 m_bag7;
 

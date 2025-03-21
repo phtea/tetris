@@ -111,7 +111,14 @@ void Renderer::update() {
 	}
 }
 
-void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) {
+ScreenPosition Renderer::getResolution() {
+	int width(0);
+	int height(0);
+	SDL_GetWindowSize(m_window, &width, &height);
+	return ScreenPosition(width, height);
+}
+
+void Renderer::drawTextAtPixel(const std::string& text, ScreenPosition pos) {
 	SDL_Color color = { 255, 255, 255, 255 }; // White text color
 
 	// Create a surface from the text
@@ -125,14 +132,24 @@ void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
 	if (!textTexture) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+		SDL_DestroySurface(textSurface);  // Surface no longer needed
 		return;
 	}
-	SDL_DestroySurface(textSurface);  // No longer needed
+	// Get the text width and height
+	int textWidth = textSurface->w;
+	int textHeight = textSurface->h;
+	SDL_DestroySurface(textSurface);  // Surface no longer needed
 
 	// Render the text
 	// TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
 	// OF renderQuad W and H!
-	SDL_FRect renderQuad = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(textSurface->w), static_cast<float>(textSurface->h) };
+	SDL_FRect renderQuad = {
+		pos.x - textWidth / 2.0f,
+		pos.y - textHeight / 2.0f,
+		static_cast<float>(textWidth),
+		static_cast<float>(textHeight)
+	};
+
 	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
 
 	// Clean up

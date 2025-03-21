@@ -1,6 +1,3 @@
-// input_handler.cpp
-// Implements input handling logic
-
 #include "InputHandler.h"
 
 #include <SDL3/SDL_events.h>
@@ -26,12 +23,6 @@ void InputHandler::pollEvents(SDL_Event& event) {
 
 				// if just pressed the button - store its hold start time
 				m_keyHoldStartTimes[event.key.scancode] = now;
-			}
-
-			// Quit on Escape key
-			if (event.key.key == SDLK_ESCAPE) {
-				std::cout << "Escape key pressed. Quitting..." << std::endl;
-				quit = true;
 			}
 		}
 		if (event.type == SDL_EVENT_KEY_UP) {

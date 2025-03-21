@@ -1,5 +1,5 @@
-constexpr bool DEBUG_NO_FALL = true;
-constexpr bool DEBUG_NO_LOCK = true;
+constexpr bool DEBUG_NO_FALL = false;
+constexpr bool DEBUG_NO_LOCK = false;
 
 #include "Game.h"
 
@@ -77,19 +77,16 @@ Mino Game::pickRandomMino() { return Mino(m_bag7.pickNext()); }
 
 void Game::run() {
 	SDL_Event event;
+	m_gameState = GameState::RUNNING;
 	while (m_running) {
 		m_inputHandler.pollEvents(event);
 
-		if (m_inputHandler.shouldQuit()) {
-			stopGame();
+		if (m_gameState == GameState::RUNNING) {
+			update();
 		}
 
 		handleInput();
-
-		update();
-
 		render();
-
 		SDL_Delay(1000 / FPS);
 	}
 }
@@ -143,7 +140,8 @@ void Game::handleLockDelay(Uint64 now) {
 
 			if (isGameOver()) {
 				restartGame();
-				std::cout << "Game over!" << std::endl;
+				m_gameState = GameState::GAMEOVER;
+				std::cout << "Game over! Press R to Restart" << std::endl;
 			}
 		}
 		break;
@@ -159,6 +157,13 @@ void Game::render() {
 	m_grid.draw(m_renderer);
 	m_Mino.draw(m_renderer);
 	m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino);
+
+	if (m_gameState == GameState::PAUSED) {
+		ScreenPosition pos = m_renderer.getResolution();
+		pos.x /= 2;
+		pos.y /= 2;
+		m_renderer.drawTextAtPixel("GAME PAUSED.", pos);
+	}
 
 	m_renderer.present();
 }
@@ -205,8 +210,24 @@ void Game::restartGame() {
 void Game::handleInput() {
 	Uint32 now = SDL_GetTicks();
 
-	handleMovement(Direction::LEFT, SDL_SCANCODE_LEFT);
-	handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT);
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_ESCAPE)) {
+		stopGame();
+		return;
+	}
+
+	if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_P)) {
+		// Toggle pause
+		if (m_gameState == GameState::RUNNING) {
+			m_gameState = GameState::PAUSED;
+		}
+		else if (m_gameState == GameState::PAUSED) {
+			m_gameState = GameState::RUNNING;
+		}
+	}
+	if (m_gameState != GameState::RUNNING) return;
+
+	handleMovement(Direction::LEFT, SDL_SCANCODE_LEFT, now);
+	handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT, now);
 
 	if (m_inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
 		bool canFall = (now - m_lastFallTime) * m_SDF >= m_timeToFall;
@@ -259,8 +280,7 @@ void Game::swapTetromino() {
 	m_canSwap = false;  // Prevent swapping again until the next tetromino is placed
 }
 
-void Game::handleMovement(Direction dir, SDL_Scancode key) {
-	Uint32 now = SDL_GetTicks();
+void Game::handleMovement(Direction dir, SDL_Scancode key, Uint32 now) {
 	Uint32 holdTime = m_inputHandler.getKeyHoldTime(key);
 
 	if (m_inputHandler.isKeyJustPressed(key) ||

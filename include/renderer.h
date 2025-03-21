@@ -7,6 +7,11 @@
 
 #include "CustomTypes.h"
 
+struct ScreenPosition {
+	ScreenPosition(float x, float y) : x(x), y(y) {}
+	float x, y;
+};
+
 class Renderer {
 public:
 	Renderer(const char* title, int screenWidth, int screenHeight);
@@ -25,10 +30,12 @@ public:
 
 	void update();
 
+	ScreenPosition getResolution();
+
 	// New methods for drawing at pixel positions
 	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color);
 	void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color, int blockSize);
-	void drawTextAtPixel(const std::string& text, int pixelX, int pixelY);
+	void drawTextAtPixel(const std::string& text, ScreenPosition pos);
 
 	// New methods for position and size calculation
 	int calculateHudX(int baseX) const;

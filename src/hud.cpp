@@ -16,11 +16,11 @@ Hud::~Hud() {}
 
 void Hud::update(Renderer& renderer, int nextCount) {
 	m_elementSpacing = renderer.getBlockSize();
-	m_currentElementPos = 0; // Reset the current element position
 	m_NextCount = nextCount;
 }
 
 void Hud::draw(Renderer& renderer, const std::queue<Mino>& nextMinos, const Mino& bufferMino) {
+	m_currentElementPos = 0; // Reset the current element position
 	if (m_showNext) {
 		renderNextTetromino(renderer, nextMinos, m_NextCount);
 	}
@@ -80,7 +80,8 @@ void Hud::renderBufferTetromino(Renderer& renderer, const Mino& bufferTetromino)
 void Hud::renderTetromino(Renderer& renderer, const std::string& label, std::queue<Mino> tetrominos, int count) {
 	int labelX = renderer.calculateHudX(m_hudX);
 	int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
-	renderer.drawTextAtPixel(label, labelX, labelY);
+	ScreenPosition pos(labelX, labelY);
+	renderer.drawTextAtPixel(label, pos);
 
 	int yOffset = m_elementSpacing; // Offset to space out the nextMinos visually
 
