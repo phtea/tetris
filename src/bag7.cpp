@@ -1,4 +1,4 @@
-#include "bag7.h"
+#include "Bag7.h"
 
 #include <algorithm>
 
@@ -6,11 +6,11 @@
 std::random_device Bag7::rd;
 std::default_random_engine Bag7::engine(rd());
 
-// Constructor initializes the m_bag with all 7 Tetromino types and shuffle them
+// Constructor initializes the m_bag with all 7 Mino types and shuffle them
 Bag7::Bag7() : m_currentIndex(0) {
-	m_bag = { TetrominoType::I, TetrominoType::O, TetrominoType::T,
-			 TetrominoType::S, TetrominoType::Z, TetrominoType::J,
-			 TetrominoType::L };
+	m_bag = { MinoType::I, MinoType::O, MinoType::T,
+			 MinoType::S, MinoType::Z, MinoType::J,
+			 MinoType::L };
 	shuffle();
 }
 
@@ -25,7 +25,7 @@ void Bag7::print() const {
 	std::cout << std::endl;
 }
 
-TetrominoType Bag7::pickNext() {
+MinoType Bag7::pickNext() {
 	if (m_currentIndex >= m_bag.size()) {
 		shuffle();
 		m_currentIndex = 0;

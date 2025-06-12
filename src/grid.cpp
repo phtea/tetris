@@ -15,7 +15,7 @@ bool Grid::isCellOccupied(int x, int y) const {
 	return m_grid[y][x] != 0;
 }
 
-void Grid::placeTetromino(const Tetromino& tetromino) {
+void Grid::placeTetromino(const Mino& tetromino) {
 	for (const auto& cell : tetromino.getRelativeBlocks()) {
 		int x = cell[0];
 		int y = cell[1];
@@ -26,8 +26,10 @@ void Grid::placeTetromino(const Tetromino& tetromino) {
 	}
 }
 
-bool Grid::checkFullRows() {
-	bool cleared = false;
+// clears rows
+// returns how many rows were cleared
+int Grid::checkFullRows() {
+	int cleared = 0;
 	for (int y = 0; y < m_height; ++y) {
 		bool fullRow = true;
 		for (int x = 0; x < m_width; ++x) {
@@ -38,7 +40,7 @@ bool Grid::checkFullRows() {
 		}
 		if (fullRow) {
 			clearRow(y);
-			cleared = true;
+			cleared++;
 		}
 	}
 	return cleared;
@@ -59,7 +61,7 @@ void Grid::shiftDown(int row) {
 	m_grid[0] = std::vector<int>(m_width, 0);  // Empty top row
 }
 
-void Grid::reset() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
+void Grid::clear() { m_grid.assign(m_height, std::vector<int>(m_width, 0)); }
 
 void Grid::draw(Renderer& renderer) const {
 	// Draw occupied blocks

@@ -5,9 +5,9 @@
 - [x] lock delay
 - [x] make NORMAL rotate (with collision detection)
 - [x] random piece generation system (7 dice bag)
-- [ ] clear row
+- [x] clear row
 - [ ] difficulty progression: game should become faster with time
-- [ ] hard drop
+- [x] hard drop
 - [ ] pause menu
 
 ### Bugs

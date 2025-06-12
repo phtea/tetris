@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "constants.h"
+#include "Constants.h"
 
 Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
 	m_screenWidth(screenWidth),
@@ -12,35 +12,27 @@ Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
 	m_font(nullptr) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		// Initialization failed, output the error
-		std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		throw std::runtime_error("Failed to initialize SDL");
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Init Error: %s\n", SDL_GetError());
 		return;
 	}
 
-	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, 0, &m_window, &m_renderer)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window and renderer: %s\n",
-			SDL_GetError());
+	if (!SDL_CreateWindowAndRenderer(title, m_screenWidth, m_screenHeight, SDL_WINDOW_RESIZABLE, &m_window, &m_renderer)) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateWindowAndRenderer Error: %s\n", SDL_GetError());
+		return;
 	}
+
 	setGridSize(GRID_WIDTH, GRID_HEIGHT);
 	m_blockTexture = nullptr;
 
 	// Ensure SDL_ttf is initialized (you can do this once at the start of your program)
 	if (!TTF_Init()) {
-		std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "TTF_Init Error: %s\n", SDL_GetError());
 		return;
 	}
 
-	//// Load font
-	//m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", 24);
-	//if (!m_font) {
-	//	std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
-	//	return;
-	//}
-
 	loadFont(BASE_FONT_SIZE);
 
-	//m_blockTexture = IMG_LoadTexture(m_renderer, "C:/dev/Tetris/assets/block.png");
+	//m_blockTexture = IMG_LoadTexture(m_renderer, RESOURSES_PATH "textures/block.png");
 	//if (!m_blockTexture) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
 	//		SDL_GetError());
@@ -57,19 +49,16 @@ Renderer::~Renderer() {
 
 void Renderer::clear() {
 	if (!SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR,
-			"Could not set render draw color: %s\n", SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_SetRenderDrawColor Error: %s\n", SDL_GetError());
 	}
 	if (!SDL_RenderClear(m_renderer)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not clear render: %s\n",
-			SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_RenderClear Error: %s\n", SDL_GetError());
 	}
 }
 
 void Renderer::present() {
 	if (!SDL_RenderPresent(m_renderer)) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not present render: %s\n",
-			SDL_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_RenderPresent Error: %s\n", SDL_GetError());
 	}
 }
 
@@ -79,7 +68,7 @@ void Renderer::present() {
 //
 //    SDL_FRect block = { gridX, gridY, BLOCK_SIZE, BLOCK_SIZE };
 //    if (!SDL_RenderTexture(m_renderer, m_blockTexture, NULL, &block)) {
-//        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not render block texture: %s\n", SDL_GetError());
+//        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not draw block texture: %s\n", SDL_GetError());
 //    }
 //}
 
@@ -92,7 +81,7 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	// Create a surface from the text
 	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, text.c_str(), 0, color);
 	if (!textSurface) {
-		std::cerr << "Unable to create text surface! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "TTF_RenderText_Solid Error: %s\n", SDL_GetError());
 		TTF_CloseFont(m_font);
 		return;
 	}
@@ -113,24 +102,54 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	SDL_DestroyTexture(textTexture);
 }
 
-void Renderer::drawTextAtPixel(const std::string& text, int pixelX, int pixelY) {
+void Renderer::update() {
+	int width(0);
+	int height(0);
+	SDL_GetWindowSize(m_window, &width, &height);
+	if (m_screenWidth != width || m_screenHeight != height) {
+		setResolution(width, height);
+	}
+}
+
+ScreenPosition Renderer::getResolution() {
+	int width(0);
+	int height(0);
+	SDL_GetWindowSize(m_window, &width, &height);
+	return ScreenPosition(width, height);
+}
+
+void Renderer::drawTextAtPixel(const std::string& text, ScreenPosition pos) {
 	SDL_Color color = { 255, 255, 255, 255 }; // White text color
 
 	// Create a surface from the text
 	SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, text.c_str(), 0, color);
 	if (!textSurface) {
-		std::cerr << "Unable to create text surface! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "TTF_RenderText_Solid Error: %s\n", SDL_GetError());
 		return;
 	}
 
 	// Create texture from surface
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-	SDL_DestroySurface(textSurface);  // No longer needed
+	if (!textTexture) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+		SDL_DestroySurface(textSurface);  // Surface no longer needed
+		return;
+	}
+	// Get the text width and height
+	int textWidth = textSurface->w;
+	int textHeight = textSurface->h;
+	SDL_DestroySurface(textSurface);  // Surface no longer needed
 
 	// Render the text
 	// TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
 	// OF renderQuad W and H!
-	SDL_FRect renderQuad = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(textSurface->w), static_cast<float>(textSurface->h) };
+	SDL_FRect renderQuad = {
+		pos.x - textWidth / 2.0f,
+		pos.y - textHeight / 2.0f,
+		static_cast<float>(textWidth),
+		static_cast<float>(textHeight)
+	};
+
 	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
 
 	// Clean up
@@ -234,8 +253,8 @@ void Renderer::loadFont(int fontSize) {
 		TTF_CloseFont(m_font);
 	}
 
-	m_font = TTF_OpenFont("C:/dev/Tetris/fonts/Kgsecondchancessketch.ttf", fontSize);
+	m_font = TTF_OpenFont(RESOURSES_PATH "/fonts/Kgsecondchancessketch.ttf", fontSize);
 	if (!m_font) {
-		std::cerr << "Failed to load font! SDL_ttf Error: " << SDL_GetError() << std::endl;
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "TTF_OpenFont Error: %s\n", SDL_GetError());
 	}
 }

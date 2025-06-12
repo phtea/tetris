@@ -1,10 +1,20 @@
 #include <iostream>
 
-#include "game.h"
+#include "Game.h"
+#include "GameBuilder.h"
 
 int main() {
-	Game game;
+	GameBuilder builder(800, 600);
+
+	Game game = builder.setTimeToFall(900)
+		.setLockDelayTime(600)
+		.setDAS(150)
+		.setARR(30)
+		.setSDF(120)
+		.setNextTetrominosSize(2)
+		.build();
+
 	game.run();
+
 	return 0;
-}  // Exception Thrown Run-Time Check Failure #2 - Stack around the variable
-   // 'game' was corrupted.
+}
