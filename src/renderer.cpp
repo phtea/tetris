@@ -1,7 +1,4 @@
 #include "Renderer.h"
-
-#include <iostream>
-
 #include "Constants.h"
 
 Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
@@ -95,7 +92,7 @@ void Renderer::drawText(const std::string& text, int gridX, int gridY) {
 	int pixelY = m_yOffset + gridY * m_blockSize;
 
 	// Render the text
-	SDL_FRect renderQuad = { pixelX, pixelY, static_cast<float>(textSurface->w), static_cast<float>(textSurface->h) };
+	SDL_FRect renderQuad = { static_cast<float>(pixelX), static_cast<float>(pixelY), static_cast<float>(textSurface->w), static_cast<float>(textSurface->h) };
 	SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
 
 	// Clean up
@@ -172,10 +169,10 @@ void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color& color, 
 void Renderer::drawBlock(int x, int y, const SDL_Color& color) {
 	if (y < 0) return;
 
-	SDL_FRect block = { m_xOffset + x * m_blockSize,
-						m_yOffset + y * m_blockSize,
-						m_blockSize,
-						m_blockSize };
+	SDL_FRect block = { static_cast<float>(m_xOffset + x * m_blockSize),
+						static_cast<float>(m_yOffset + y * m_blockSize),
+						static_cast<float>(m_blockSize),
+						static_cast<float>(m_blockSize) };
 
 	SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(m_renderer, &block);
