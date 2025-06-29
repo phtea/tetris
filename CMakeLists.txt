@@ -77,3 +77,16 @@ endif()
 # Compile-time resource path definition
 target_compile_definitions(tetris
     PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resourses/")
+
+# Define source files to format
+file(GLOB_RECURSE FORMAT_SOURCES 
+    "${CMAKE_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_SOURCE_DIR}/include/*.h"
+)
+
+# Add 'format' target
+add_custom_target(format
+    COMMAND clang-format -i ${FORMAT_SOURCES}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Formatting source files with clang-format"
+)
