@@ -1,5 +1,4 @@
 #include "Hud.h"
-#include <iostream>
 
 Hud::Hud(int hudX, int hudY, float scale) :
 	m_hudX(hudX),
