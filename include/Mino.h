@@ -4,7 +4,7 @@
 
 #include <array>
 #include <vector>
-#include "renderer.h"
+#include "Renderer.h"
 #include "CustomTypes.h"
 #include <unordered_map>
 

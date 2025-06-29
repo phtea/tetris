@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "Bag7.h"
 #include "Grid.h"
 #include "InputHandler.h"

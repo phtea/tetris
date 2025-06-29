@@ -11,11 +11,9 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include <cstdlib>
 #include <iostream>
 #include <ostream>
-#include <vector>
 
 #include "Constants.h"
 #include "Mino.h"
-#include "HudBuilder.h"
 
 Game::Game(int screenWidth, int screenHeight)
 	: m_running(true),
