@@ -7,7 +7,7 @@
 class Hud {
 public:
     Hud(int hudX, int hudY, float scale);
-	Hud() = delete;
+    Hud() = delete;
     ~Hud();
 
     void update(Renderer& renderer, int nextCount);
@@ -35,5 +35,5 @@ private:
     bool m_showNext;
     bool m_showHold;
 
-	bool m_hudBordersEnabled; // New member variable to control HUD borders
+    bool m_hudBordersEnabled; // New member variable to control HUD borders
 };
