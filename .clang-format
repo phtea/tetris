@@ -1,0 +1,9 @@
+# .clang-format (LLVM style but modified)
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+UseTab: Never
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach  # 1TBS style
+SpacesInAngles: false
+SortIncludes: true

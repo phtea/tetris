@@ -2,10 +2,10 @@
 
 #include "Bag7.h"
 #include "Grid.h"
-#include "InputHandler.h"
-#include "Renderer.h"
-#include "Mino.h"
 #include "Hud.h"
+#include "InputHandler.h"
+#include "Mino.h"
+#include "Renderer.h"
 #include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
@@ -14,9 +14,10 @@ enum class GameState : uint8_t { START, RUNNING, PAUSED, GAMEOVER };
 typedef std::array<MinoType, 7> bag7_t;
 
 class Game {
-public:
+  public:
     Game(int screenWidth, int screenHeight);
-    Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das, Uint32 arr, Uint32 sdf, int nextMinosSize);
+    Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
+         Uint32 arr, Uint32 sdf, int nextMinosSize);
     ~Game() = default;
     void run();
 
@@ -27,7 +28,7 @@ public:
     void setSDF(Uint32 sdf);
     void setNextMinosSize(int size);
 
-private:
+  private:
     void update();
     void handleFallDelay(Uint64 now);
     void handleLockDelay(Uint64 now);
@@ -59,12 +60,12 @@ private:
 
     Uint32 m_lastFallTime = 0;
     Uint32 m_lastMoveTime = 0;
-    Uint32 m_lockDelayTime = 500;  // Lock delay time (milliseconds)
-    Uint32 m_lastLockTime = 0;     // Time when tetromino last touched the grid
+    Uint32 m_lockDelayTime = 500; // Lock delay time (milliseconds)
+    Uint32 m_lastLockTime = 0;    // Time when tetromino last touched the grid
 
-    Uint32 m_DAS = 167;     // Delay before auto-repeat (milliseconds)
-    Uint32 m_ARR = 33;      // Auto-repeat rate (milliseconds)
-    Uint32 m_SDF;			// Soft-drop factor (the factor with which soft drop changes the gravity)
+    Uint32 m_DAS = 167; // Delay before auto-repeat (milliseconds)
+    Uint32 m_ARR = 33;  // Auto-repeat rate (milliseconds)
+    Uint32 m_SDF;       // Soft-drop factor (the factor with which soft drop changes the gravity)
 
     Grid m_grid;
     Renderer m_renderer;
