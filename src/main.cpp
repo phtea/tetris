@@ -2,17 +2,17 @@
 #include "GameBuilder.h"
 
 int main() {
-	GameBuilder builder(800, 600);
+    GameBuilder builder(800, 600);
 
-	Game game = builder.setTimeToFall(900)
-		.setLockDelayTime(600)
-		.setDAS(150)
-		.setARR(30)
-		.setSDF(120)
-		.setNextTetrominosSize(2)
-		.build();
+    Game game = builder.setTimeToFall(900)
+	.setLockDelayTime(600)
+	.setDAS(150)
+	.setARR(30)
+	.setSDF(120)
+	.setNextTetrominosSize(2)
+	.build();
 
-	game.run();
+    game.run();
 
-	return 0;
+    return 0;
 }
