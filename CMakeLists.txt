@@ -27,27 +27,31 @@ if(WIN32)
     set(SDL3_TTF_DIR "${CMAKE_SOURCE_DIR}/libs/SDL3_ttf")
 
     include_directories(
-        ${SDL3_DIR}/include
-        ${SDL3_IMAGE_DIR}/include
-        ${SDL3_TTF_DIR}/include
+	${SDL3_DIR}/include
+	${SDL3_IMAGE_DIR}/include
+	${SDL3_TTF_DIR}/include
     )
 
     link_directories(
-        ${SDL3_DIR}/lib/x64
-        ${SDL3_IMAGE_DIR}/lib/x64
-        ${SDL3_TTF_DIR}/lib/x64
+	${SDL3_DIR}/lib/x64
+	${SDL3_IMAGE_DIR}/lib/x64
+	${SDL3_TTF_DIR}/lib/x64
     )
 
-    target_link_libraries(tetris SDL3 SDL3_image SDL3_ttf)
+    target_link_libraries(tetris
+	"${SDL3_DIR}/lib/x64/SDL3.lib"
+	"${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.lib"
+	"${SDL3_TTF_DIR}/lib/x64/SDL3_ttf.lib"
+    )
 
     # Copy DLLs after build
     add_custom_command(TARGET tetris POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${SDL3_DIR}/lib/x64/SDL3.dll
-        ${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.dll
-        ${SDL3_TTF_DIR}/lib/x64/SDL3_ttf.dll
-        $<TARGET_FILE_DIR:tetris>
-        COMMAND_EXPAND_LISTS
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	${SDL3_DIR}/lib/x64/SDL3.dll
+	${SDL3_IMAGE_DIR}/lib/x64/SDL3_image.dll
+	${SDL3_TTF_DIR}/lib/x64/SDL3_ttf.dll
+	$<TARGET_FILE_DIR:tetris>
+	COMMAND_EXPAND_LISTS
     )
 
 elseif(UNIX)
@@ -64,12 +68,12 @@ elseif(UNIX)
     endif()
 
     target_link_libraries(tetris
-        SDL3::SDL3
-        SDL3_image::SDL3_image
-        SDL3_ttf::SDL3_ttf
+	SDL3::SDL3
+	SDL3_image::SDL3_image
+	SDL3_ttf::SDL3_ttf
     )
 endif()
 
 # Compile-time resource path definition
 target_compile_definitions(tetris
-    PUBLIC RESOURSES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resourses/")
+    PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resourses/")

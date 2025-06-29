@@ -32,7 +32,7 @@ Renderer::Renderer(const char* title, int screenWidth, int screenHeight) :
 
 	loadFont(BASE_FONT_SIZE);
 
-	//m_blockTexture = IMG_LoadTexture(m_renderer, RESOURSES_PATH "textures/block.png");
+	//m_blockTexture = IMG_LoadTexture(m_renderer, RESOURCES_PATH "textures/block.png");
 	//if (!m_blockTexture) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create block texture: %s\n",
 	//		SDL_GetError());
@@ -253,7 +253,7 @@ void Renderer::loadFont(int fontSize) {
 		TTF_CloseFont(m_font);
 	}
 
-	m_font = TTF_OpenFont(RESOURSES_PATH "/fonts/Kgsecondchancessketch.ttf", fontSize);
+	m_font = TTF_OpenFont(RESOURCES_PATH "/fonts/Kgsecondchancessketch.ttf", fontSize);
 	if (!m_font) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "TTF_OpenFont Error: %s\n", SDL_GetError());
 	}
