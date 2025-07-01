@@ -38,10 +38,18 @@ make -j$(nproc) && make install
 
 2. **Build the project:**
 
-From root dir:
+Run this command if just cloned
 ```bash
-cmake -B build
-cmake --build build
+make init
+```
+
+Build in debug mode:
+```bash
+make debug
+```
+Release mode:
+```bash
+make release
 ```
 
 3. **Run the game:**
@@ -52,9 +60,10 @@ cmake --build build
 
 ---
 
-### Bugs
+### Bugs (TODO)
 - [ ] main.cpp (at the end) => Exception Thrown Run-Time Check Failure #2 - Stack around the variable 'game' was corrupted.
 - [x] renderer.h - free memory at destructor
+- [ ] Game over! Press R to Restart => not restarting
 
 ---
 

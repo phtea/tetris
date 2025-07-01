@@ -16,19 +16,18 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "Mino.h"
 
 Game::Game(int screenWidth, int screenHeight)
-    : m_running(true), m_lastFallTime(SDL_GetTicks()),
+    : m_Hud(1300, 200, 1.0f), m_running(true), m_lastFallTime(SDL_GetTicks()), m_SDF(100),
       m_renderer(GAME_TITLE, screenWidth, screenHeight), m_Mino(MinoType::NONE), m_nextMinosSize(1),
-      m_canSwap(true), m_bufferMino(MinoType::NONE), m_SDF(100), m_Hud(1300, 200, 1.0f) {
+      m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 
 Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
            Uint32 arr, Uint32 sdf, int nextMinosSize)
-    : m_running(true), m_lastFallTime(SDL_GetTicks()), m_timeToFall(timeToFall),
-      m_lockDelayTime(lockDelayTime), m_DAS(das), m_ARR(arr), m_SDF(sdf),
-      m_renderer(GAME_TITLE, screenWidth, screenHeight), m_Mino(MinoType::NONE),
-      m_nextMinosSize(nextMinosSize), m_canSwap(true), m_bufferMino(MinoType::NONE),
-      m_Hud(1300, 200, 1.0f) {
+    : m_Hud(1300, 200, 1.0f), m_running(true), m_timeToFall(timeToFall),
+      m_lastFallTime(SDL_GetTicks()), m_lockDelayTime(lockDelayTime), m_DAS(das), m_ARR(arr),
+      m_SDF(sdf), m_renderer(GAME_TITLE, screenWidth, screenHeight), m_Mino(MinoType::NONE),
+      m_nextMinosSize(nextMinosSize), m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 
@@ -246,8 +245,9 @@ void Game::handleInput() {
 
 // Implement the swapTetromino method
 void Game::swapTetromino() {
-    if (!m_canSwap)
+    if (!m_canSwap) {
         return;
+    }
     // TODO: bring back to original rotate state
     if (m_bufferMino.getType() == MinoType::NONE) {
         // Buffer is empty, add current tetromino to buffer and get next one

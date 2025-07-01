@@ -3,12 +3,21 @@ project(Tetris)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Optional debug flag
-option(DEBUG "Enable debug mode" OFF)
-if(DEBUG)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -DDEBUG=1")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode ENABLED")
     add_definitions(-DDEBUG=1)
 endif()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Project source files
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")

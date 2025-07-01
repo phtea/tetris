@@ -1,8 +1,8 @@
 #include "Hud.h"
 
 Hud::Hud(int hudX, int hudY, float scale)
-    : m_hudX(hudX), m_hudY(hudY), m_elementSpacing(50), m_hudScale(scale), m_showHold(true),
-      m_showNext(true), m_currentElementPos(0), m_hudBordersEnabled(true) {}
+    : m_hudX(hudX), m_hudY(hudY), m_elementSpacing(50), m_hudScale(scale), m_currentElementPos(0),
+      m_showNext(true), m_showHold(true), m_hudBordersEnabled(true) {}
 
 Hud::~Hud() {}
 
@@ -76,7 +76,7 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
 
     int blockSize = renderer.getBlockSize() * m_hudScale;
 
-    for (size_t i = 0; i < count && !tetrominos.empty(); ++i) {
+    for (int i = 0; i < count && !tetrominos.empty(); ++i) {
         Mino t = tetrominos.front();
         tetrominos.pop();
 

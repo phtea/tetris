@@ -43,8 +43,8 @@ class Mino {
     void setShape(int newRotation);
     constexpr static std::array<std::array<int, 2>, 12>
     getWallKicks(int currentRotation, int newRotation, MinoType type);
-    constexpr static std::array<std::array<int, 2>, 12>
-    get180WallKicks(int currentRotation, int newRotation, MinoType type);
+    constexpr static std::array<std::array<int, 2>, 12> get180WallKicks(int newRotation,
+                                                                        MinoType type);
     blocks_t applyRotation(int newRotation);
 
   private:

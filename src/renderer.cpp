@@ -2,8 +2,8 @@
 #include "Constants.h"
 
 Renderer::Renderer(const char *title, int screenWidth, int screenHeight)
-    : m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0), m_yOffset(0),
-      m_font(nullptr) {
+    : m_font(nullptr), m_screenWidth(screenWidth), m_screenHeight(screenHeight), m_xOffset(0),
+      m_yOffset(0) {
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Init Error: %s\n", SDL_GetError());

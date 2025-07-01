@@ -67,7 +67,7 @@ bool Mino::rotate(int rotations, const grid_t &grid) {
 
     // get180 is stable!
     // get90 is buggy
-    auto wallKicks = (rotations == 2) ? get180WallKicks(m_rotationState, newRotation, m_type)
+    auto wallKicks = (rotations == 2) ? get180WallKicks(newRotation, m_type)
                                       : getWallKicks(m_rotationState, newRotation, m_type);
 
     blocks_t rotatedBlocks = applyRotation(newRotation);
@@ -173,8 +173,7 @@ constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int from, int to
     return paddedWallKicks;
 }
 
-constexpr std::array<std::array<int, 2>, 12> Mino::get180WallKicks(int currentRotation,
-                                                                   int newRotation, MinoType type) {
+constexpr std::array<std::array<int, 2>, 12> Mino::get180WallKicks(int newRotation, MinoType type) {
     return (type == MinoType::I) ? iBlock180KickTable[newRotation]
                                  : otherBlock180KickTable[newRotation];
 }
