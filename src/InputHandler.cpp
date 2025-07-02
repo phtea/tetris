@@ -1,4 +1,5 @@
 #include "InputHandler.h"
+#include "Logger.h"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keyboard.h>
@@ -10,7 +11,7 @@ void InputHandler::pollEvents(SDL_Event &event) {
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
-            std::cout << "Quit event received" << std::endl;
+            LOG("Quit event received");
             quit = true;
         }
 

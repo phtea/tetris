@@ -1,6 +1,7 @@
 ﻿#include "Mino.h"
 
 #include "Constants.h"
+#include "Logger.h"
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <cassert>
@@ -80,7 +81,8 @@ bool Mino::rotate(int rotations, const grid_t &grid) {
         }
 
         if (!collidesWithGrid(testBlocks, grid)) {
-            std::cout << "used offset: " << offset[0] << " " << offset[1] << std::endl;
+            LOG("Used offset: %d %d", offset[0], offset[1]);
+            // std::cout << "used offset: " << offset[0] << " " << offset[1] << std::endl;
             m_blocks = rotatedBlocks;
             m_X += offset[0];
             m_Y -= offset[1];

@@ -9,6 +9,7 @@
 - [ ] difficulty progression: game should become faster with time
 - [x] hard drop
 - [ ] pause menu
+- [x] Preprosessor Logger (minimal)
 
 ---
 

@@ -13,6 +13,7 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include <ostream>
 
 #include "Constants.h"
+#include "Logger.h"
 #include "Mino.h"
 
 Game::Game(int screenWidth, int screenHeight)
@@ -126,7 +127,8 @@ void Game::handleLockDelay(Uint64 now) {
             if (isGameOver()) {
                 restartGame();
                 m_gameState = GameState::GAMEOVER;
-                std::cout << "Game over! Press R to Restart" << std::endl;
+                LOG("Game over! Press R to Restart");
+                // std::cout << "Game over! Press R to Restart" << std::endl;
             }
         }
         break;
