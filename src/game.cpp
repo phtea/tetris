@@ -128,12 +128,11 @@ void Game::handleLockDelay(Uint64 now) {
                 restartGame();
                 m_gameState = GameState::GAMEOVER;
                 LOG("Game over! Press R to Restart");
-                // std::cout << "Game over! Press R to Restart" << std::endl;
             }
         }
         break;
     default:
-        std::cerr << "Didn't expect default touch state" << std::endl;
+        FATAL("Didn't expect default touch state");
         break;
     }
 }

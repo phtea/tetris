@@ -82,7 +82,6 @@ bool Mino::rotate(int rotations, const grid_t &grid) {
 
         if (!collidesWithGrid(testBlocks, grid)) {
             LOG("Used offset: %d %d", offset[0], offset[1]);
-            // std::cout << "used offset: " << offset[0] << " " << offset[1] << std::endl;
             m_blocks = rotatedBlocks;
             m_X += offset[0];
             m_Y -= offset[1];
