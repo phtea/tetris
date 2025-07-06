@@ -51,6 +51,7 @@ class Game {
 
     // Game state
     GameState m_gameState = GameState::START;
+    GameState m_prevGameState = GameState::START;
     bool m_running;
 
     TouchState m_touchState = TouchState::NotTouching;

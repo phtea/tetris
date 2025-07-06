@@ -13,6 +13,14 @@
 
 ---
 
+### Bugs (TODO)
+- [?] main.cpp (at the end) => Exception Thrown Run-Time Check Failure #2 - Stack around the variable 'game' was corrupted.
+- [x] renderer.h - free memory at destructor
+- [x] Game over! Press R to Restart => not restarting
+- [ ] If holding R while on GAMEOVER screen -> Minos don't change (maybe a feature?) -> Happens because input handler handles all the inputs even if the game is paused
+
+--- 
+
 ### 🛠 How to Build on Linux
 
 1. **Install SDL3 and related libraries** to your user directory:
@@ -58,13 +66,6 @@ make release
 ```bash
 ./build/tetris
 ```
-
----
-
-### Bugs (TODO)
-- [ ] main.cpp (at the end) => Exception Thrown Run-Time Check Failure #2 - Stack around the variable 'game' was corrupted.
-- [x] renderer.h - free memory at destructor
-- [ ] Game over! Press R to Restart => not restarting
 
 ---
 

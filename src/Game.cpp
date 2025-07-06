@@ -198,10 +198,11 @@ void Game::handleInput() {
 
     if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_P)) {
         // Toggle pause
-        if (m_gameState == GameState::RUNNING) {
+        if (m_gameState != GameState::PAUSED) {
+            m_prevGameState = m_gameState;
             m_gameState = GameState::PAUSED;
-        } else if (m_gameState == GameState::PAUSED) {
-            m_gameState = GameState::RUNNING;
+        } else {
+            m_gameState = m_prevGameState;
         }
     }
 
