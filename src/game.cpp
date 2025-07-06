@@ -204,8 +204,14 @@ void Game::handleInput() {
             m_gameState = GameState::RUNNING;
         }
     }
-    if (m_gameState != GameState::RUNNING)
+
+    if (m_gameState == GameState::GAMEOVER && m_inputHandler.isKeyPressed(SDL_SCANCODE_R)) {
+        m_gameState = GameState::RUNNING;
+    }
+
+    if (m_gameState != GameState::RUNNING) {
         return;
+    }
 
     handleMovement(Direction::LEFT, SDL_SCANCODE_LEFT, now);
     handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT, now);

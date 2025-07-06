@@ -18,10 +18,10 @@ class InputHandler {
     bool isKeyJustPressed(SDL_Scancode key);
     Uint32 getKeyHoldTime(SDL_Scancode key) const;
 
-    bool shouldQuit() const { return quit; }
+    bool shouldQuit() const { return m_quit; }
 
   private:
     std::unordered_map<SDL_Scancode, KeyStateType> m_keyStates;
     std::unordered_map<SDL_Scancode, Uint64> m_keyHoldStartTimes;
-    bool quit = false;
+    bool m_quit = false;
 };

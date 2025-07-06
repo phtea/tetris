@@ -12,12 +12,12 @@ void InputHandler::pollEvents(SDL_Event &event) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
             LOG("Quit event received");
-            quit = true;
+            m_quit = true;
         }
 
         if (event.type == SDL_EVENT_KEY_DOWN) {
             if (event.key.scancode == SDL_SCANCODE_ESCAPE) {
-                quit = true;
+                m_quit = true;
             }
             if (event.key.repeat) {
                 m_keyStates[event.key.scancode] = KeyStateType::isHeld;
