@@ -8,10 +8,6 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
 
-#include <cstdlib>
-#include <iostream>
-#include <ostream>
-
 #include "Constants.h"
 #include "Logger.h"
 #include "Mino.h"

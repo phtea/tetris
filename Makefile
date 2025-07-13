@@ -37,13 +37,3 @@ clean:
 .PHONY: format
 format:
 	clang-format -i $(FORMAT_SOURCES)
-
-# Show usage help
-.PHONY: help
-help:
-	@echo "Makefile commands:"
-	@echo "  init    - Generate Ninja build files"
-	@echo "  debug   - Build Debug version"
-	@echo "  release - Build Release version"
-	@echo "  clean   - Clean build files"
-	@echo "  format  - Format source files with clang-format"

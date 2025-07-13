@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <iostream>
 #include <random>
 
 #include "CustomTypes.h"
