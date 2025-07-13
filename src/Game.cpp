@@ -11,6 +11,7 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "Constants.h"
 #include "Logger.h"
 #include "Mino.h"
+#include <cstdlib>
 
 Game::Game(int screenWidth, int screenHeight)
     : m_Hud(1300, 200, 1.0f), m_running(true), m_lastFallTime(SDL_GetTicks()), m_SDF(100),

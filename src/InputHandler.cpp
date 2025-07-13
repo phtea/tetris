@@ -4,8 +4,6 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keyboard.h>
 
-#include <iostream>
-
 void InputHandler::pollEvents(SDL_Event &event) {
     Uint64 now = SDL_GetTicks();
 
