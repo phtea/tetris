@@ -72,16 +72,18 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
     ScreenPosition pos(labelX, labelY);
     renderer.drawTextAtPixel(label, pos);
 
-    int yOffset = m_elementSpacing; // Offset to space out the nextMinos visually
-
     int blockSize = renderer.getBlockSize() * m_hudScale;
+    int minoSpacing = blockSize * 3; // Space each mino by 3 block heights (adjust as needed)
 
-    for (int i = 0; i < count && !tetrominos.empty(); ++i) {
+    for (auto i = 0; i < count && !tetrominos.empty(); ++i) {
         Mino t = tetrominos.front();
         tetrominos.pop();
 
         SDL_Color blockColor = t.getColor();
         auto blocks = t.getBlocks();
+
+        // Calculate vertical offset for this mino
+        int yOffset = m_elementSpacing + static_cast<int>(i * minoSpacing);
 
         for (const auto &block : blocks) {
             int x = renderer.calculateHudX(m_hudX + static_cast<int>(block[0] * blockSize));
@@ -89,9 +91,8 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
                                            yOffset + m_currentElementPos);
             renderer.drawBlockAtPixel(x, y, blockColor, blockSize);
         }
-
-        yOffset += m_elementSpacing; // Move each next mino down visually
     }
 
-    m_currentElementPos += yOffset + m_elementSpacing; // Update the current element position
+    m_currentElementPos += m_elementSpacing + static_cast<int>(count * minoSpacing) +
+                           m_elementSpacing; // Update the current element position
 }
