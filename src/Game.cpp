@@ -164,6 +164,12 @@ void Game::render() {
         pos.y /= 2;
 				bool centered = true;
         m_renderer.drawTextAtPixel("GAME PAUSED.", pos, centered);
+    } else if (m_gameState == GameState::GAMEOVER) {
+        ScreenPosition pos = m_renderer.getResolution();
+        pos.x /= 2;
+        pos.y /= 2;
+				bool centered = true;
+        m_renderer.drawTextAtPixel("GAME OVER. \nPress R to Restart.", pos, centered);
     }
 
     m_renderer.present();
