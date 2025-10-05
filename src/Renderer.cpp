@@ -140,7 +140,7 @@ void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos) {
     // Render the text
     // TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
     // OF renderQuad W and H!
-    SDL_FRect renderQuad = {pos.x - textWidth / 2.0f, pos.y - textHeight / 2.0f,
+    SDL_FRect renderQuad = {pos.x, pos.y,
                             static_cast<float>(textWidth), static_cast<float>(textHeight)};
 
     SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);
