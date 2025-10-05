@@ -114,7 +114,7 @@ ScreenPosition Renderer::getResolution() {
     return ScreenPosition(width, height);
 }
 
-void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos) {
+void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos, bool centered) {
     SDL_Color color = {255, 255, 255, 255}; // White text color
 
     // Create a surface from the text
@@ -140,7 +140,9 @@ void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos) {
     // Render the text
     // TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
     // OF renderQuad W and H!
-    SDL_FRect renderQuad = {pos.x, pos.y, static_cast<float>(textWidth),
+		float textPosX = centered ? pos.x - textWidth / 2.0f : pos.x;
+		float textPosY = centered ? pos.y - textHeight / 2.0f : pos.y;
+    SDL_FRect renderQuad = {textPosX, textPosY, static_cast<float>(textWidth),
                             static_cast<float>(textHeight)};
 
     SDL_RenderTexture(m_renderer, textTexture, NULL, &renderQuad);

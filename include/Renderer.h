@@ -35,7 +35,7 @@ class Renderer {
     // New methods for drawing at pixel positions
     void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color);
     void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color, int blockSize);
-    void drawTextAtPixel(const std::string &text, ScreenPosition pos);
+    void drawTextAtPixel(const std::string &text, ScreenPosition pos, bool centered);
 
     // New methods for position and size calculation
     int calculateHudX(int baseX) const;

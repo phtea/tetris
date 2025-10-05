@@ -11,6 +11,7 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "Constants.h"
 #include "Logger.h"
 #include "Mino.h"
+#include "ScoreSystem.h"
 #include <cstdlib>
 
 Game::Game(int screenWidth, int screenHeight)
@@ -124,7 +125,7 @@ void Game::handleLockDelay(Uint64 now) {
             if (isGameOver()) {
                 restartGame();
                 m_gameState = GameState::GAMEOVER;
-                LOG("Game over! Press R to Restart");
+                LOG("Game over! Press R to Restart"); // TODO: not LOG, but show in game
             }
         }
         break;
@@ -145,7 +146,8 @@ void Game::render() {
         ScreenPosition pos = m_renderer.getResolution();
         pos.x /= 2;
         pos.y /= 2;
-        m_renderer.drawTextAtPixel("GAME PAUSED.", pos);
+				bool centered = true;
+        m_renderer.drawTextAtPixel("GAME PAUSED.", pos, centered);
     }
 
     m_renderer.present();

@@ -70,7 +70,7 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
     int labelX = renderer.calculateHudX(m_hudX);
     int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
     ScreenPosition pos(labelX, labelY);
-    renderer.drawTextAtPixel(label, pos);
+    renderer.drawTextAtPixel(label, pos, false);
 
     int blockSize = renderer.getBlockSize() * m_hudScale;
     int minoSpacing = blockSize * 3; // Space each mino by 3 block heights (adjust as needed)

@@ -6,6 +6,7 @@
 #include "InputHandler.h"
 #include "Mino.h"
 #include "Renderer.h"
+#include "ScoreSystem.h"
 #include <queue>
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
@@ -67,6 +68,9 @@ class Game {
     Uint32 m_DAS = 167; // Delay before auto-repeat (milliseconds)
     Uint32 m_ARR = 33;  // Auto-repeat rate (milliseconds)
     Uint32 m_SDF;       // Soft-drop factor (the factor with which soft drop changes the gravity)
+
+		int m_currentLevel;
+		ScoreSystem m_scoreSystem;
 
     Grid m_grid;
     Renderer m_renderer;
