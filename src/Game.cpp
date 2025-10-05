@@ -102,8 +102,18 @@ void Game::update() {
     handleLockDelay(now);
 }
 
+double Game::computeFallDelayForLevel(int level) const {
+    // guideline gravity formula (секунды за 1 строку)
+    double t = pow(0.8 - ((level - 1) * 0.007), (level - 1));
+
+    // конвертируем в миллисекунды
+    return t * 1000.0;
+}
+
 void Game::handleFallDelay(Uint64 now) {
     // Handle the fall behavior (move tetromino down based on m_timeToFall)
+		int level = m_scoreSystem.getLevel();
+		double m_timeToFall = computeFallDelayForLevel(level);
     bool canFall = now - m_lastFallTime >= m_timeToFall;
     if (!DEBUG_NO_FALL && canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
         m_Mino.move(Direction::DOWN);
