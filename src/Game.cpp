@@ -11,6 +11,7 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "Constants.h"
 #include "Logger.h"
 #include "Mino.h"
+#include "ScoreSystem.h"
 #include <cstdlib>
 
 Game::Game(int screenWidth, int screenHeight)
@@ -31,7 +32,13 @@ Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDela
 
 void Game::placeMinoOnGrid() {
     m_grid.placeTetromino(m_Mino);
-    m_grid.checkFullRows();
+    int lines = m_grid.checkFullRows();
+		if (lines > 0) {
+			m_scoreSystem.addScore(lines);
+			LOG("getScore: %i", m_scoreSystem.getScore());
+			LOG("getLevel: %i", m_scoreSystem.getLevel());
+			LOG("getTotalLines: %i", m_scoreSystem.getTotalLines());
+		}
     createNewMino();
     m_canSwap = true; // Allow swapping again
 }
@@ -95,8 +102,18 @@ void Game::update() {
     handleLockDelay(now);
 }
 
+double Game::computeFallDelayForLevel(int level) const {
+    // guideline gravity formula (секунды за 1 строку)
+    double t = pow(0.8 - ((level - 1) * 0.007), (level - 1));
+
+    // конвертируем в миллисекунды
+    return t * 1000.0;
+}
+
 void Game::handleFallDelay(Uint64 now) {
     // Handle the fall behavior (move tetromino down based on m_timeToFall)
+		int level = m_scoreSystem.getLevel();
+		double m_timeToFall = computeFallDelayForLevel(level);
     bool canFall = now - m_lastFallTime >= m_timeToFall;
     if (!DEBUG_NO_FALL && canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
         m_Mino.move(Direction::DOWN);
@@ -124,7 +141,7 @@ void Game::handleLockDelay(Uint64 now) {
             if (isGameOver()) {
                 restartGame();
                 m_gameState = GameState::GAMEOVER;
-                LOG("Game over! Press R to Restart");
+                LOG("Game over! Press R to Restart"); // TODO: not LOG, but show in game
             }
         }
         break;
@@ -139,13 +156,22 @@ void Game::render() {
     m_renderer.clear();
     m_grid.draw(m_renderer);
     m_Mino.draw(m_renderer);
-    m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino);
+		int score = m_scoreSystem.getScore();
+		int level = m_scoreSystem.getLevel();
+    m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino, level, score);
 
     if (m_gameState == GameState::PAUSED) {
         ScreenPosition pos = m_renderer.getResolution();
         pos.x /= 2;
         pos.y /= 2;
-        m_renderer.drawTextAtPixel("GAME PAUSED.", pos);
+				bool centered = true;
+        m_renderer.drawTextAtPixel("GAME PAUSED.", pos, centered);
+    } else if (m_gameState == GameState::GAMEOVER) {
+        ScreenPosition pos = m_renderer.getResolution();
+        pos.x /= 2;
+        pos.y /= 2;
+				bool centered = true;
+        m_renderer.drawTextAtPixel("GAME OVER. \nPress R to Restart.", pos, centered);
     }
 
     m_renderer.present();

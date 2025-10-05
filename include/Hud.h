@@ -11,10 +11,11 @@ class Hud {
     ~Hud();
 
     void update(Renderer &renderer, int nextCount);
-    void draw(Renderer &renderer, const std::queue<Mino> &tetrominos, const Mino &bufferTetromino);
+    void draw(Renderer &renderer, const std::queue<Mino> &tetrominos, const Mino &bufferTetromino, const int level, const int score);
     void move(int deltaX, int deltaY);
     void setShowNext(bool show);
     void setShowHold(bool show);
+		void showStat(Renderer &renderer, const std::string statName, const int stat);
 
     // New method for drawing HUD borders
     void drawBorders(Renderer &renderer);
