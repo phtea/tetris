@@ -13,12 +13,7 @@ class ScoreSystem {
 		int m_level;
 		int m_startingLevel;
 
-		int handleLevel0(int lines);
-		int handleLevel1(int lines);
-		int handleLevel2(int lines);
-		int handleLevel9(int lines);
-		int handleLevelN(int lines);
-
+		int calculateGivenScore(int lines);
 		void calculateLevel();
 
 		int amountToAdd(int lines);
