@@ -2,29 +2,31 @@
 #include <csignal>
 #include "Logger.h"
 
-int handleLevel0(int lines);
-int handleLevel1(int lines);
-int handleLevel2(int lines);
-int handleLevel9(int lines);
-int handleLevelN(int lines, int level);
+void ScoreSystem::calculateLevel() {
+	if (m_totalLines >= (m_level * 10) + 10) {
+		m_level++;
+	}
+}
 
-int ScoreSystem::addScore(int level, int lines) {
-	int newScore = amountToAdd(level, lines);
-	m_currentScore += newScore;
+int ScoreSystem::addScore(int lines) {
+	m_totalLines += lines;
+	calculateLevel();
+	int newScore = amountToAdd(lines);
+	m_score += newScore;
 	return newScore;
 }
 
-int ScoreSystem::amountToAdd(int level, int lines) {
-	switch (level) {
+int ScoreSystem::amountToAdd(int lines) {
+	switch (m_level) {
 		case 0: return handleLevel0(lines);
 		case 1: return handleLevel1(lines);
 		case 2: return handleLevel2(lines);
 		case 9: return handleLevel9(lines);
 	}
-	return handleLevelN(lines, level);
+	return handleLevelN(lines);
 }
 
-int handleLevel0(int lines) {
+int ScoreSystem::handleLevel0(int lines) {
 	switch (lines) {
 		case 1: return 40;
 		case 2: return 100;
@@ -35,7 +37,7 @@ int handleLevel0(int lines) {
 	return -1;
 }
 
-int handleLevel1(int lines) {
+int ScoreSystem::handleLevel1(int lines) {
 	switch (lines) {
 		case 1: return 80;
 		case 2: return 200;
@@ -46,7 +48,7 @@ int handleLevel1(int lines) {
 	return -1;
 }
 
-int handleLevel2(int lines) {
+int ScoreSystem::handleLevel2(int lines) {
 	switch (lines) {
 		case 1: return 120;
 		case 2: return 300;
@@ -57,7 +59,7 @@ int handleLevel2(int lines) {
 	return -1;
 }
 
-int handleLevel9(int lines) {
+int ScoreSystem::handleLevel9(int lines) {
 	switch (lines) {
 		case 1: return 400;
 		case 2: return 1000;
@@ -68,12 +70,12 @@ int handleLevel9(int lines) {
 	return -1;
 }
 
-int handleLevelN(int lines, int level) {
+int ScoreSystem::handleLevelN(int lines) {
 	switch (lines) {
-		case 1: return 40 * (level+1);
-		case 2: return 100 * (level+1);
-		case 3: return 300 * (level+1);
-		case 4: return 1200 * (level+1);
+		case 1: return 40 * (m_level+1);
+		case 2: return 100 * (m_level+1);
+		case 3: return 300 * (m_level+1);
+		case 4: return 1200 * (m_level+1);
 	}
 	FATAL("lines can't be more than 4");
 	return -1;

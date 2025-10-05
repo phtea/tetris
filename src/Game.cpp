@@ -32,7 +32,13 @@ Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDela
 
 void Game::placeMinoOnGrid() {
     m_grid.placeTetromino(m_Mino);
-    m_grid.checkFullRows();
+    int lines = m_grid.checkFullRows();
+		if (lines > 0) {
+			m_scoreSystem.addScore(lines);
+			LOG("getScore: %i", m_scoreSystem.getScore());
+			LOG("getLevel: %i", m_scoreSystem.getLevel());
+			LOG("getTotalLines: %i", m_scoreSystem.getTotalLines());
+		}
     createNewMino();
     m_canSwap = true; // Allow swapping again
 }
