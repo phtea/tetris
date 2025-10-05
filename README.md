@@ -3,6 +3,8 @@
 A modern **Tetris** clone written in **C++17** using **SDL3**.  
 Implements the full gameplay loop, original Nintendo scoring system, 7-bag piece generation, Super Rotation System (known as SRS), level progression, and smooth gravity behavior.
 
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/2282d7fb-ec09-42e9-bdc3-8d8f9b8453ba" />
+
 ### Features:
 - ✅ **7-bag randomizer** — fair piece generation (no repeats until all 7 appear)
 - ✅ **Normal rotation system** — rotation with collision detection
