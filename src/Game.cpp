@@ -156,7 +156,9 @@ void Game::render() {
     m_renderer.clear();
     m_grid.draw(m_renderer);
     m_Mino.draw(m_renderer);
-    m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino);
+		int score = m_scoreSystem.getScore();
+		int level = m_scoreSystem.getLevel();
+    m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino, level, score);
 
     if (m_gameState == GameState::PAUSED) {
         ScreenPosition pos = m_renderer.getResolution();

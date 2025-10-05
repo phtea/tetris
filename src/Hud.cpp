@@ -1,4 +1,6 @@
 #include "Hud.h"
+#include "Renderer.h"
+#include <string>
 
 Hud::Hud(int hudX, int hudY, float scale)
     : m_hudX(hudX), m_hudY(hudY), m_elementSpacing(50), m_hudScale(scale), m_currentElementPos(0),
@@ -11,8 +13,10 @@ void Hud::update(Renderer &renderer, int nextCount) {
     m_NextCount = nextCount;
 }
 
-void Hud::draw(Renderer &renderer, const std::queue<Mino> &nextMinos, const Mino &bufferMino) {
+void Hud::draw(Renderer &renderer, const std::queue<Mino> &nextMinos, const Mino &bufferMino, const int level, const int score) {
     m_currentElementPos = 0; // Reset the current element position
+		showStat(renderer, "Level", level);
+		showStat(renderer, "Score", score);
     if (m_showNext) {
         renderNextTetromino(renderer, nextMinos, m_NextCount);
     }
@@ -22,6 +26,16 @@ void Hud::draw(Renderer &renderer, const std::queue<Mino> &nextMinos, const Mino
     if (m_hudBordersEnabled) {
         drawBorders(renderer);
     }
+}
+
+void Hud::showStat(Renderer &renderer, const std::string statName, const int stat) {
+    int labelX = renderer.calculateHudX(m_hudX);
+    int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
+    ScreenPosition pos(labelX, labelY);
+
+		std::string levelLabel = statName + ": " + std::to_string(stat);
+    renderer.drawTextAtPixel(levelLabel, pos, false);
+    m_currentElementPos += m_elementSpacing; // Update the current element position
 }
 
 void Hud::move(int deltaX, int deltaY) {
