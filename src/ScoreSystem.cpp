@@ -11,13 +11,9 @@ void ScoreSystem::calculateLevel() {
 int ScoreSystem::addScore(int lines) {
 	m_totalLines += lines;
 	calculateLevel();
-	int newScore = amountToAdd(lines);
+	int newScore = calculateGivenScore(lines);
 	m_score += newScore;
 	return newScore;
-}
-
-int ScoreSystem::amountToAdd(int lines) {
-	return calculateGivenScore(lines);
 }
 
 int ScoreSystem::calculateGivenScore(int lines) {

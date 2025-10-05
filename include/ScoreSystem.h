@@ -15,6 +15,4 @@ class ScoreSystem {
 
 		int calculateGivenScore(int lines);
 		void calculateLevel();
-
-		int amountToAdd(int lines);
 };
