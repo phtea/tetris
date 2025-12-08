@@ -190,6 +190,9 @@ bool Game::isGameOver() {
 }
 
 void Game::restartGame() {
+    // Clear the score system
+		m_scoreSystem = ScoreSystem();
+
     // Clear the grid
     m_grid.clear();
 
