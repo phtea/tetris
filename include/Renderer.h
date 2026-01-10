@@ -7,7 +7,7 @@
 #include <string>
 
 struct ScreenPosition {
-    float x, y;
+    double x, y;
 };
 
 class Renderer {
@@ -21,28 +21,28 @@ class Renderer {
 
     void setResolution(const ScreenResolution &res);
 
-    void drawLine(int x1, int y1, int x2, int y2);
+    void drawLine(float x1, float y1, float x2, float y2);
     void drawGrid(const ScreenResolution& res);
-    void drawBlock(int x, int y, const SDL_Color &color);
-    void drawText(const std::string &text, int x, int y);
+    void drawBlock(double x, double y, const SDL_Color &color);
+    void drawText(const std::string &text, const ScreenPosition& pos);
 
     void update();
 
     ScreenPosition getResolution();
 
     // New methods for drawing at pixel positions
-    void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color);
-    void drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color, int blockSize);
+    void drawBlockAtPixel(float pixelX, float pixelY, const SDL_Color &color);
+    void drawBlockAtPixel(float pixelX, float pixelY, const SDL_Color &color, float blockSize);
     void drawTextAtPixel(const std::string &text, ScreenPosition pos, bool centered);
 
     // New methods for position and size calculation
-    [[nodiscard]] float calculateHudX(int baseX) const;
-    [[nodiscard]] float calculateHudY(int baseY) const;
-    [[nodiscard]] int calculateHudBlockSize() const;
+    [[nodiscard]] float calculateHudX(double baseX) const;
+    [[nodiscard]] float calculateHudY(double baseY) const;
+    [[nodiscard]] float calculateHudBlockSize() const;
 
     [[nodiscard]] float calculateFontSize(float baseFontSize) const;
 
-    [[nodiscard]] int getBlockSize() const { return m_blockSize; }
+    [[nodiscard]] float getBlockSize() const { return m_blockSize; }
 
   private:
     void loadFont(float fontSize);
@@ -55,7 +55,7 @@ class Renderer {
 		ScreenResolution m_res{0, 0};
     int m_xOffset{0};
     int m_yOffset{0};
-    int m_blockSize{0};
+    float m_blockSize{0};
 
     static constexpr int BASE_WIDTH = 1920;
     static constexpr int BASE_HEIGHT = 1080;

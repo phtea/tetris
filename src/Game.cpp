@@ -17,19 +17,19 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "ScoreSystem.h"
 #include <cstdlib>
 
-Game::Game(const ScreenResolution& res)
+Game::Game(const ScreenResolution &res)
     : m_Hud({1300, 200}, 1.0F), m_running(true), m_lastFallTime(SDL_GetTicks()), m_SDF(100),
       m_renderer(GAME_TITLE, res), m_Mino(MinoType::NONE), m_nextMinosSize(1),
       m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 
-Game::Game(const ScreenResolution& res, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
-           Uint32 arr, Uint32 sdf, int nextMinosSize)
-    : m_Hud({1300, 200}, 1.0F), m_running(true), m_timeToFall(timeToFall),
-      m_lastFallTime(SDL_GetTicks()), m_lockDelayTime(lockDelayTime), m_DAS(das), m_ARR(arr),
-      m_SDF(sdf), m_renderer(GAME_TITLE, res), m_Mino(MinoType::NONE),
-      m_nextMinosSize(nextMinosSize), m_bufferMino(MinoType::NONE), m_canSwap(true) {
+Game::Game(const ScreenResolution &res, const GameConfig &cfg)
+    : m_Hud({1300, 200}, 1.0F), m_running(true), m_timeToFall(cfg.timings.timeToFall),
+      m_lastFallTime(SDL_GetTicks()), m_lockDelayTime(cfg.timings.lockDelayTime),
+      m_DAS(cfg.timings.das), m_ARR(cfg.timings.arr), m_SDF(cfg.timings.sdf),
+      m_renderer(GAME_TITLE, res), m_Mino(MinoType::NONE), m_nextMinosSize(cfg.nextMinosSize),
+      m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 

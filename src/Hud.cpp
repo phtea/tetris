@@ -1,7 +1,6 @@
 #include "Hud.h"
 #include "CustomTypes.h"
 #include "Renderer.h"
-#include <iostream>
 #include <string>
 
 Hud::Hud(const Position& pos, float scale)
@@ -29,15 +28,13 @@ void Hud::draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bu
 }
 
 void Hud::showStat(Renderer &renderer, const std::string& statLabel, int stat) {
-    const int labelX = renderer.calculateHudX(m_hudX);
-    const int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
-		// std::cout << "H " << labelX << " " << labelY << '\n';
-		// std::cout << "M " << m_hudX << " " << m_hudY << '\n';
-    const ScreenPosition pos{static_cast<float>(labelX), static_cast<float>(labelY)};
+    const float labelX = renderer.calculateHudX(m_hudX);
+    const float labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
+    const ScreenPosition pos{labelX, labelY};
 
 		const std::string levelLabel = statLabel + ": " + std::to_string(stat);
     renderer.drawTextAtPixel(levelLabel, pos, false);
-    m_currentElementPos += m_elementSpacing; // Update the current element position
+    m_currentElementPos += static_cast<int>(m_elementSpacing); // Update the current element position
 }
 
 void Hud::move(int deltaX, int deltaY) {
@@ -55,12 +52,12 @@ void Hud::drawBorders(Renderer &renderer) const {
     renderer.setDrawColor(borderColor);
 
     // Calculate HUD dimensions
-    const int hudX = static_cast<int>(renderer.calculateHudX(m_hudX) * 0.99);
-    const int hudY = renderer.calculateHudY(m_hudY);
+    const float hudX = renderer.calculateHudX(m_hudX) * 0.99F;
+    const float hudY = renderer.calculateHudY(m_hudY);
 
     // Calculate the width and height based on the elements
-    const int hudWidth = renderer.getBlockSize() * 4; // Assuming the width of the HUD is 4 blocks
-    const int hudHeight = m_currentElementPos;        // Total height of the elements plus some spacing
+    const float hudWidth = renderer.getBlockSize() * 4; // Assuming the width of the HUD is 4 blocks
+    const auto hudHeight = static_cast<float>(m_currentElementPos);        // Total height of the elements plus some spacing
 
     // Draw the borders
     renderer.drawLine(hudX, hudY, hudX + hudWidth, hudY);                         // Top border
@@ -83,14 +80,15 @@ void Hud::renderBufferTetromino(Renderer &renderer, const Mino &bufferMino) {
 
 void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::queue<Mino> tetrominos,
                           int count) {
-    const int labelX = renderer.calculateHudX(m_hudX);
-    const int labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
+    const float labelX = renderer.calculateHudX(m_hudX);
+    const float labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
+
     const ScreenPosition pos{static_cast<float>(labelX), static_cast<float>(labelY)};
 
     renderer.drawTextAtPixel(label, pos, false);
 
-    const int blockSize = renderer.getBlockSize() * static_cast<int>(m_hudScale);
-    const int minoSpacing = blockSize * 3; // Space each mino by 3 block heights (adjust as needed)
+    const float blockSize = renderer.getBlockSize() * m_hudScale;
+    const int minoSpacing = static_cast<int>(blockSize) * 3; // Space each mino by 3 block heights (adjust as needed)
 
     for (auto i = 0; i < count && !tetrominos.empty(); ++i) {
         const Mino t = tetrominos.front();
@@ -100,15 +98,15 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
         const auto blocks = t.getBlocks();
 
         // Calculate vertical offset for this mino
-        const int yOffset = m_elementSpacing + (i * minoSpacing);
+        const int yOffset = static_cast<int>(m_elementSpacing) + (i * minoSpacing);
 
         for (const auto &block : blocks) {
-            const int x = renderer.calculateHudX(m_hudX + static_cast<int>(block[0] * blockSize));
-            const int y = renderer.calculateHudY(m_hudY + static_cast<int>(block[1] * blockSize) +
-                                           yOffset + m_currentElementPos);
+            const float x = renderer.calculateHudX(m_hudX + (static_cast<double>(block[0]) * blockSize));
+            const float y = renderer.calculateHudY(m_hudY + (static_cast<double>(block[1]) * blockSize) + yOffset + m_currentElementPos);
+
             renderer.drawBlockAtPixel(x, y, blockColor, blockSize);
         }
     }
 
-    m_currentElementPos += m_elementSpacing + (count * minoSpacing) + m_elementSpacing; // Update the current element position
+    m_currentElementPos += static_cast<int>(m_elementSpacing * 2) + (count * minoSpacing); // Update the current element position
 }

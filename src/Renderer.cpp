@@ -2,8 +2,7 @@
 #include "Constants.h"
 #include "CustomTypes.h"
 
-Renderer::Renderer(const std::string& title, const ScreenResolution &res)
-    : m_res(res) {
+Renderer::Renderer(const std::string &title, const ScreenResolution &res) : m_res(res) {
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_Init Error: %s\n", SDL_GetError());
@@ -58,7 +57,7 @@ void Renderer::present() {
     }
 }
 
-// void Renderer::drawBlock(int gridX, int gridY, const SDL_Color& color) {
+// void Renderer::drawBlock(double gridX, double gridY, const SDL_Color& color) {
 //     if (gridY < 0) return;
 //
 //     SDL_FRect block = { gridX, gridY, BLOCK_SIZE, BLOCK_SIZE };
@@ -70,7 +69,7 @@ void Renderer::present() {
 
 // Draws block based on X and Y (compared to grid). blockSize is handled here
 
-void Renderer::drawText(const std::string &text, int gridX, int gridY) {
+void Renderer::drawText(const std::string &text, const ScreenPosition& pos) {
     const SDL_Color color = {255, 255, 255, 255}; // White text color
 
     // Create a surface from the text
@@ -86,8 +85,8 @@ void Renderer::drawText(const std::string &text, int gridX, int gridY) {
     SDL_DestroySurface(textSurface); // No longer needed
 
     // Convert grid position to pixel position
-    const int pixelX = m_xOffset + gridX * m_blockSize;
-    const int pixelY = m_yOffset + gridY * m_blockSize;
+    const float pixelX = static_cast<float>(m_xOffset) + (static_cast<float>(pos.x) * m_blockSize);
+    const float pixelY = static_cast<float>(m_yOffset) + (static_cast<float>(pos.y) * m_blockSize);
 
     // Render the text
     const SDL_FRect renderQuad = {static_cast<float>(pixelX), static_cast<float>(pixelY),
@@ -141,9 +140,9 @@ void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos, bool
     // Render the text
     // TODO: YOU DONT HAVE TO LOAD FONT EACH TIME! YOU CAN JUST CHANGE THE SIZE
     // OF renderQuad W and H!
-    const float textPosX = centered ? pos.x - static_cast<float>(textWidth) / 2.0F : pos.x;
-    const float textPosY = centered ? pos.y - static_cast<float>(textHeight) / 2.0F : pos.y;
-    const SDL_FRect renderQuad = {textPosX, textPosY, static_cast<float>(textWidth),
+    const double textPosX = centered ? pos.x - static_cast<double>(textWidth) / 2.0 : pos.x;
+    const double textPosY = centered ? pos.y - static_cast<double>(textHeight) / 2.0 : pos.y;
+    const SDL_FRect renderQuad = {static_cast<float>(textPosX), static_cast<float>(textPosY), static_cast<float>(textWidth),
                                   static_cast<float>(textHeight)};
 
     SDL_RenderTexture(m_renderer, textTexture, nullptr, &renderQuad);
@@ -152,26 +151,26 @@ void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos, bool
     SDL_DestroyTexture(textTexture);
 }
 
-void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color) {
+void Renderer::drawBlockAtPixel(float pixelX, float pixelY, const SDL_Color &color) {
     drawBlockAtPixel(pixelX, pixelY, color, m_blockSize);
 }
 
-void Renderer::drawBlockAtPixel(int pixelX, int pixelY, const SDL_Color &color, int blockSize) {
-    const SDL_FRect block = {static_cast<float>(pixelX), static_cast<float>(pixelY),
-                             static_cast<float>(blockSize), static_cast<float>(blockSize)};
+void Renderer::drawBlockAtPixel(float pixelX, float pixelY, const SDL_Color &color,
+                                float blockSize) {
+    const SDL_FRect block = {pixelX, pixelY, blockSize, blockSize};
 
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(m_renderer, &block);
 }
 
-void Renderer::drawBlock(int x, int y, const SDL_Color &color) {
+void Renderer::drawBlock(double x, double y, const SDL_Color &color) {
     if (y < 0) {
         return;
     }
 
     const SDL_FRect block = {static_cast<float>(m_xOffset + x * m_blockSize),
-                       static_cast<float>(m_yOffset + y * m_blockSize),
-                       static_cast<float>(m_blockSize), static_cast<float>(m_blockSize)};
+                             static_cast<float>(m_yOffset + y * m_blockSize), m_blockSize,
+                             m_blockSize};
 
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(m_renderer, &block);
@@ -181,64 +180,68 @@ void Renderer::setDrawColor(const SDL_Color &color) {
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 }
 
-void Renderer::drawLine(int x1, int y1, int x2, int y2) {
-    SDL_RenderLine(m_renderer, static_cast<float>(x1), static_cast<float>(y1), static_cast<float>(x2), static_cast<float>(y2));
+void Renderer::drawLine(float x1, float y1, float x2, float y2) {
+    SDL_RenderLine(m_renderer, x1, y1, x2, y2);
 }
 
-void Renderer::drawGrid(const ScreenResolution& res) {
+void Renderer::drawGrid(const ScreenResolution &res) {
     for (int x = 0; x <= res.width; ++x) {
-        const int screenX = m_xOffset + x * m_blockSize;
-        drawLine(screenX, m_yOffset, screenX, m_yOffset + res.height * m_blockSize);
+        const float screenX = static_cast<float>(m_xOffset) + static_cast<float>(x) * m_blockSize;
+        drawLine(screenX, static_cast<float>(m_yOffset), screenX,
+                 static_cast<float>(m_yOffset) + static_cast<float>(res.height) * m_blockSize);
     }
 
     for (int y = 0; y <= res.height; ++y) {
-        const int screenY = m_yOffset + y * m_blockSize;
-        drawLine(m_xOffset, screenY, m_xOffset + res.width * m_blockSize, screenY);
+        const float screenY = static_cast<float>(m_yOffset) + static_cast<float>(y) * m_blockSize;
+        drawLine(static_cast<float>(m_xOffset), screenY,
+                 static_cast<float>(m_xOffset) + static_cast<float>(res.width) * m_blockSize,
+                 screenY);
     }
 }
 
-void Renderer::setGridSize(const ScreenResolution& res) {
-    m_blockSize = std::min(m_res.width / res.width, m_res.height / res.height);
+void Renderer::setGridSize(const ScreenResolution &res) {
+    m_blockSize = std::min(static_cast<float>(m_res.width) / static_cast<float>(res.width),
+                           static_cast<float>(m_res.height) / static_cast<float>(res.height));
 
     // Calculate offsets to center the grid
-    const int gridWidthPx = res.width * m_blockSize;
-    const int gridHeightPx = res.height * m_blockSize;
+    const int gridWidthPx = res.width * static_cast<int>(m_blockSize);
+    const int gridHeightPx = res.height * static_cast<int>(m_blockSize);
 
     m_xOffset = (m_res.width - gridWidthPx) / 2;
     m_yOffset = (m_res.height - gridHeightPx) / 2;
 }
 
 void Renderer::setResolution(const ScreenResolution &res) {
-		m_res = res;
+    m_res = res;
 
     // Update SDL window size
     SDL_SetWindowSize(m_window, m_res.width, m_res.height);
 
     // Recalculate grid and block size
     setGridSize({GRID_WIDTH, GRID_HEIGHT});
-    float scaledFontSize = calculateFontSize(BASE_FONT_SIZE);
+    const float scaledFontSize = calculateFontSize(BASE_FONT_SIZE);
     loadFont(scaledFontSize);
 }
 
-float Renderer::calculateHudX(int baseX) const {
-    float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
+float Renderer::calculateHudX(double baseX) const {
+    const float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
     return scaleX * static_cast<float>(baseX);
 }
 
-float Renderer::calculateHudY(int baseY) const {
-    float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
+float Renderer::calculateHudY(double baseY) const {
+    const float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
     return scaleY * static_cast<float>(baseY);
 }
 
-int Renderer::calculateHudBlockSize() const {
-    float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
-    float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
-    return static_cast<int>(std::max(scaleX, scaleY)) * m_blockSize;
+float Renderer::calculateHudBlockSize() const {
+    const float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
+    const float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
+    return std::max(scaleX, scaleY) * m_blockSize;
 }
 
 float Renderer::calculateFontSize(float baseFontSize) const {
-    float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
-    float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
+    const float scaleX = static_cast<float>(m_res.width) / BASE_WIDTH;
+    const float scaleY = static_cast<float>(m_res.height) / BASE_HEIGHT;
     return std::min(scaleX, scaleY) * baseFontSize;
 }
 

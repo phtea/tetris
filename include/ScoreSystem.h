@@ -12,6 +12,6 @@ class ScoreSystem {
 		int m_level{0};
 		int m_startingLevel{0};
 
-		int calculateGivenScore(int lines);
+		[[nodiscard]] int calculateGivenScore(int lines) const;
 		void calculateLevel();
 };

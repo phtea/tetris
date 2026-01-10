@@ -52,7 +52,13 @@ class GameBuilder {
     // Note: If Game's constructor doesn't take these parameters,
     // you might have to add additional setters in Game or make GameBuilder a friend.
     [[nodiscard]] Game build() const {
-        return {m_res, m_timeToFall, m_lockDelayTime, m_DAS, m_ARR, m_SDF, m_nextMinosSize};
+        const GameConfig cfg{.timings = {.timeToFall = m_timeToFall,
+                                   .lockDelayTime = m_lockDelayTime,
+                                   .das = m_DAS,
+                                   .arr = m_ARR,
+                                   .sdf = m_SDF},
+                       .nextMinosSize = m_nextMinosSize};
+        return {m_res, cfg};
     }
 
   private:

@@ -14,10 +14,23 @@ enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 enum class GameState : uint8_t { START, RUNNING, PAUSED, GAMEOVER };
 using bag7_t = std::array<MinoType, 7>;
 
+struct GameTimings {
+    Uint32 timeToFall;
+    Uint32 lockDelayTime;
+    Uint32 das;
+    Uint32 arr;
+    Uint32 sdf;
+};
+
+struct GameConfig {
+    GameTimings timings;
+    int nextMinosSize;
+};
+
 class Game {
   public:
-    Game(const ScreenResolution& res);
-    Game(const ScreenResolution& res, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das, Uint32 arr, Uint32 sdf, int nextMinosSize);
+    Game(const ScreenResolution &res);
+    Game(const ScreenResolution &res, const GameConfig &cfg);
     ~Game() = default;
     void run();
 
@@ -38,7 +51,7 @@ class Game {
     bool isGameOver();
     void stopGame() { m_running = false; }
     void restartGame();
-		static Uint64 computeFallDelayForLevel(int level);
+    static Uint64 computeFallDelayForLevel(int level);
 
     void swapTetromino();
 
@@ -68,10 +81,10 @@ class Game {
     Uint32 m_DAS = 167; // Delay before auto-repeat (milliseconds)
     Uint32 m_ARR = 33;  // Auto-repeat rate (milliseconds)
     Uint32 m_SDF;       // Soft-drop factor (the factor with which soft drop changes the gravity)
-    float m_gravity;    // Gravity of Minos dropping (the more the faster they drop) 
+    float m_gravity;    // Gravity of Minos dropping (the more the faster they drop)
 
-		int m_currentLevel;
-		ScoreSystem m_scoreSystem;
+    int m_currentLevel;
+    ScoreSystem m_scoreSystem;
 
     Grid m_grid;
     Renderer m_renderer;

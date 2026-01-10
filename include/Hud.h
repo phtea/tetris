@@ -28,7 +28,7 @@ class Hud {
 
     int m_hudX;
     int m_hudY;
-    int m_elementSpacing;
+    float m_elementSpacing;
     float m_hudScale;
     int m_currentElementPos;
 
