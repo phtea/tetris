@@ -1,22 +1,23 @@
 #pragma once
 
+#include "CustomTypes.h"
 #include "Mino.h"
 #include "Renderer.h"
 #include <queue>
-#include "CustomTypes.h"
 
 class Hud {
   public:
-    Hud(const Position& pos, float scale);
+    Hud(const Position &pos, float scale);
     Hud() = delete;
     ~Hud() = default;
 
     void update(Renderer &renderer, int nextCount);
-    void draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bufferMino, int level, int score);
+    void draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bufferMino, int level,
+              int score);
     void move(int deltaX, int deltaY);
     void setShowNext(bool show);
     void setShowHold(bool show);
-		void showStat(Renderer &renderer, const std::string& statLabel, int stat);
+    void showStat(Renderer &renderer, const std::string &statLabel, int stat);
 
     // New method for drawing HUD borders
     void drawBorders(Renderer &renderer) const;
@@ -24,7 +25,8 @@ class Hud {
   private:
     void renderNextTetromino(Renderer &renderer, std::queue<Mino> minos, int count);
     void renderBufferTetromino(Renderer &renderer, const Mino &bufferMino);
-    void renderTetromino(Renderer &renderer, const std::string &label, std::queue<Mino> minos, int count);
+    void renderTetromino(Renderer &renderer, const std::string &label, std::queue<Mino> minos,
+                         int count);
 
     int m_hudX;
     int m_hudY;

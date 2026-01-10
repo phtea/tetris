@@ -69,7 +69,7 @@ void Renderer::present() {
 
 // Draws block based on X and Y (compared to grid). blockSize is handled here
 
-void Renderer::drawText(const std::string &text, const ScreenPosition& pos) {
+void Renderer::drawText(const std::string &text, const ScreenPosition &pos) {
     const SDL_Color color = {255, 255, 255, 255}; // White text color
 
     // Create a surface from the text
@@ -142,8 +142,8 @@ void Renderer::drawTextAtPixel(const std::string &text, ScreenPosition pos, bool
     // OF renderQuad W and H!
     const double textPosX = centered ? pos.x - static_cast<double>(textWidth) / 2.0 : pos.x;
     const double textPosY = centered ? pos.y - static_cast<double>(textHeight) / 2.0 : pos.y;
-    const SDL_FRect renderQuad = {static_cast<float>(textPosX), static_cast<float>(textPosY), static_cast<float>(textWidth),
-                                  static_cast<float>(textHeight)};
+    const SDL_FRect renderQuad = {static_cast<float>(textPosX), static_cast<float>(textPosY),
+                                  static_cast<float>(textWidth), static_cast<float>(textHeight)};
 
     SDL_RenderTexture(m_renderer, textTexture, nullptr, &renderQuad);
 

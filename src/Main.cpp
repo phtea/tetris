@@ -2,7 +2,7 @@
 #include "GameBuilder.h"
 
 int main() {
-    GameBuilder builder({ .width = 800, .height = 600});
+    GameBuilder builder({.width = 800, .height = 600});
 
     Game game = builder.setTimeToFall(900)
                     .setLockDelayTime(600)

@@ -2,7 +2,7 @@
 #include "CustomTypes.h"
 
 HudBuilder &HudBuilder::setPosition(const Position &pos) {
-		m_pos = pos;
+    m_pos = pos;
     return *this;
 }
 

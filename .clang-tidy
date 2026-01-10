@@ -11,6 +11,6 @@ Checks: >
   -misc-include-cleaner
 
 WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: '.*/(src|include)/.*'
 
 FormatStyle: none

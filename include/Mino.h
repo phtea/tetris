@@ -41,8 +41,8 @@ class Mino {
 
     // rotation logic
     void setShape(int newRotation);
-    constexpr static std::array<std::array<int, 2>, 12>
-    getWallKicks(int from, int to, MinoType type);
+    constexpr static std::array<std::array<int, 2>, 12> getWallKicks(int from, int to,
+                                                                     MinoType type);
     constexpr static std::array<std::array<int, 2>, 12> get180WallKicks(int newRotation,
                                                                         MinoType type);
     blocks_t applyRotation(int newRotation);

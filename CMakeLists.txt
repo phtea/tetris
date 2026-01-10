@@ -25,6 +25,13 @@ file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 # Add executable
 add_executable(tetris ${MY_SOURCES})
 
+# clang-tidy setup
+find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+if(CLANG_TIDY_EXE)
+    set(CLANG_TIDY_COMMAND ${CLANG_TIDY_EXE} -p=${CMAKE_BINARY_DIR})
+    set_target_properties(tetris PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+endif()
+
 # Include headers
 target_include_directories(tetris PRIVATE ${CMAKE_SOURCE_DIR}/include)
 

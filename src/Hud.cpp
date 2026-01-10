@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include <string>
 
-Hud::Hud(const Position& pos, float scale)
+Hud::Hud(const Position &pos, float scale)
     : m_hudX(pos.x), m_hudY(pos.y), m_elementSpacing(50), m_hudScale(scale), m_currentElementPos(0),
       m_showNext(true), m_showHold(true), m_hudBordersEnabled(true) {}
 
@@ -12,10 +12,11 @@ void Hud::update(Renderer &renderer, int nextCount) {
     m_NextCount = nextCount;
 }
 
-void Hud::draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bufferMino, int level, int score) {
+void Hud::draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bufferMino, int level,
+               int score) {
     m_currentElementPos = 0; // Reset the current element position
-		showStat(renderer, "Level", level);
-		showStat(renderer, "Score", score);
+    showStat(renderer, "Level", level);
+    showStat(renderer, "Score", score);
     if (m_showNext) {
         renderNextTetromino(renderer, minos, m_NextCount);
     }
@@ -27,14 +28,15 @@ void Hud::draw(Renderer &renderer, const std::queue<Mino> &minos, const Mino &bu
     }
 }
 
-void Hud::showStat(Renderer &renderer, const std::string& statLabel, int stat) {
+void Hud::showStat(Renderer &renderer, const std::string &label, int stat) {
     const float labelX = renderer.calculateHudX(m_hudX);
     const float labelY = renderer.calculateHudY(m_hudY + m_currentElementPos);
     const ScreenPosition pos{labelX, labelY};
 
-		const std::string levelLabel = statLabel + ": " + std::to_string(stat);
+    const std::string levelLabel = label + ": " + std::to_string(stat);
     renderer.drawTextAtPixel(levelLabel, pos, false);
-    m_currentElementPos += static_cast<int>(m_elementSpacing); // Update the current element position
+    m_currentElementPos +=
+        static_cast<int>(m_elementSpacing); // Update the current element position
 }
 
 void Hud::move(int deltaX, int deltaY) {
@@ -57,7 +59,8 @@ void Hud::drawBorders(Renderer &renderer) const {
 
     // Calculate the width and height based on the elements
     const float hudWidth = renderer.getBlockSize() * 4; // Assuming the width of the HUD is 4 blocks
-    const auto hudHeight = static_cast<float>(m_currentElementPos);        // Total height of the elements plus some spacing
+    const auto hudHeight =
+        static_cast<float>(m_currentElementPos); // Total height of the elements plus some spacing
 
     // Draw the borders
     renderer.drawLine(hudX, hudY, hudX + hudWidth, hudY);                         // Top border
@@ -88,7 +91,8 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
     renderer.drawTextAtPixel(label, pos, false);
 
     const float blockSize = renderer.getBlockSize() * m_hudScale;
-    const int minoSpacing = static_cast<int>(blockSize) * 3; // Space each mino by 3 block heights (adjust as needed)
+    const int minoSpacing =
+        static_cast<int>(blockSize) * 3; // Space each mino by 3 block heights (adjust as needed)
 
     for (auto i = 0; i < count && !tetrominos.empty(); ++i) {
         const Mino t = tetrominos.front();
@@ -101,12 +105,16 @@ void Hud::renderTetromino(Renderer &renderer, const std::string &label, std::que
         const int yOffset = static_cast<int>(m_elementSpacing) + (i * minoSpacing);
 
         for (const auto &block : blocks) {
-            const float x = renderer.calculateHudX(m_hudX + (static_cast<double>(block[0]) * blockSize));
-            const float y = renderer.calculateHudY(m_hudY + (static_cast<double>(block[1]) * blockSize) + yOffset + m_currentElementPos);
+            const float x =
+                renderer.calculateHudX(m_hudX + (static_cast<double>(block[0]) * blockSize));
+            const float y =
+                renderer.calculateHudY(m_hudY + (static_cast<double>(block[1]) * blockSize) +
+                                       yOffset + m_currentElementPos);
 
             renderer.drawBlockAtPixel(x, y, blockColor, blockSize);
         }
     }
 
-    m_currentElementPos += static_cast<int>(m_elementSpacing * 2) + (count * minoSpacing); // Update the current element position
+    m_currentElementPos += static_cast<int>(m_elementSpacing * 2) +
+                           (count * minoSpacing); // Update the current element position
 }

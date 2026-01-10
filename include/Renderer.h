@@ -12,19 +12,19 @@ struct ScreenPosition {
 
 class Renderer {
   public:
-    Renderer(const std::string& title, const ScreenResolution &res);
+    Renderer(const std::string &title, const ScreenResolution &res);
     ~Renderer();
     void clear();
     void present();
     void setDrawColor(const SDL_Color &color);
-    void setGridSize(const ScreenResolution& res);
+    void setGridSize(const ScreenResolution &res);
 
     void setResolution(const ScreenResolution &res);
 
     void drawLine(float x1, float y1, float x2, float y2);
-    void drawGrid(const ScreenResolution& res);
+    void drawGrid(const ScreenResolution &res);
     void drawBlock(double x, double y, const SDL_Color &color);
-    void drawText(const std::string &text, const ScreenPosition& pos);
+    void drawText(const std::string &text, const ScreenPosition &pos);
 
     void update();
 
@@ -52,7 +52,7 @@ class Renderer {
     SDL_Texture *m_blockTexture{nullptr};
     TTF_Font *m_font{nullptr};
 
-		ScreenResolution m_res{0, 0};
+    ScreenResolution m_res{0, 0};
     int m_xOffset{0};
     int m_yOffset{0};
     float m_blockSize{0};

@@ -1,6 +1,7 @@
 #include <SDL3/SDL_gpu.h>
 #include <algorithm>
 #include <cmath>
+#include <typeinfo>
 constexpr bool DEBUG_NO_FALL = false;
 constexpr bool DEBUG_NO_LOCK = false;
 

@@ -53,11 +53,11 @@ class GameBuilder {
     // you might have to add additional setters in Game or make GameBuilder a friend.
     [[nodiscard]] Game build() const {
         const GameConfig cfg{.timings = {.timeToFall = m_timeToFall,
-                                   .lockDelayTime = m_lockDelayTime,
-                                   .das = m_DAS,
-                                   .arr = m_ARR,
-                                   .sdf = m_SDF},
-                       .nextMinosSize = m_nextMinosSize};
+                                         .lockDelayTime = m_lockDelayTime,
+                                         .das = m_DAS,
+                                         .arr = m_ARR,
+                                         .sdf = m_SDF},
+                             .nextMinosSize = m_nextMinosSize};
         return {m_res, cfg};
     }
 
