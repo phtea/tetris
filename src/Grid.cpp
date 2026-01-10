@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Constants.h"
 
 // TODO: add 2 extra rows for spawning pieces!
 Grid::Grid()
@@ -15,8 +16,8 @@ bool Grid::isCellOccupied(int x, int y) const {
 
 void Grid::placeTetromino(const Mino &tetromino) {
     for (const auto &cell : tetromino.getRelativeBlocks()) {
-        int x = cell[0];
-        int y = cell[1];
+        const int x = cell[0];
+        const int y = cell[1];
         if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
             m_grid[y][x] = 1; // Mark the grid cell as occupied
             m_gridOfColors[y][x] = tetromino.getColor();
@@ -72,7 +73,7 @@ void Grid::draw(Renderer &renderer) const {
     }
 
     // Draw grid lines
-    SDL_Color gridColor = {50, 50, 50, 255};
+    const SDL_Color gridColor = {50, 50, 50, 255};
     renderer.setDrawColor(gridColor);
-    renderer.drawGrid(m_width, m_height);
+    renderer.drawGrid({m_width, m_height});
 }

@@ -8,50 +8,49 @@
 #include <unordered_map>
 #include <vector>
 
-typedef std::vector<std::vector<int>> grid_t;
-typedef std::array<std::array<int, 2>, 4> blocks_t;
+using grid_t = std::vector<std::vector<int>>;
+using blocks_t = std::array<std::array<int, 2>, 4>;
 
 class Mino {
   public:
     Mino(MinoType type);
 
-    bool canMove(Direction dir, const grid_t &grid) const;
+    [[nodiscard]] bool canMove(Direction dir, const grid_t &grid) const;
     void move(Direction dir);
     void hardDrop(const grid_t &grid);
-    bool rotate(int angle, const grid_t &grid);
+    bool rotate(int rotations, const grid_t &grid);
     void setOriginalRotationState();
 
-    void setPosition(int x, int y);
+    void setPosition(Position pos);
     void setStartPosition();
 
     // Gets fixed blocks for the tetromino
-    blocks_t getBlocks() const { return m_blocks; }
+    [[nodiscard]] blocks_t getBlocks() const { return m_blocks; }
     // Gets the blocks relative to grid
-    blocks_t getRelativeBlocks() const;
+    [[nodiscard]] blocks_t getRelativeBlocks() const;
 
-    std::array<int, 2> getPosition() const { return {m_X, m_Y}; }
-    SDL_Color getColor() const { return m_color; }
-    MinoType getType() const { return m_type; }
+    [[nodiscard]] std::array<int, 2> getPosition() const { return {m_X, m_Y}; }
+    [[nodiscard]] SDL_Color getColor() const { return m_color; }
+    [[nodiscard]] MinoType getType() const { return m_type; }
 
     void draw(Renderer &renderer) const;
 
   private:
     void setColor();
-    bool collidesWithGrid(const blocks_t &testBlocks, const grid_t &grid) const;
+    [[nodiscard]] bool collidesWithGrid(const blocks_t &testBlocks, const grid_t &grid) const;
 
     // rotation logic
     void setShape(int newRotation);
     constexpr static std::array<std::array<int, 2>, 12>
-    getWallKicks(int currentRotation, int newRotation, MinoType type);
+    getWallKicks(int from, int to, MinoType type);
     constexpr static std::array<std::array<int, 2>, 12> get180WallKicks(int newRotation,
                                                                         MinoType type);
     blocks_t applyRotation(int newRotation);
 
-  private:
     MinoType m_type;
     SDL_Color m_color;
     blocks_t m_blocks;
-    int m_rotationState = 0;
+    int m_rotationState{0};
     static const std::unordered_map<MinoType, std::array<std::array<std::array<int, 2>, 4>, 4>>
         shapes;
 

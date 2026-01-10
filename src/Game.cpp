@@ -1,3 +1,6 @@
+#include <SDL3/SDL_gpu.h>
+#include <algorithm>
+#include <cmath>
 constexpr bool DEBUG_NO_FALL = false;
 constexpr bool DEBUG_NO_LOCK = false;
 
@@ -14,31 +17,31 @@ constexpr bool DEBUG_NO_LOCK = false;
 #include "ScoreSystem.h"
 #include <cstdlib>
 
-Game::Game(int screenWidth, int screenHeight)
-    : m_Hud(1300, 200, 1.0f), m_running(true), m_lastFallTime(SDL_GetTicks()), m_SDF(100),
-      m_renderer(GAME_TITLE, screenWidth, screenHeight), m_Mino(MinoType::NONE), m_nextMinosSize(1),
+Game::Game(const ScreenResolution& res)
+    : m_Hud({1300, 200}, 1.0F), m_running(true), m_lastFallTime(SDL_GetTicks()), m_SDF(100),
+      m_renderer(GAME_TITLE, res), m_Mino(MinoType::NONE), m_nextMinosSize(1),
       m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 
-Game::Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
+Game::Game(const ScreenResolution& res, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
            Uint32 arr, Uint32 sdf, int nextMinosSize)
-    : m_Hud(1300, 200, 1.0f), m_running(true), m_timeToFall(timeToFall),
+    : m_Hud({1300, 200}, 1.0F), m_running(true), m_timeToFall(timeToFall),
       m_lastFallTime(SDL_GetTicks()), m_lockDelayTime(lockDelayTime), m_DAS(das), m_ARR(arr),
-      m_SDF(sdf), m_renderer(GAME_TITLE, screenWidth, screenHeight), m_Mino(MinoType::NONE),
+      m_SDF(sdf), m_renderer(GAME_TITLE, res), m_Mino(MinoType::NONE),
       m_nextMinosSize(nextMinosSize), m_bufferMino(MinoType::NONE), m_canSwap(true) {
     createNewMino();
 }
 
 void Game::placeMinoOnGrid() {
     m_grid.placeTetromino(m_Mino);
-    int lines = m_grid.checkFullRows();
-		if (lines > 0) {
-			m_scoreSystem.addScore(lines);
-			LOG("getScore: %i", m_scoreSystem.getScore());
-			LOG("getLevel: %i", m_scoreSystem.getLevel());
-			LOG("getTotalLines: %i", m_scoreSystem.getTotalLines());
-		}
+    const int lines = m_grid.checkFullRows();
+    if (lines > 0) {
+        m_scoreSystem.addScore(lines);
+        LOG("getScore: %i", m_scoreSystem.getScore());
+        LOG("getLevel: %i", m_scoreSystem.getLevel());
+        LOG("getTotalLines: %i", m_scoreSystem.getTotalLines());
+    }
     createNewMino();
     m_canSwap = true; // Allow swapping again
 }
@@ -61,7 +64,7 @@ void Game::createNewMino() {
     m_Mino.setStartPosition();
 }
 
-Mino Game::pickRandomMino() { return Mino(m_bag7.pickNext()); }
+Mino Game::pickRandomMino() { return {m_bag7.pickNext()}; }
 
 void Game::run() {
     SDL_Event event;
@@ -94,27 +97,26 @@ void Game::setSDF(Uint32 sdf) { m_SDF = sdf; }
 void Game::setNextMinosSize(int size) { m_nextMinosSize = size; }
 
 void Game::update() {
-
-    Uint64 now = SDL_GetTicks();
+    const Uint64 now = SDL_GetTicks();
     m_Hud.update(m_renderer, m_nextMinosSize);
 
     handleFallDelay(now);
     handleLockDelay(now);
 }
 
-double Game::computeFallDelayForLevel(int level) const {
-    // guideline gravity formula (секунды за 1 строку)
-    double t = pow(0.8 - ((level - 1) * 0.007), (level - 1));
+Uint64 Game::computeFallDelayForLevel(int level) {
+    // guideline gravity formula (seconds per 1 line)
+    const double t = pow(0.8 - ((level - 1) * 0.007), (level - 1));
 
-    // конвертируем в миллисекунды
-    return t * 1000.0;
+    // convert to milliseconds
+    return static_cast<Uint64>(t * 1000.0);
 }
 
 void Game::handleFallDelay(Uint64 now) {
     // Handle the fall behavior (move tetromino down based on m_timeToFall)
-		int level = m_scoreSystem.getLevel();
-		double m_timeToFall = computeFallDelayForLevel(level);
-    bool canFall = now - m_lastFallTime >= m_timeToFall;
+    const int level = m_scoreSystem.getLevel();
+    const Uint64 m_timeToFall = computeFallDelayForLevel(level);
+    const bool canFall = now - m_lastFallTime >= m_timeToFall;
     if (!DEBUG_NO_FALL && canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
         m_Mino.move(Direction::DOWN);
         m_lastFallTime = now;
@@ -156,21 +158,21 @@ void Game::render() {
     m_renderer.clear();
     m_grid.draw(m_renderer);
     m_Mino.draw(m_renderer);
-		int score = m_scoreSystem.getScore();
-		int level = m_scoreSystem.getLevel();
+    const int score = m_scoreSystem.getScore();
+    const int level = m_scoreSystem.getLevel();
     m_Hud.draw(m_renderer, m_nextMinos, m_bufferMino, level, score);
 
     if (m_gameState == GameState::PAUSED) {
         ScreenPosition pos = m_renderer.getResolution();
         pos.x /= 2;
         pos.y /= 2;
-				bool centered = true;
+        const bool centered = true;
         m_renderer.drawTextAtPixel("GAME PAUSED.", pos, centered);
     } else if (m_gameState == GameState::GAMEOVER) {
         ScreenPosition pos = m_renderer.getResolution();
         pos.x /= 2;
         pos.y /= 2;
-				bool centered = true;
+        const bool centered = true;
         m_renderer.drawTextAtPixel("GAME OVER. \nPress R to Restart.", pos, centered);
     }
 
@@ -178,20 +180,15 @@ void Game::render() {
 }
 
 bool Game::isGameOver() {
-    std::array<std::array<int, 2>, 4> blocks = m_Mino.getRelativeBlocks();
-    for (const auto &block : blocks) {
-        int x = block[0];
-        int y = block[1];
-        if (m_grid.isCellOccupied(x, y)) {
-            return true; // Collision at spawn → game over
-        }
-    }
-    return false;
+    const std::array<std::array<int, 2>, 4> blocks = m_Mino.getRelativeBlocks();
+    return std::any_of(blocks.begin(), blocks.end(), [this](const auto &block) {
+        return m_grid.isCellOccupied(block[0], block[1]);
+    });
 }
 
 void Game::restartGame() {
     // Clear the score system
-		m_scoreSystem = ScoreSystem();
+    m_scoreSystem = ScoreSystem();
 
     // Clear the grid
     m_grid.clear();
@@ -220,7 +217,7 @@ void Game::restartGame() {
 }
 
 void Game::handleInput() {
-    Uint32 now = SDL_GetTicks();
+    const Uint64 now = SDL_GetTicks();
 
     if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_P)) {
         // Toggle pause
@@ -244,7 +241,7 @@ void Game::handleInput() {
     handleMovement(Direction::RIGHT, SDL_SCANCODE_RIGHT, now);
 
     if (m_inputHandler.isKeyPressed(SDL_SCANCODE_DOWN)) {
-        bool canFall = (now - m_lastFallTime) * m_SDF >= m_timeToFall;
+        const bool canFall = (now - m_lastFallTime) * m_SDF >= m_timeToFall;
         if (canFall && m_Mino.canMove(Direction::DOWN, m_grid.getGrid())) {
             m_Mino.move(Direction::DOWN);
             m_lastFallTime = now;
@@ -270,10 +267,10 @@ void Game::handleInput() {
     handleRotation(2, {SDL_SCANCODE_C});
 
     if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_1)) {
-        m_renderer.setResolution(1920, 1080);
+        m_renderer.setResolution({1920, 1080});
     }
     if (m_inputHandler.isKeyJustPressed(SDL_SCANCODE_0)) {
-        m_renderer.setResolution(1280, 720);
+        m_renderer.setResolution({1280, 720});
     }
 }
 
@@ -297,7 +294,7 @@ void Game::swapTetromino() {
 }
 
 void Game::handleMovement(Direction dir, SDL_Scancode key, Uint32 now) {
-    Uint32 holdTime = m_inputHandler.getKeyHoldTime(key);
+    const Uint64 holdTime = m_inputHandler.getKeyHoldTime(key);
 
     if (m_inputHandler.isKeyJustPressed(key) ||
         (m_inputHandler.isKeyPressed(key) && holdTime > m_DAS && now - m_lastMoveTime > m_ARR)) {
@@ -310,7 +307,7 @@ void Game::handleMovement(Direction dir, SDL_Scancode key, Uint32 now) {
 
 // Rotations is the number of rotations of piece
 void Game::handleRotation(int rotations, std::initializer_list<SDL_Scancode> keys) {
-    for (SDL_Scancode key : keys) {
+    for (const SDL_Scancode key : keys) {
         if (m_inputHandler.isKeyJustPressed(key)) {
             m_Mino.rotate(rotations, m_grid.getGrid());
             return;

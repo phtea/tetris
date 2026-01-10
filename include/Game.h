@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bag7.h"
+#include "CustomTypes.h"
 #include "Grid.h"
 #include "Hud.h"
 #include "InputHandler.h"
@@ -11,14 +12,12 @@
 
 enum class TouchState : uint8_t { NotTouching, JustTouched, KeepsTouching };
 enum class GameState : uint8_t { START, RUNNING, PAUSED, GAMEOVER };
-
-typedef std::array<MinoType, 7> bag7_t;
+using bag7_t = std::array<MinoType, 7>;
 
 class Game {
   public:
-    Game(int screenWidth, int screenHeight);
-    Game(int screenWidth, int screenHeight, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das,
-         Uint32 arr, Uint32 sdf, int nextMinosSize);
+    Game(const ScreenResolution& res);
+    Game(const ScreenResolution& res, Uint32 timeToFall, Uint32 lockDelayTime, Uint32 das, Uint32 arr, Uint32 sdf, int nextMinosSize);
     ~Game() = default;
     void run();
 
@@ -39,12 +38,12 @@ class Game {
     bool isGameOver();
     void stopGame() { m_running = false; }
     void restartGame();
-		double computeFallDelayForLevel(int level) const;
+		static Uint64 computeFallDelayForLevel(int level);
 
     void swapTetromino();
 
     void handleMovement(Direction dir, SDL_Scancode key, Uint32 now);
-    void handleRotation(int angle, std::initializer_list<SDL_Scancode> keys);
+    void handleRotation(int rotations, std::initializer_list<SDL_Scancode> keys);
     void handleInput();
 
     Mino pickRandomMino();

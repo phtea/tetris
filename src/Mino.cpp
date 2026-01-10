@@ -4,14 +4,16 @@
 #include "Logger.h"
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include <algorithm>
 #include <cassert>
 #include <unordered_map>
 
 blocks_t Mino::applyRotation(int newRotation) { return shapes.at(m_type)[newRotation]; }
 
-Mino::Mino(MinoType type) : m_type(type), m_rotationState(0) {
-    if (m_type == MinoType::NONE)
+Mino::Mino(MinoType type) : m_type(type) {
+    if (m_type == MinoType::NONE) {
         return;
+    }
     setColor();
     setShape(m_rotationState);
     setStartPosition();
@@ -32,23 +34,29 @@ void Mino::setShape(int newRotation) { m_blocks = shapes.at(m_type)[newRotation]
 bool Mino::canMove(Direction dir, const grid_t &grid) const {
     std::array<std::array<int, 2>, 4> testBlocks = m_blocks;
     for (auto &block : testBlocks) {
-        if (dir == Direction::LEFT)
+        if (dir == Direction::LEFT) {
             block[0]--;
-        if (dir == Direction::RIGHT)
+        }
+        if (dir == Direction::RIGHT) {
             block[0]++;
-        if (dir == Direction::DOWN)
+        }
+        if (dir == Direction::DOWN) {
             block[1]++;
+        }
     }
     return !collidesWithGrid(testBlocks, grid);
 }
 
 void Mino::move(Direction dir) {
-    if (dir == Direction::LEFT)
+    if (dir == Direction::LEFT) {
         m_X--;
-    if (dir == Direction::RIGHT)
+    }
+    if (dir == Direction::RIGHT) {
         m_X++;
-    if (dir == Direction::DOWN)
+    }
+    if (dir == Direction::DOWN) {
         m_Y++;
+    }
 }
 
 void Mino::hardDrop(const grid_t &grid) {
@@ -60,18 +68,19 @@ void Mino::hardDrop(const grid_t &grid) {
 // try to rotate piece N times
 // returns true on success
 bool Mino::rotate(int rotations, const grid_t &grid) {
-    if (m_type == MinoType::O)
+    if (m_type == MinoType::O) {
         return false; // O piece doesn't rotate
+    }
 
     // Calculate new rotation state
-    int newRotation = (m_rotationState + rotations + 4) % 4;
+    const int newRotation = (m_rotationState + rotations + 4) % 4;
 
     // get180 is stable!
     // get90 is buggy
     auto wallKicks = (rotations == 2) ? get180WallKicks(newRotation, m_type)
                                       : getWallKicks(m_rotationState, newRotation, m_type);
 
-    blocks_t rotatedBlocks = applyRotation(newRotation);
+    const blocks_t rotatedBlocks = applyRotation(newRotation);
     // Loop through the wall kick offsets
     for (const auto &offset : wallKicks) {
         auto testBlocks = rotatedBlocks;
@@ -98,9 +107,9 @@ void Mino::setOriginalRotationState() {
     setShape(m_rotationState);
 }
 
-void Mino::setPosition(int x, int y) {
-    m_X = x;
-    m_Y = y;
+void Mino::setPosition(Position pos) {
+    m_X = pos.x;
+    m_Y = pos.y;
 }
 
 void Mino::setStartPosition() {
@@ -123,16 +132,11 @@ void Mino::draw(Renderer &renderer) const {
 }
 
 bool Mino::collidesWithGrid(const blocks_t &testBlocks, const grid_t &grid) const {
-    for (const auto &block : testBlocks) {
-        int x = block[0] + m_X;
-        int y = block[1] + m_Y;
-        if (y < 0)
-            continue;
-        if (x < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT || grid[y][x] != 0) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(testBlocks.begin(), testBlocks.end(), [&](const auto &block) {
+        const int x = block[0] + m_X;
+        const int y = block[1] + m_Y;
+        return (y < 0 || x < 0 || x >= GRID_WIDTH || y >= GRID_HEIGHT || grid[y][x] != 0);
+    });
 }
 
 constexpr std::array<std::array<int, 2>, 12> Mino::getWallKicks(int from, int to, MinoType type) {

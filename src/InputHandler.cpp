@@ -5,7 +5,7 @@
 #include <SDL3/SDL_keyboard.h>
 
 void InputHandler::pollEvents(SDL_Event &event) {
-    Uint64 now = SDL_GetTicks();
+    const Uint64 now = SDL_GetTicks();
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
@@ -48,7 +48,7 @@ bool InputHandler::isKeyJustPressed(SDL_Scancode key) {
     return false;
 }
 
-Uint32 InputHandler::getKeyHoldTime(SDL_Scancode key) const {
+Uint64 InputHandler::getKeyHoldTime(SDL_Scancode key) const {
     auto it = m_keyHoldStartTimes.find(key);
     if (it != m_keyHoldStartTimes.end()) {
         return SDL_GetTicks() - it->second; // return hold duration

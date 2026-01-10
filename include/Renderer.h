@@ -1,30 +1,28 @@
 #pragma once
 
+#include "CustomTypes.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 
-#include "CustomTypes.h"
-
 struct ScreenPosition {
-    ScreenPosition(float x, float y) : x(x), y(y) {}
     float x, y;
 };
 
 class Renderer {
   public:
-    Renderer(const char *title, int screenWidth, int screenHeight);
+    Renderer(const std::string& title, const ScreenResolution &res);
     ~Renderer();
     void clear();
     void present();
     void setDrawColor(const SDL_Color &color);
-    void setGridSize(int gridWidth, int gridHeight);
+    void setGridSize(const ScreenResolution& res);
 
-    void setResolution(int newWidth, int newHeight);
+    void setResolution(const ScreenResolution &res);
 
     void drawLine(int x1, int y1, int x2, int y2);
-    void drawGrid(int gridWidth, int gridHeight);
+    void drawGrid(const ScreenResolution& res);
     void drawBlock(int x, int y, const SDL_Color &color);
     void drawText(const std::string &text, int x, int y);
 
@@ -38,27 +36,26 @@ class Renderer {
     void drawTextAtPixel(const std::string &text, ScreenPosition pos, bool centered);
 
     // New methods for position and size calculation
-    int calculateHudX(int baseX) const;
-    int calculateHudY(int baseY) const;
-    int calculateHudBlockSize() const;
+    [[nodiscard]] float calculateHudX(int baseX) const;
+    [[nodiscard]] float calculateHudY(int baseY) const;
+    [[nodiscard]] int calculateHudBlockSize() const;
 
-    int calculateFontSize(int baseFontSize) const;
+    [[nodiscard]] float calculateFontSize(float baseFontSize) const;
 
-    int getBlockSize() const { return m_blockSize; }
+    [[nodiscard]] int getBlockSize() const { return m_blockSize; }
 
   private:
-    void loadFont(int fontSize);
+    void loadFont(float fontSize);
 
-    SDL_Window *m_window;
-    SDL_Renderer *m_renderer;
-    SDL_Texture *m_blockTexture;
-    TTF_Font *m_font;
+    SDL_Window *m_window{nullptr};
+    SDL_Renderer *m_renderer{nullptr};
+    SDL_Texture *m_blockTexture{nullptr};
+    TTF_Font *m_font{nullptr};
 
-    int m_screenWidth;
-    int m_screenHeight;
-    int m_xOffset;
-    int m_yOffset;
-    int m_blockSize;
+		ScreenResolution m_res{0, 0};
+    int m_xOffset{0};
+    int m_yOffset{0};
+    int m_blockSize{0};
 
     static constexpr int BASE_WIDTH = 1920;
     static constexpr int BASE_HEIGHT = 1080;

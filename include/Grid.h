@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "Constants.h"
 #include "Mino.h"
 #include "Renderer.h"
 
@@ -9,7 +8,7 @@ class Grid {
   public:
     Grid();
 
-    bool isCellOccupied(int x, int y) const;
+    [[nodiscard]] bool isCellOccupied(int x, int y) const;
     void placeTetromino(const Mino &tetromino);
     int checkFullRows();
     void clearRow(int row);
@@ -17,7 +16,7 @@ class Grid {
     void clear();
     void draw(Renderer &renderer) const;
 
-    const std::vector<std::vector<int>> &getGrid() const { return m_grid; }
+    [[nodiscard]] const std::vector<std::vector<int>> &getGrid() const { return m_grid; }
 
   private:
     std::vector<std::vector<int>> m_grid;

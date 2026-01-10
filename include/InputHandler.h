@@ -16,7 +16,7 @@ class InputHandler {
 
     bool isKeyPressed(SDL_Scancode key) const;
     bool isKeyJustPressed(SDL_Scancode key);
-    Uint32 getKeyHoldTime(SDL_Scancode key) const;
+    Uint64 getKeyHoldTime(SDL_Scancode key) const;
 
     bool shouldQuit() const { return m_quit; }
 

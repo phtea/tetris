@@ -18,7 +18,7 @@ class Bag7 {
 
   private:
     bag7_t m_bag;
-    size_t m_currentIndex;
+    size_t m_currentIndex{0};
     static std::random_device rd;
     static std::default_random_engine engine;
 };
